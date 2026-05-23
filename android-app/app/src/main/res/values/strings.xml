@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">REDU</string>
+    <string name="accessibility_service_label">REDU Monitoring Service</string>
+    <string name="accessibility_service_description">Monitors selected short-form video sessions for local, privacy-preserving thesis logging.</string>
+</resources>

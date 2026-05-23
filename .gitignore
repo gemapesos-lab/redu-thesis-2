@@ -1,0 +1,13 @@
+.DS_Store
+.gradle-work/
+android-app/.android-sdk/
+android-app/.kotlin/
+android-app/.gradle/
+android-app/app/.cxx/
+android-app/app/build/
+android-app/local.properties
+
+# VLM model files (too large for git, download separately)
+*.gguf
+*.gguf.*
+android-app/app/src/main/cpp/llama.cpp/models/*.gguf*
