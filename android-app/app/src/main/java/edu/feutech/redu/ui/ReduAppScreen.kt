@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import edu.feutech.redu.BuildConfig
 import edu.feutech.redu.data.AppSettingsEntity
 import edu.feutech.redu.data.Platform
+import edu.feutech.redu.data.PromptLevel
 import edu.feutech.redu.data.ReduDatabase
 import edu.feutech.redu.data.RiskPersonalizationEntity
 import edu.feutech.redu.data.RiskLevel
@@ -329,6 +330,18 @@ fun ReduAppScreen(
                         }
                     },
                     onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+                    onDemoIntervention = { level ->
+                        android.widget.Toast.makeText(
+                            context,
+                            when (level) {
+                                PromptLevel.L1_AWARENESS -> "REDU: You have been scrolling for a while. Risk score: 42"
+                                PromptLevel.L2_PAUSE -> "REDU: Consider taking a short pause."
+                                PromptLevel.L3_BREATHING -> "REDU: Pause and try a 60-second breathing reset."
+                                PromptLevel.NONE -> return@SettingsScreen
+                            },
+                            android.widget.Toast.LENGTH_LONG,
+                        ).show()
+                    },
                 )
             }
         }
@@ -745,6 +758,7 @@ private fun SettingsScreen(
     onPromptsEnabledChange: (Boolean) -> Unit,
     onDebugOverlayChange: (Boolean) -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
+    onDemoIntervention: (PromptLevel) -> Unit = {},
 ) {
     var editCodeDialogOpen by rememberSaveable { mutableStateOf(false) }
     var editedStudyCode by rememberSaveable { mutableStateOf(settings?.studyCode?.takeIf { it != "UNSET" }.orEmpty()) }
@@ -838,6 +852,74 @@ private fun SettingsScreen(
                             Switch(
                                 checked = debugOverlayEnabled,
                                 onCheckedChange = onDebugOverlayChange,
+                            )
+                        }
+
+                        var demoPromptLevel by remember { mutableStateOf<PromptLevel?>(null) }
+
+                        Text("Demo intervention", style = MaterialTheme.typography.labelLarge)
+                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = { onDemoIntervention(PromptLevel.L1_AWARENESS) },
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+                            ) {
+                                Text("L1", style = MaterialTheme.typography.labelMedium)
+                            }
+                            OutlinedButton(
+                                onClick = { demoPromptLevel = PromptLevel.L2_PAUSE },
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+                            ) {
+                                Text("L2", style = MaterialTheme.typography.labelMedium)
+                            }
+                            OutlinedButton(
+                                onClick = { demoPromptLevel = PromptLevel.L3_BREATHING },
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+                            ) {
+                                Text("L3", style = MaterialTheme.typography.labelMedium)
+                            }
+                        }
+                        SecondaryText("L1 = awareness toast, L2 = pause overlay, L3 = breathing reset")
+
+                        demoPromptLevel?.let { level ->
+                            AlertDialog(
+                                onDismissRequest = { demoPromptLevel = null },
+                                title = {
+                                    Text(
+                                        when (level) {
+                                            PromptLevel.L2_PAUSE -> "REDU pause prompt"
+                                            PromptLevel.L3_BREATHING -> "REDU breathing reset"
+                                            else -> "REDU"
+                                        },
+                                    )
+                                },
+                                text = {
+                                    Text(
+                                        when (level) {
+                                            PromptLevel.L2_PAUSE -> "Risk score: 62. Consider taking a short pause before continuing."
+                                            PromptLevel.L3_BREATHING -> "Risk score: 78.\n\nBreathe in slowly. Hold. Breathe out slowly. Repeat for 60 seconds."
+                                            else -> ""
+                                        },
+                                    )
+                                },
+                                confirmButton = {
+                                    when (level) {
+                                        PromptLevel.L2_PAUSE -> {
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Continue") }
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Take break") }
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Dashboard") }
+                                        }
+                                        PromptLevel.L3_BREATHING -> {
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Done") }
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Take break") }
+                                        }
+                                        else -> {
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("OK") }
+                                        }
+                                    }
+                                },
                             )
                         }
                     }
