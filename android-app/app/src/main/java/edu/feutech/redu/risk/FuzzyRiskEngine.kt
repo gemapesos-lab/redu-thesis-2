@@ -118,7 +118,7 @@ object FuzzyRiskEngine {
         put(rule(FuzzyLevel.HIGH, FuzzyLevel.MEDIUM, FuzzyLevel.LOW), RiskLevel.WARNING)
         put(rule(FuzzyLevel.HIGH, FuzzyLevel.MEDIUM, FuzzyLevel.MEDIUM), RiskLevel.CRITICAL)
         put(rule(FuzzyLevel.HIGH, FuzzyLevel.MEDIUM, FuzzyLevel.HIGH), RiskLevel.CRITICAL)
-        put(rule(FuzzyLevel.HIGH, FuzzyLevel.HIGH, FuzzyLevel.LOW), RiskLevel.CRITICAL)
+        put(rule(FuzzyLevel.HIGH, FuzzyLevel.HIGH, FuzzyLevel.LOW), RiskLevel.WARNING)
         put(rule(FuzzyLevel.HIGH, FuzzyLevel.HIGH, FuzzyLevel.MEDIUM), RiskLevel.CRITICAL)
         put(rule(FuzzyLevel.HIGH, FuzzyLevel.HIGH, FuzzyLevel.HIGH), RiskLevel.CRITICAL)
     }

@@ -25,7 +25,7 @@ sealed class PromptPresentationEvent {
 
 object PromptPresenter {
     private val mainHandler = Handler(Looper.getMainLooper())
-    private const val BREATHING_PROMPT_MILLIS = 60_000L
+    private const val BREATHING_PROMPT_MILLIS = 45_000L
     private var activePrompt: ActivePromptOverlay? = null
 
     fun show(
@@ -35,15 +35,15 @@ object PromptPresenter {
         onEvent: (PromptPresentationEvent) -> Unit = {},
     ) {
         val text = when (level) {
-            PromptLevel.L1_AWARENESS -> "REDU: You have been scrolling for a while."
-            PromptLevel.L2_PAUSE -> "REDU: Consider taking a short pause."
-            PromptLevel.L3_BREATHING -> "REDU: Pause and try a 60-second breathing reset."
+            PromptLevel.L1_AWARENESS -> "You've been scrolling for a while. Consider a short pause."
+            PromptLevel.L2_PAUSE -> "Consider taking a short pause."
+            PromptLevel.L3_BREATHING -> "Pause and try a short breathing break."
             PromptLevel.NONE -> return
         }
         mainHandler.post {
             when (level) {
                 PromptLevel.L1_AWARENESS -> {
-                    Toast.makeText(service, "$text Risk score: ${score.toInt()}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(service, text, Toast.LENGTH_LONG).show()
                     onEvent(PromptPresentationEvent.NonBlockingShown)
                 }
                 PromptLevel.L2_PAUSE -> showPauseOverlay(service, score, onEvent)
@@ -69,8 +69,8 @@ object PromptPresenter {
             orientation = LinearLayout.VERTICAL
             setPadding(36, 28, 36, 28)
             setBackgroundColor(0xEE202124.toInt())
-            addView(promptText(service, "REDU pause prompt", 20f, true))
-            addView(promptText(service, "Risk score: ${score.toInt()}. Consider taking a short pause before continuing.", 16f))
+            addView(promptText(service, "Pause and reset", 20f, true))
+            addView(promptText(service, "You've been scrolling for an extended period. Consider taking a short pause before continuing.", 16f))
             addView(
                 LinearLayout(service).apply {
                     orientation = LinearLayout.HORIZONTAL
@@ -120,10 +120,11 @@ object PromptPresenter {
             gravity = Gravity.CENTER
             setPadding(48, 48, 48, 48)
             setBackgroundColor(0xF2172028.toInt())
-            addView(promptText(service, "REDU breathing reset", 24f, true))
-            addView(promptText(service, "Risk score: ${score.toInt()}", 16f))
-            addView(promptText(service, "Breathe in slowly. Hold. Breathe out slowly. Repeat for 60 seconds.", 18f))
+            addView(promptText(service, "Take a short breathing break", 24f, true))
+            addView(promptText(service, "Breathe in slowly. Hold. Breathe out slowly.", 18f))
+            addView(promptText(service, "This is a digital wellness pause, not a clinical exercise.", 13f))
             addView(promptButton(service, "Done") { close(PromptAction.DISMISSED) })
+            addView(promptButton(service, "Skip") { close(PromptAction.DISMISSED) })
             addView(promptButton(service, "Take break") { close(PromptAction.TAKE_BREAK) })
         }
 

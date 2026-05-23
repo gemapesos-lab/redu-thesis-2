@@ -334,9 +334,9 @@ fun ReduAppScreen(
                         android.widget.Toast.makeText(
                             context,
                             when (level) {
-                                PromptLevel.L1_AWARENESS -> "REDU: You have been scrolling for a while. Risk score: 42"
-                                PromptLevel.L2_PAUSE -> "REDU: Consider taking a short pause."
-                                PromptLevel.L3_BREATHING -> "REDU: Pause and try a 60-second breathing reset."
+                                PromptLevel.L1_AWARENESS -> "You've been scrolling for a while. Consider a short pause."
+                                PromptLevel.L2_PAUSE -> "Consider taking a short pause."
+                                PromptLevel.L3_BREATHING -> "Pause and try a short breathing break."
                                 PromptLevel.NONE -> return@SettingsScreen
                             },
                             android.widget.Toast.LENGTH_LONG,
@@ -392,8 +392,8 @@ private fun DashboardScreen(
             MetricCard("Today's active time", summary.todayActiveMillis.formatDuration(), Modifier.weight(1f))
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            MetricCard("Current estimated risk", summary.latestRiskScore?.formatOne() ?: "No data", Modifier.weight(1f))
-            MetricCard("Current risk level", latest?.riskLevel?.displayName() ?: "No data", Modifier.weight(1f))
+            MetricCard("Activity pattern score", summary.latestRiskScore?.formatOne() ?: "No data", Modifier.weight(1f))
+            MetricCard("Current pattern level", latest?.riskLevel?.displayName() ?: "No data", Modifier.weight(1f))
         }
 
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -405,7 +405,7 @@ private fun DashboardScreen(
                     InfoRow("Platform", latest.platform.displayName())
                     InfoRow("Started", latest.startedAtMillis.formatTime())
                     InfoRow("Duration", latest.rawDurationMillis.formatDuration())
-                    InfoRow("Estimated risk", "${latest.riskLevel.displayName()} (${latest.riskScore.formatOne()})")
+                    InfoRow("Activity pattern", "${latest.riskLevel.displayName()} (${latest.riskScore.formatOne()})")
                 }
             }
         }
@@ -534,7 +534,7 @@ private fun HistoryScreen(
                     modifier = Modifier.weight(1f),
                 )
                 CompactFilterMenu(
-                    label = "Risk",
+                    label = "Pattern",
                     selectedLabel = riskFilter.displayName(),
                     options = RiskFilter.entries.toList(),
                     optionLabel = { it.displayName() },
@@ -676,7 +676,7 @@ private fun SessionHistoryCard(
                 }
                 StatusChip(session.riskLevel.displayName(), positive = session.riskLevel == RiskLevel.SAFE)
             }
-            InfoRow("Estimated risk", session.riskScore.formatOne())
+            InfoRow("Activity pattern", session.riskScore.formatOne())
             InfoRow("Reliability", session.sentimentReliability.displayName())
             if (expanded) {
                 InfoRow("Mean dwell", session.meanDwellMillis.formatDuration())
@@ -889,8 +889,8 @@ private fun SettingsScreen(
                                 title = {
                                     Text(
                                         when (level) {
-                                            PromptLevel.L2_PAUSE -> "REDU pause prompt"
-                                            PromptLevel.L3_BREATHING -> "REDU breathing reset"
+                                            PromptLevel.L2_PAUSE -> "Pause and reset"
+                                            PromptLevel.L3_BREATHING -> "Take a short breathing break"
                                             else -> "REDU"
                                         },
                                     )
@@ -898,8 +898,8 @@ private fun SettingsScreen(
                                 text = {
                                     Text(
                                         when (level) {
-                                            PromptLevel.L2_PAUSE -> "Risk score: 62. Consider taking a short pause before continuing."
-                                            PromptLevel.L3_BREATHING -> "Risk score: 78.\n\nBreathe in slowly. Hold. Breathe out slowly. Repeat for 60 seconds."
+                                            PromptLevel.L2_PAUSE -> "You've been scrolling for an extended period. Consider taking a short pause before continuing."
+                                            PromptLevel.L3_BREATHING -> "Breathe in slowly. Hold. Breathe out slowly.\n\nThis is a digital wellness pause, not a clinical exercise."
                                             else -> ""
                                         },
                                     )
@@ -913,6 +913,7 @@ private fun SettingsScreen(
                                         }
                                         PromptLevel.L3_BREATHING -> {
                                             TextButton(onClick = { demoPromptLevel = null }) { Text("Done") }
+                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Skip") }
                                             TextButton(onClick = { demoPromptLevel = null }) { Text("Take break") }
                                         }
                                         else -> {
@@ -1275,9 +1276,9 @@ private fun Platform.displayName(): String =
 
 private fun RiskLevel.displayName(): String =
     when (this) {
-        RiskLevel.SAFE -> "Safe"
-        RiskLevel.WARNING -> "Warning"
-        RiskLevel.CRITICAL -> "Critical"
+        RiskLevel.SAFE -> "Normal"
+        RiskLevel.WARNING -> "Elevated"
+        RiskLevel.CRITICAL -> "Extended"
     }
 
 private fun SentimentReliability.displayName(): String =
@@ -1297,7 +1298,7 @@ private fun PlatformFilter.displayName(): String =
 private fun RiskFilter.displayName(): String =
     when (this) {
         RiskFilter.ALL -> "All"
-        RiskFilter.SAFE -> "Safe"
-        RiskFilter.WARNING -> "Warn"
-        RiskFilter.CRITICAL -> "Critical"
+        RiskFilter.SAFE -> "Normal"
+        RiskFilter.WARNING -> "Elevated"
+        RiskFilter.CRITICAL -> "Extended"
     }
