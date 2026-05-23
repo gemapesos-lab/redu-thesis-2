@@ -21,4 +21,10 @@ object MoondreamLlamaNative {
      * The prompt used is the predefined constrained VQA prompt for visual sentiment.
      */
     external fun inferenceImage(imageBytes: ByteArray): String
+
+    /**
+     * Requests interruption of the current native inference. This is cooperative:
+     * llama.cpp checks the abort callback during decode work.
+     */
+    external fun cancelInference()
 }

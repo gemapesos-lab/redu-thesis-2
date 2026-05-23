@@ -3,7 +3,11 @@ package edu.feutech.redu.sentiment
 import edu.feutech.redu.vlm.MoondreamLlamaNative
 import edu.feutech.redu.vlm.ModelDownloadManager
 import edu.feutech.redu.vlm.ModelValidationResult
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -18,12 +22,18 @@ class NativeVisualSentimentResolver(
 
     override suspend fun resolveNoTextItem(frames: List<ByteArray>): VisualSentimentLabel =
         withContext(Dispatchers.Default) {
-            inferenceMutex.withLock {
-                resolveNoTextItemLocked(frames)
+            try {
+                inferenceMutex.withLock {
+                    resolveNoTextItemLocked(frames)
+                }
+            } catch (e: CancellationException) {
+                MoondreamLlamaNative.cancelInference()
+                throw e
             }
         }
 
     override fun close() {
+        MoondreamLlamaNative.cancelInference()
         resetNativeModels()
         modelDownloadManager.close()
     }
@@ -33,7 +43,19 @@ class NativeVisualSentimentResolver(
         if (frames.isEmpty()) return VisualSentimentLabel.UNRESOLVED
 
         val votes = frames.map { imageBytes ->
-            val response = MoondreamLlamaNative.inferenceImage(imageBytes).trim()
+            val context = currentCoroutineContext()
+            context.ensureActive()
+            val cancellationHandle = context.job.invokeOnCompletion { cause ->
+                if (cause is CancellationException) {
+                    MoondreamLlamaNative.cancelInference()
+                }
+            }
+            val response = try {
+                MoondreamLlamaNative.inferenceImage(imageBytes).trim()
+            } finally {
+                cancellationHandle.dispose()
+            }
+            context.ensureActive()
             try {
                 val cleanResponse = response.replace(Regex("[^A-Z_]"), "")
                 VisualSentimentLabel.valueOf(cleanResponse)

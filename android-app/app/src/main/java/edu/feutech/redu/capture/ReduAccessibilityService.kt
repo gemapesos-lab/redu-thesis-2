@@ -46,15 +46,19 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.Executors
 import kotlin.coroutines.resume
+
+private const val VLM_INFERENCE_TIMEOUT_MILLIS = 25_000L
 
 class ReduAccessibilityService : AccessibilityService() {
     private val serviceJob = SupervisorJob()
@@ -682,7 +686,20 @@ class ReduAccessibilityService : AccessibilityService() {
             debugLog("REDU_VLM", "captured screenshot bytes=${frame.size}")
 
             debugOverlayBridge.updateVlm(status = "inferring...")
-            val label = visualSentimentResolver.resolveNoTextItem(listOf(frame))
+            val label = try {
+                withTimeoutOrNull(VLM_INFERENCE_TIMEOUT_MILLIS) {
+                    visualSentimentResolver.resolveNoTextItem(listOf(frame))
+                }
+            } catch (e: CancellationException) {
+                debugOverlayBridge.updateVlm(status = "canceled")
+                debugLog("REDU_VLM", "inference canceled")
+                throw e
+            }
+            if (label == null) {
+                debugOverlayBridge.updateVlm(status = "timeout")
+                debugLog("REDU_VLM", "inference timeout")
+                return@launch
+            }
             val applied = applyVlmResult(token, label)
             debugOverlayBridge.updateVlm(
                 lastLabel = label.name,

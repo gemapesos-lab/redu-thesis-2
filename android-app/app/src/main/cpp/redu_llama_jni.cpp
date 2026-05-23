@@ -1,6 +1,8 @@
 #include <jni.h>
 #include <string>
 #include <vector>
+#include <atomic>
+#include <chrono>
 #include <android/log.h>
 #include <android/bitmap.h>
 
@@ -18,6 +20,12 @@ static struct llama_model * model = nullptr;
 static struct clip_ctx * ctx_clip = nullptr;
 static struct llama_context * ctx_llama = nullptr;
 static struct common_sampler * smpl = nullptr;
+static std::atomic<bool> abort_inference(false);
+static std::chrono::steady_clock::time_point inference_deadline;
+
+static bool should_abort_inference(void *) {
+    return abort_inference.load() || std::chrono::steady_clock::now() > inference_deadline;
+}
 
 static void free_models() {
     if (smpl) { common_sampler_free(smpl); smpl = nullptr; }
@@ -72,6 +80,8 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_initModels(JNIEnv* env, jobject /
 
     llama_context_params cparams = common_context_params_to_llama(params);
     cparams.n_ctx = params.n_ctx;
+    cparams.abort_callback = should_abort_inference;
+    cparams.abort_callback_data = nullptr;
     ctx_llama = llama_new_context_with_model(model, cparams);
     if (!ctx_llama) {
         LOGE("Failed to create llama context");
@@ -97,7 +107,13 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_initModels(JNIEnv* env, jobject /
 
 extern "C" JNIEXPORT void JNICALL
 Java_edu_feutech_redu_vlm_MoondreamLlamaNative_freeModels(JNIEnv* env, jobject /* this */) {
+    abort_inference.store(true);
     free_models();
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_edu_feutech_redu_vlm_MoondreamLlamaNative_cancelInference(JNIEnv* env, jobject /* this */) {
+    abort_inference.store(true);
 }
 
 static bool eval_tokens(struct llama_context * ctx, std::vector<llama_token>& tokens, int * n_past) {
@@ -119,6 +135,9 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobje
     if (!model || !ctx_clip || !ctx_llama) {
         return env->NewStringUTF("UNRESOLVED");
     }
+    abort_inference.store(false);
+    inference_deadline = std::chrono::steady_clock::now() + std::chrono::seconds(20);
+    llama_set_abort_callback(ctx_llama, should_abort_inference, nullptr);
 
     jsize len = env->GetArrayLength(image_bytes);
     jbyte* bytes = env->GetByteArrayElements(image_bytes, 0);
@@ -140,12 +159,21 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobje
     std::string system_prompt = "A chat between a curious human and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the human's questions.\nUSER:<image>";
     std::string user_prompt = prompt + "\nASSISTANT:";
 
-    eval_string(ctx_llama, system_prompt, &n_past, true);
-    llava_eval_image_embed(ctx_llama, image_embed, 512, &n_past);
-    eval_string(ctx_llama, user_prompt, &n_past, false);
+    if (!eval_string(ctx_llama, system_prompt, &n_past, true) ||
+        !llava_eval_image_embed(ctx_llama, image_embed, 512, &n_past) ||
+        !eval_string(ctx_llama, user_prompt, &n_past, false)) {
+        LOGE("Inference aborted or failed during prompt/image eval");
+        llava_image_embed_free(image_embed);
+        abort_inference.store(false);
+        return env->NewStringUTF("UNRESOLVED");
+    }
 
     std::string response = "";
     for (int i = 0; i < 32; i++) {
+        if (should_abort_inference(nullptr)) {
+            LOGE("Inference aborted during generation");
+            break;
+        }
         const llama_token id = common_sampler_sample(smpl, ctx_llama, -1);
         common_sampler_accept(smpl, id, true);
         if (llama_token_is_eog(model, id)) break;
@@ -154,9 +182,13 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobje
         
         std::vector<llama_token> t;
         t.push_back(id);
-        eval_tokens(ctx_llama, t, &n_past);
+        if (!eval_tokens(ctx_llama, t, &n_past)) {
+            LOGE("Inference aborted or failed during token eval");
+            break;
+        }
     }
 
     llava_image_embed_free(image_embed);
+    abort_inference.store(false);
     return env->NewStringUTF(response.c_str());
 }
