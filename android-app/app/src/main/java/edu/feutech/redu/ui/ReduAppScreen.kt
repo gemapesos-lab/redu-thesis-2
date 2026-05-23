@@ -1103,6 +1103,21 @@ private fun VlmModelCard(
                     }
                 }
 
+                is ModelState.Verifying -> {
+                    InfoRow("Status", "Verifying…")
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth().height(8.dp),
+                        strokeCap = StrokeCap.Round,
+                    )
+                    modelState.detail?.let { detail ->
+                        Text(
+                            detail,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
                 is ModelState.Ready -> {
                     InfoRow("Status", "Ready ✓")
                     InfoRow("Total size", formatBytes(ModelDownloadManager.TOTAL_SIZE_BYTES))

@@ -150,7 +150,7 @@ class ModelDownloadManager(context: Context) {
      * Downloads persist across app switches and show in system notifications.
      */
     fun startDownload() {
-        if (_state.value is ModelState.Downloading) return
+        if (_state.value is ModelState.Downloading || _state.value is ModelState.Verifying) return
         managerScope.launch {
             startDownloadOnIo()
         }
@@ -232,7 +232,9 @@ class ModelDownloadManager(context: Context) {
                 val downloadedFile = File(Uri.parse(localUri).path!!)
                 val targetFile = modelFile(file.filename)
 
+                _state.value = ModelState.Verifying("Moving ${file.displayName}…")
                 moveToInternalStorage(downloadedFile, targetFile, file)
+                _state.value = ModelState.Verifying("Verifying ${file.displayName}…")
                 if (!file.isValidModelFile(targetFile)) {
                     targetFile.delete()
                     Log.e(TAG, "${file.displayName} failed integrity check")
@@ -253,10 +255,11 @@ class ModelDownloadManager(context: Context) {
             cursor.close()
         }
 
-        // Check if all downloads are complete
+        // Check if all downloads are complete — skip full re-hash since each
+        // file was already validated above; a size-only sanity check suffices.
         if (activeDownloadIds.isEmpty()) {
             cleanup()
-            _state.value = when (val validation = validateModelsBlocking(deleteInvalid = true, checkHash = true)) {
+            _state.value = when (val validation = validateModelsBlocking(deleteInvalid = false, checkHash = false)) {
                 ModelValidationResult.Valid -> ModelState.Ready
                 is ModelValidationResult.Invalid -> ModelState.Error(validation.reason)
             }
@@ -500,6 +503,7 @@ sealed class ModelValidationResult {
 sealed class ModelState {
     data object NotDownloaded : ModelState()
     data class Downloading(val progress: Float, val detail: String? = null) : ModelState()
+    data class Verifying(val detail: String? = null) : ModelState()
     data object Ready : ModelState()
     data class Error(val message: String) : ModelState()
 }
