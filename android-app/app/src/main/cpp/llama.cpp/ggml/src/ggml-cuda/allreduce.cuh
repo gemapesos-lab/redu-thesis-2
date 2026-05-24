@@ -26,4 +26,3 @@ bool ggml_cuda_ar_allreduce(
     ggml_cuda_ar_pipeline * pipeline,
     ggml_backend_t        * backends,
     ggml_tensor           ** tensors);
-
