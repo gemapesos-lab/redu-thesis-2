@@ -1,0 +1,3 @@
+id,studyCode,studyGroup,sessionId,timestampMillis,riskScore,riskLevel,promptLevel,action,cooldownActive
+1,P-01X,INTERVENTION,2,1779520410947,50.0,WARNING,L2_PAUSE,SHOWN,0
+2,P-01X,INTERVENTION,2,1779520490667,50.0,WARNING,L2_PAUSE,TAKE_BREAK,0
