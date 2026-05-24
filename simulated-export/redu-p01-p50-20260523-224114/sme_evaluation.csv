@@ -1,0 +1,4 @@
+expert_id,expert_role,technical_soundness,input_range_plausibility,rule_base_coherence,privacy_architecture_quality,intervention_design_appropriateness,overall_software_quality,comments
+SME-01,software_engineering_or_mobile_development,,,,,,,
+SME-02,data_science_machine_learning_or_fuzzy_logic,,,,,,,
+SME-03,digital_wellbeing_behavioral_psychology_or_educational_technology,,,,,,,
