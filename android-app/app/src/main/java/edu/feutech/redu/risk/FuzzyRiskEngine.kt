@@ -1,7 +1,6 @@
 package edu.feutech.redu.risk
 
 import edu.feutech.redu.data.RiskLevel
-import kotlin.math.max
 import kotlin.math.min
 
 data class RiskInputs(

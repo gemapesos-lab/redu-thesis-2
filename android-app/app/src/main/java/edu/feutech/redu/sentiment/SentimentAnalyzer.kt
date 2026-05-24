@@ -13,7 +13,7 @@ data class SentimentResult(
     val reliable: Boolean = oovRatio < OovCalculator.UNRELIABLE_THRESHOLD
 }
 
-// DEBUG_OVERLAY_REMOVE: delete this display-only model with classifyTokensForDebug when removing the overlay.
+/** Display-only model used by the debug overlay to show per-token sentiment classification. */
 data class DebugTokenBreakdown(
     val snippet: String,
     val negativeTokens: List<String>,
@@ -238,7 +238,7 @@ class VADERCompatibleAnalyzer internal constructor(
         return SentimentResult(compound, recognized, tokens.size, oovRatio)
     }
 
-    // DEBUG_OVERLAY_REMOVE: display-only token grouping; analyze() remains the scoring source of truth.
+    /** Display-only token grouping for the debug overlay; [analyze] remains the scoring source of truth. */
     fun classifyTokensForDebug(text: String): DebugTokenBreakdown {
         val normalizedText = text.withoutUserMentions()
         val tokens = tokenize(normalizedText)
