@@ -59,6 +59,7 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 
 private const val VLM_INFERENCE_TIMEOUT_MILLIS = 25_000L
+private const val VLM_CAPTURE_SIZE_PX = 448
 
 class ReduAccessibilityService : AccessibilityService() {
     companion object {
@@ -523,12 +524,16 @@ class ReduAccessibilityService : AccessibilityService() {
                                 val bitmap = Bitmap.wrapHardwareBuffer(hwBuffer, screenshot.colorSpace)
                                 hwBuffer.close()
                                 if (bitmap != null) {
-                                    // Convert hardware bitmap to software for JPEG compression
+                                    // Convert hardware bitmap to software, then crop/scale before VLM.
                                     val swBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
                                     bitmap.recycle()
+                                    val vlmBitmap = swBitmap.centerCropSquare(VLM_CAPTURE_SIZE_PX)
+                                    if (vlmBitmap != swBitmap) {
+                                        swBitmap.recycle()
+                                    }
                                     val stream = ByteArrayOutputStream()
-                                    swBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
-                                    swBitmap.recycle()
+                                    vlmBitmap.compress(Bitmap.CompressFormat.JPEG, 75, stream)
+                                    vlmBitmap.recycle()
                                     resumeCapture(stream.toByteArray())
                                 } else {
                                     resumeCapture(null)
@@ -549,6 +554,17 @@ class ReduAccessibilityService : AccessibilityService() {
             debugLog("REDU_VLM", "captureScreenshot exception=${e::class.simpleName}")
             null
         }
+    }
+
+    private fun Bitmap.centerCropSquare(sizePx: Int): Bitmap {
+        val side = minOf(width, height)
+        val left = ((width - side) / 2).coerceAtLeast(0)
+        val top = ((height - side) / 2).coerceAtLeast(0)
+        val cropped = Bitmap.createBitmap(this, left, top, side, side)
+        if (cropped.width == sizePx && cropped.height == sizePx) return cropped
+        val scaled = Bitmap.createScaledBitmap(cropped, sizePx, sizePx, true)
+        if (scaled != cropped) cropped.recycle()
+        return scaled
     }
 
     private suspend fun persistFinalized(finalized: FinalizedSession) {
