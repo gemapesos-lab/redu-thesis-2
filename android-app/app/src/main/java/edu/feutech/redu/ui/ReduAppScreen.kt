@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,6 +65,7 @@ import edu.feutech.redu.BuildConfig
 import edu.feutech.redu.data.AppSettingsEntity
 import edu.feutech.redu.data.Platform
 import edu.feutech.redu.data.PromptLevel
+import edu.feutech.redu.capture.ReduAccessibilityService
 import edu.feutech.redu.data.ReduDatabase
 import edu.feutech.redu.data.RiskPersonalizationEntity
 import edu.feutech.redu.data.RiskLevel
@@ -331,16 +331,13 @@ fun ReduAppScreen(
                     },
                     onOpenAccessibilitySettings = onOpenAccessibilitySettings,
                     onDemoIntervention = { level ->
-                        android.widget.Toast.makeText(
-                            context,
-                            when (level) {
-                                PromptLevel.L1_AWARENESS -> "You've been scrolling for a while. Consider a short pause."
-                                PromptLevel.L2_PAUSE -> "Consider taking a short pause."
-                                PromptLevel.L3_BREATHING -> "Pause and try a short breathing break."
-                                PromptLevel.NONE -> return@SettingsScreen
+                        if (level == PromptLevel.NONE) return@SettingsScreen
+                        context.sendBroadcast(
+                            Intent(ReduAccessibilityService.ACTION_DEMO_PROMPT).apply {
+                                setPackage(context.packageName)
+                                putExtra(ReduAccessibilityService.EXTRA_PROMPT_LEVEL, level.name)
                             },
-                            android.widget.Toast.LENGTH_LONG,
-                        ).show()
+                        )
                     },
                 )
             }
@@ -855,8 +852,6 @@ private fun SettingsScreen(
                             )
                         }
 
-                        var demoPromptLevel by remember { mutableStateOf<PromptLevel?>(null) }
-
                         Text("Demo intervention", style = MaterialTheme.typography.labelLarge)
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedButton(
@@ -867,14 +862,14 @@ private fun SettingsScreen(
                                 Text("L1", style = MaterialTheme.typography.labelMedium)
                             }
                             OutlinedButton(
-                                onClick = { demoPromptLevel = PromptLevel.L2_PAUSE },
+                                onClick = { onDemoIntervention(PromptLevel.L2_PAUSE) },
                                 modifier = Modifier.weight(1f),
                                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
                             ) {
                                 Text("L2", style = MaterialTheme.typography.labelMedium)
                             }
                             OutlinedButton(
-                                onClick = { demoPromptLevel = PromptLevel.L3_BREATHING },
+                                onClick = { onDemoIntervention(PromptLevel.L3_BREATHING) },
                                 modifier = Modifier.weight(1f),
                                 contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
                             ) {
@@ -882,47 +877,7 @@ private fun SettingsScreen(
                             }
                         }
                         SecondaryText("L1 = awareness toast, L2 = pause overlay, L3 = breathing reset")
-
-                        demoPromptLevel?.let { level ->
-                            AlertDialog(
-                                onDismissRequest = { demoPromptLevel = null },
-                                title = {
-                                    Text(
-                                        when (level) {
-                                            PromptLevel.L2_PAUSE -> "Pause and reset"
-                                            PromptLevel.L3_BREATHING -> "Take a short breathing break"
-                                            else -> "REDU"
-                                        },
-                                    )
-                                },
-                                text = {
-                                    Text(
-                                        when (level) {
-                                            PromptLevel.L2_PAUSE -> "You've been scrolling for an extended period. Consider taking a short pause before continuing."
-                                            PromptLevel.L3_BREATHING -> "Breathe in slowly. Hold. Breathe out slowly.\n\nThis is a digital wellness pause, not a clinical exercise."
-                                            else -> ""
-                                        },
-                                    )
-                                },
-                                confirmButton = {
-                                    when (level) {
-                                        PromptLevel.L2_PAUSE -> {
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Continue") }
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Take break") }
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Dashboard") }
-                                        }
-                                        PromptLevel.L3_BREATHING -> {
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Done") }
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Skip") }
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("Take break") }
-                                        }
-                                        else -> {
-                                            TextButton(onClick = { demoPromptLevel = null }) { Text("OK") }
-                                        }
-                                    }
-                                },
-                            )
-                        }
+                        SecondaryText("Requires accessibility service to be enabled.")
                     }
                 }
             }

@@ -61,6 +61,10 @@ import kotlin.coroutines.resume
 private const val VLM_INFERENCE_TIMEOUT_MILLIS = 25_000L
 
 class ReduAccessibilityService : AccessibilityService() {
+    companion object {
+        const val ACTION_DEMO_PROMPT = "edu.feutech.redu.ACTION_DEMO_PROMPT"
+        const val EXTRA_PROMPT_LEVEL = "prompt_level"
+    }
     private val serviceJob = SupervisorJob()
     private val scope = CoroutineScope(serviceJob + Dispatchers.IO)
     private val trackerExecutor = Executors.newSingleThreadExecutor { runnable ->
@@ -81,6 +85,20 @@ class ReduAccessibilityService : AccessibilityService() {
                     finalizeNow()
                 }
                 clearDebugOverlay()
+            }
+        }
+    }
+    private val demoPromptReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != ACTION_DEMO_PROMPT) return
+            val levelName = intent.getStringExtra(EXTRA_PROMPT_LEVEL) ?: return
+            val level = runCatching { enumValueOf<PromptLevel>(levelName) }.getOrNull() ?: return
+            mainHandler.post {
+                PromptPresenter.show(
+                    service = this@ReduAccessibilityService,
+                    level = level,
+                    score = 55.0,
+                )
             }
         }
     }
@@ -134,6 +152,9 @@ class ReduAccessibilityService : AccessibilityService() {
             debugBuild = BuildConfig.DEBUG,
         )
         registerReceiver(screenStateReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+        if (BuildConfig.DEBUG) {
+            registerReceiver(demoPromptReceiver, IntentFilter(ACTION_DEMO_PROMPT), Context.RECEIVER_NOT_EXPORTED)
+        }
         observeSettings()
     }
 
@@ -399,6 +420,9 @@ class ReduAccessibilityService : AccessibilityService() {
         followUpProcessingJob?.cancel()
         cancelPendingVlm("service destroyed")
         runCatching { unregisterReceiver(screenStateReceiver) }
+        if (BuildConfig.DEBUG) {
+            runCatching { unregisterReceiver(demoPromptReceiver) }
+        }
         runBlocking(Dispatchers.IO + NonCancellable) {
             finalizeNow()
             insertReliability(ReliabilityEventType.SERVICE_STOPPED, "service_destroyed")
