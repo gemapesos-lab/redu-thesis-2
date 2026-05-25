@@ -25,6 +25,7 @@ import edu.feutech.redu.data.RiskLevel
 import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.SentimentReliability
 import edu.feutech.redu.data.StudyGroup
+import edu.feutech.redu.data.isTrackingEnabled
 import edu.feutech.redu.debug.DebugOverlayController
 import edu.feutech.redu.prompt.PromptPolicy
 import edu.feutech.redu.prompt.PromptPresentationEvent
@@ -128,6 +129,7 @@ class ReduAccessibilityService : AccessibilityService() {
     @Volatile private var debugOverlayEnabled = false
     @Volatile private var studyGroup = StudyGroup.INTERVENTION
     @Volatile private var promptsEnabled = true
+    @Volatile private var enabledPlatforms: Set<Platform> = emptySet()
     @Volatile private var liveRiskMembershipConfig = RiskMembershipConfig.Fixed
 
     private var lastObservedTransitionFingerprint: String? = null
@@ -174,7 +176,7 @@ class ReduAccessibilityService : AccessibilityService() {
         val platform = PlatformAdapterRegistry.platformFor(event.packageName)
         val targetEvent = platform != null
         val foregroundChanged = event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
-        if (!targetEvent) {
+        if (!targetEvent || platform !in enabledPlatforms) {
             handleNonTargetEvent(event)
             return
         }
@@ -212,6 +214,7 @@ class ReduAccessibilityService : AccessibilityService() {
         val root = rootInActiveWindow ?: return false
         try {
             val platform = PlatformAdapterRegistry.platformFor(root.packageName) ?: return false
+            if (platform !in enabledPlatforms) return false
             val directSupported = PlatformAdapterRegistry.isSupportedSurface(platform, root)
             val commentSheet = !directSupported && PlatformAdapterRegistry.isCommentSheetSurface(platform, root)
             return commentSheetSurfaceResolver.resolve(
@@ -273,6 +276,12 @@ class ReduAccessibilityService : AccessibilityService() {
                 return
             }
             val platform = activeRootPlatform
+            if (platform !in enabledPlatforms) {
+                if (targetInForeground) {
+                    discardActiveSession("platform disabled")
+                }
+                return
+            }
             val activePackageName = root.packageName?.toString() ?: packageName
             debugLog(
                 "REDU_DEBUG",
@@ -442,6 +451,14 @@ class ReduAccessibilityService : AccessibilityService() {
                 debugOverlayEnabled = settings?.debugOverlayEnabled == true
                 studyGroup = settings?.studyGroup ?: StudyGroup.INTERVENTION
                 promptsEnabled = settings?.promptsEnabled == true && studyGroup == StudyGroup.INTERVENTION
+                val nextEnabledPlatforms = Platform.entries.filterTo(mutableSetOf()) {
+                    settings?.isTrackingEnabled(it) == true
+                }
+                val activePlatform = withContext(trackerDispatcher) { tracker.snapshot()?.platform }
+                enabledPlatforms = nextEnabledPlatforms
+                if (activePlatform != null && activePlatform !in nextEnabledPlatforms) {
+                    discardActiveSession("platform tracking disabled", waitForTracker = true)
+                }
                 val studyCode = settings?.studyCode?.takeIf { it.isNotBlank() } ?: "UNSET"
                 val personalization = if (promptsEnabled) {
                     app.database.riskPersonalizationDao().getFor(studyCode, studyGroup)
@@ -482,6 +499,29 @@ class ReduAccessibilityService : AccessibilityService() {
             commentSheetSurfaceResolver.onTargetExit()
             finalizeInactive()
             removeDebugOverlay()
+        }
+    }
+
+    private fun discardActiveSession(reason: String, waitForTracker: Boolean = false) {
+        pendingTargetExitJob?.cancel()
+        pendingProcessingJob?.cancel()
+        followUpProcessingJob?.cancel()
+        cancelPendingVlm(reason)
+        commentSheetSurfaceResolver.onTargetExit()
+        targetInForeground = false
+        if (::debugOverlayBridge.isInitialized) {
+            debugOverlayBridge.setTargetInForeground(false)
+        }
+        removeDebugOverlay()
+        resetPerItemStateLocked()
+        if (waitForTracker) {
+            runBlocking(trackerDispatcher) {
+                tracker.discardActive()
+            }
+        } else {
+            scope.launch(trackerDispatcher) {
+                tracker.discardActive()
+            }
         }
     }
 
@@ -802,6 +842,7 @@ class ReduAccessibilityService : AccessibilityService() {
         try {
             val platform = PlatformAdapterRegistry.platformFor(root.packageName)
             if (platform != null) {
+                if (platform !in enabledPlatforms) return false
                 val directSupported = PlatformAdapterRegistry.isSupportedSurface(platform, root)
                 val commentSheet = !directSupported && PlatformAdapterRegistry.isCommentSheetSurface(platform, root)
                 val supported = commentSheetSurfaceResolver.resolve(

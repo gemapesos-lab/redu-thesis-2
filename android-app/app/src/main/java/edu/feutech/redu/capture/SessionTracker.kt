@@ -166,6 +166,10 @@ class SessionTracker(
         return FinalizedSession(session.toSnapshot(now), endedAtMillis = now)
     }
 
+    fun discardActive() {
+        active = null
+    }
+
     private fun newSession(platform: Platform, now: Long): MutableSession =
         MutableSession(
             platform = platform,

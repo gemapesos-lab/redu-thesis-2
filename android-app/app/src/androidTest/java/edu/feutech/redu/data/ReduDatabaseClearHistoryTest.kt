@@ -30,6 +30,9 @@ class ReduDatabaseClearHistoryTest {
             studyGroup = StudyGroup.INTERVENTION,
             promptsEnabled = true,
             debugOverlayEnabled = true,
+            trackTikTokEnabled = true,
+            trackInstagramEnabled = false,
+            trackFacebookEnabled = true,
             createdAtMillis = 10L,
             updatedAtMillis = 20L,
         )
@@ -106,5 +109,8 @@ class ReduDatabaseClearHistoryTest {
         assertEquals(settings.studyGroup, savedSettings?.studyGroup)
         assertEquals(settings.promptsEnabled, savedSettings?.promptsEnabled)
         assertEquals(settings.debugOverlayEnabled, savedSettings?.debugOverlayEnabled)
+        assertEquals(settings.trackTikTokEnabled, savedSettings?.trackTikTokEnabled)
+        assertEquals(settings.trackInstagramEnabled, savedSettings?.trackInstagramEnabled)
+        assertEquals(settings.trackFacebookEnabled, savedSettings?.trackFacebookEnabled)
     }
 }

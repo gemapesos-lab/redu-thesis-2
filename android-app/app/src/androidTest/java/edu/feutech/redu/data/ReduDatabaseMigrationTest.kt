@@ -23,7 +23,7 @@ class ReduDatabaseMigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun migration1To4AddsDebugOverlaySettingDropsItemSummariesCreatesPersonalizationAndPreservesSessionRows() {
+    fun migration1To5AddsSettingsDropsItemSummariesCreatesPersonalizationAndPreservesSessionRows() {
         helper.createDatabase(TEST_DB, 1).apply {
             execSQL(
                 """
@@ -59,16 +59,20 @@ class ReduDatabaseMigrationTest {
 
         val db = helper.runMigrationsAndValidate(
             TEST_DB,
-            4,
+            5,
             true,
             ReduDatabase.MIGRATION_1_2,
             ReduDatabase.MIGRATION_2_3,
             ReduDatabase.MIGRATION_3_4,
+            ReduDatabase.MIGRATION_4_5,
         )
 
-        db.query("SELECT debugOverlayEnabled FROM app_settings WHERE id = 1").use { cursor ->
+        db.query("SELECT debugOverlayEnabled, trackTikTokEnabled, trackInstagramEnabled, trackFacebookEnabled FROM app_settings WHERE id = 1").use { cursor ->
             cursor.moveToFirst()
             assertEquals(0, cursor.getInt(0))
+            assertEquals(0, cursor.getInt(1))
+            assertEquals(0, cursor.getInt(2))
+            assertEquals(0, cursor.getInt(3))
         }
         db.query("SELECT COUNT(*) FROM sessions").use { cursor ->
             cursor.moveToFirst()
@@ -85,7 +89,7 @@ class ReduDatabaseMigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun migration2To4DropsItemSummariesCreatesPersonalizationAndPreservesSessionRows() {
+    fun migration2To5DropsItemSummariesCreatesPersonalizationAndPreservesSessionRows() {
         helper.createDatabase(TEST_DB, 2).apply {
             execSQL(
                 """
@@ -114,10 +118,11 @@ class ReduDatabaseMigrationTest {
 
         val db = helper.runMigrationsAndValidate(
             TEST_DB,
-            4,
+            5,
             true,
             ReduDatabase.MIGRATION_2_3,
             ReduDatabase.MIGRATION_3_4,
+            ReduDatabase.MIGRATION_4_5,
         )
 
         db.query("SELECT COUNT(*) FROM sessions").use { cursor ->
@@ -135,7 +140,7 @@ class ReduDatabaseMigrationTest {
 
     @Test
     @Throws(IOException::class)
-    fun migration3To4CreatesRiskPersonalizationTableAndPreservesRows() {
+    fun migration3To5CreatesRiskPersonalizationTableAddsPlatformSettingsAndPreservesRows() {
         helper.createDatabase(TEST_DB, 3).apply {
             execSQL(
                 """
@@ -154,7 +159,13 @@ class ReduDatabaseMigrationTest {
             close()
         }
 
-        val db = helper.runMigrationsAndValidate(TEST_DB, 4, true, ReduDatabase.MIGRATION_3_4)
+        val db = helper.runMigrationsAndValidate(
+            TEST_DB,
+            5,
+            true,
+            ReduDatabase.MIGRATION_3_4,
+            ReduDatabase.MIGRATION_4_5,
+        )
 
         db.query("SELECT COUNT(*) FROM sessions").use { cursor ->
             cursor.moveToFirst()
@@ -163,6 +174,42 @@ class ReduDatabaseMigrationTest {
         db.query("SELECT COUNT(*) FROM risk_personalization").use { cursor ->
             cursor.moveToFirst()
             assertEquals(0, cursor.getInt(0))
+        }
+        db.query("SELECT trackTikTokEnabled, trackInstagramEnabled, trackFacebookEnabled FROM app_settings").use { cursor ->
+            assertFalse(cursor.moveToFirst())
+        }
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migration4To5AddsPlatformTrackingDefaultsOffAndPreservesSettings() {
+        helper.createDatabase(TEST_DB, 4).apply {
+            execSQL(
+                """
+                INSERT INTO app_settings (
+                    id, studyCode, studyGroup, promptsEnabled, debugOverlayEnabled, createdAtMillis, updatedAtMillis
+                ) VALUES (1, 'P01', 'INTERVENTION', 1, 1, 10, 20)
+                """.trimIndent(),
+            )
+            close()
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 5, true, ReduDatabase.MIGRATION_4_5)
+
+        db.query(
+            """
+            SELECT studyCode, promptsEnabled, debugOverlayEnabled,
+                   trackTikTokEnabled, trackInstagramEnabled, trackFacebookEnabled
+            FROM app_settings WHERE id = 1
+            """.trimIndent(),
+        ).use { cursor ->
+            cursor.moveToFirst()
+            assertEquals("P01", cursor.getString(0))
+            assertEquals(1, cursor.getInt(1))
+            assertEquals(1, cursor.getInt(2))
+            assertEquals(0, cursor.getInt(3))
+            assertEquals(0, cursor.getInt(4))
+            assertEquals(0, cursor.getInt(5))
         }
     }
 

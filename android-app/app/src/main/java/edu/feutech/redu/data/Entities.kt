@@ -60,9 +60,22 @@ data class AppSettingsEntity(
     val promptsEnabled: Boolean = false,
     @ColumnInfo(defaultValue = "0")
     val debugOverlayEnabled: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    val trackTikTokEnabled: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    val trackInstagramEnabled: Boolean = false,
+    @ColumnInfo(defaultValue = "0")
+    val trackFacebookEnabled: Boolean = false,
     val createdAtMillis: Long = System.currentTimeMillis(),
     val updatedAtMillis: Long = System.currentTimeMillis(),
 )
+
+fun AppSettingsEntity.isTrackingEnabled(platform: Platform): Boolean =
+    when (platform) {
+        Platform.TIKTOK -> trackTikTokEnabled
+        Platform.INSTAGRAM -> trackInstagramEnabled
+        Platform.FACEBOOK -> trackFacebookEnabled
+    }
 
 @Entity(tableName = "sessions")
 data class SessionEntity(
