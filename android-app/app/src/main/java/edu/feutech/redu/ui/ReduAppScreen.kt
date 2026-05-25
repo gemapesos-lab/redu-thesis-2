@@ -55,6 +55,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -482,6 +483,7 @@ private fun SetupScreen(
     onOpenAccessibilitySettings: () -> Unit,
 ) {
     val derivedGroup = studyGroupForParticipantCode(studyCode)
+    val focusManager = LocalFocusManager.current
     ScreenColumn(
         padding = padding,
         header = {
@@ -493,19 +495,38 @@ private fun SetupScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Participant", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                OutlinedTextField(
-                    value = studyCode,
-                    onValueChange = onStudyCodeChange,
-                    label = { Text("Participant study code") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                )
-                InfoRow("Assigned group", derivedGroup.name)
-                Button(onClick = onSave, enabled = studyCode.isNotBlank()) {
-                    Text("Save participant code")
-                }
                 if (hasSavedParticipantCode) {
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            SecondaryText("Participant code")
+                            Text(studyCode, fontWeight = FontWeight.SemiBold)
+                        }
+                        StatusChip("Saved", positive = true)
+                    }
+                    InfoRow("Assigned group", derivedGroup.name)
                     SecondaryText("Participant code is saved. Enable monitoring to complete setup.")
+                } else {
+                    OutlinedTextField(
+                        value = studyCode,
+                        onValueChange = onStudyCodeChange,
+                        label = { Text("Participant study code") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                    )
+                    InfoRow("Assigned group", derivedGroup.name)
+                    Button(
+                        onClick = {
+                            focusManager.clearFocus()
+                            onSave()
+                        },
+                        enabled = studyCode.isNotBlank(),
+                    ) {
+                        Text("Save participant code")
+                    }
                 }
             }
         }
