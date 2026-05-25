@@ -99,9 +99,6 @@ fun ReduAppScreen(
     val personalizationRows by database.riskPersonalizationDao().observeAll().collectAsState(initial = emptyList())
     var studyCode by rememberSaveable { mutableStateOf("") }
     var debugOverlayEnabled by rememberSaveable { mutableStateOf(false) }
-    var setupTrackTikTokEnabled by rememberSaveable { mutableStateOf(false) }
-    var setupTrackInstagramEnabled by rememberSaveable { mutableStateOf(false) }
-    var setupTrackFacebookEnabled by rememberSaveable { mutableStateOf(false) }
     var exportStatus by rememberSaveable { mutableStateOf<String?>(null) }
     var isExporting by rememberSaveable { mutableStateOf(false) }
     val appContext = remember(context) { context.applicationContext }
@@ -113,20 +110,22 @@ fun ReduAppScreen(
     var accessibilityEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled()) }
     val hasParticipantCode = settings?.studyCode?.isNotBlank() == true && settings?.studyCode != "UNSET"
     val setupComplete = hasParticipantCode && accessibilityEnabled
-    val availableDestinations = if (setupComplete) {
-        listOf(
-            ReduDestination.DASHBOARD,
-            ReduDestination.HISTORY,
-            ReduDestination.EXPORT,
-            ReduDestination.SETTINGS,
-        )
-    } else {
-        listOf(
-            ReduDestination.DASHBOARD,
-            ReduDestination.SETUP,
-            ReduDestination.EXPORT,
-            ReduDestination.SETTINGS,
-        )
+    val availableDestinations = availableDestinationsFor(setupComplete)
+    val trackTikTokEnabled = settings?.trackTikTokEnabled == true
+    val trackInstagramEnabled = settings?.trackInstagramEnabled == true
+    val trackFacebookEnabled = settings?.trackFacebookEnabled == true
+
+    fun savePlatformTracking(platform: Platform, enabled: Boolean) {
+        scope.launch {
+            val current = database.settingsDao().get() ?: return@launch
+            database.settingsDao().save(
+                current.withPlatformTracking(
+                    platform = platform,
+                    enabled = enabled,
+                    updatedAtMillis = System.currentTimeMillis(),
+                ),
+            )
+        }
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -137,9 +136,6 @@ fun ReduAppScreen(
         settings?.let {
             studyCode = it.studyCode.takeUnless { value -> value == "UNSET" }.orEmpty()
             debugOverlayEnabled = it.debugOverlayEnabled
-            setupTrackTikTokEnabled = it.trackTikTokEnabled
-            setupTrackInstagramEnabled = it.trackInstagramEnabled
-            setupTrackFacebookEnabled = it.trackFacebookEnabled
         }
     }
 
@@ -196,37 +192,33 @@ fun ReduAppScreen(
                     studyCode = studyCode,
                     hasSavedParticipantCode = hasParticipantCode,
                     accessibilityEnabled = accessibilityEnabled,
-                    trackTikTokEnabled = setupTrackTikTokEnabled,
-                    trackInstagramEnabled = setupTrackInstagramEnabled,
-                    trackFacebookEnabled = setupTrackFacebookEnabled,
+                    trackTikTokEnabled = trackTikTokEnabled,
+                    trackInstagramEnabled = trackInstagramEnabled,
+                    trackFacebookEnabled = trackFacebookEnabled,
                     modelState = modelState,
                     onDownloadModel = { modelDownloadManager.startDownload() },
                     onCancelModelDownload = { modelDownloadManager.cancelDownload() },
                     onDeleteModel = { modelDownloadManager.deleteModels() },
                     onStudyCodeChange = { studyCode = it.trim() },
-                    onPlatformTrackingChange = { platform, enabled ->
-                        when (platform) {
-                            Platform.TIKTOK -> setupTrackTikTokEnabled = enabled
-                            Platform.INSTAGRAM -> setupTrackInstagramEnabled = enabled
-                            Platform.FACEBOOK -> setupTrackFacebookEnabled = enabled
-                        }
-                    },
+                    onPlatformTrackingChange = ::savePlatformTracking,
                     onSave = {
                         val normalizedCode = studyCode.ifBlank { "UNSET" }
                         val derivedStudyGroup = studyGroupForParticipantCode(normalizedCode)
                         scope.launch {
+                            val current = database.settingsDao().get()
                             database.settingsDao().save(
-                                AppSettingsEntity(
-                                    createdAtMillis = settings?.createdAtMillis ?: System.currentTimeMillis(),
+                                current?.copy(
+                                    studyCode = normalizedCode,
+                                    studyGroup = derivedStudyGroup,
+                                    promptsEnabled = false,
+                                    updatedAtMillis = System.currentTimeMillis(),
+                                ) ?: AppSettingsEntity(
                                     studyCode = normalizedCode,
                                     studyGroup = derivedStudyGroup,
                                     promptsEnabled = false,
                                     debugOverlayEnabled = debugOverlayEnabled,
-                                    trackTikTokEnabled = setupTrackTikTokEnabled,
-                                    trackInstagramEnabled = setupTrackInstagramEnabled,
-                                    trackFacebookEnabled = setupTrackFacebookEnabled,
                                     updatedAtMillis = System.currentTimeMillis(),
-                                ),
+                                )
                             )
                             accessibilityEnabled = isAccessibilityServiceEnabled()
                             selectedDestination = if (accessibilityEnabled) {
@@ -284,28 +276,7 @@ fun ReduAppScreen(
                     onDownloadModel = { modelDownloadManager.startDownload() },
                     onCancelModelDownload = { modelDownloadManager.cancelDownload() },
                     onDeleteModel = { modelDownloadManager.deleteModels() },
-                    onPlatformTrackingChange = { platform, enabled ->
-                        scope.launch {
-                            val current = database.settingsDao().get()
-                            database.settingsDao().save(
-                                current?.withPlatformTracking(
-                                    platform = platform,
-                                    enabled = enabled,
-                                    updatedAtMillis = System.currentTimeMillis(),
-                                ) ?: AppSettingsEntity(
-                                    studyCode = studyCode.ifBlank { "UNSET" },
-                                    studyGroup = studyGroupForParticipantCode(studyCode),
-                                    promptsEnabled = false,
-                                    debugOverlayEnabled = debugOverlayEnabled,
-                                    updatedAtMillis = System.currentTimeMillis(),
-                                ).withPlatformTracking(
-                                    platform = platform,
-                                    enabled = enabled,
-                                    updatedAtMillis = System.currentTimeMillis(),
-                                ),
-                            )
-                        }
-                    },
+                    onPlatformTrackingChange = ::savePlatformTracking,
                     onStudyCodeSave = { updatedCode ->
                         val normalizedCode = updatedCode.trim().ifBlank { "UNSET" }
                         val derivedStudyGroup = studyGroupForParticipantCode(normalizedCode)
@@ -390,7 +361,7 @@ fun ReduAppScreen(
     }
 }
 
-private enum class ReduDestination(
+internal enum class ReduDestination(
     val label: String,
     val icon: ImageVector,
 ) {
@@ -400,6 +371,18 @@ private enum class ReduDestination(
     EXPORT("Export", Icons.Filled.Dataset),
     SETTINGS("Settings", Icons.Filled.Settings),
 }
+
+internal fun availableDestinationsFor(setupComplete: Boolean): List<ReduDestination> =
+    if (setupComplete) {
+        listOf(
+            ReduDestination.DASHBOARD,
+            ReduDestination.HISTORY,
+            ReduDestination.EXPORT,
+            ReduDestination.SETTINGS,
+        )
+    } else {
+        listOf(ReduDestination.SETUP)
+    }
 
 @Composable
 private fun DashboardScreen(
@@ -531,6 +514,8 @@ private fun SetupScreen(
             trackTikTokEnabled = trackTikTokEnabled,
             trackInstagramEnabled = trackInstagramEnabled,
             trackFacebookEnabled = trackFacebookEnabled,
+            enabled = hasSavedParticipantCode,
+            disabledHelperText = "Save the participant code before choosing platforms to monitor.",
             onPlatformTrackingChange = onPlatformTrackingChange,
         )
 
@@ -878,6 +863,7 @@ private fun SettingsScreen(
             trackTikTokEnabled = settings?.trackTikTokEnabled == true,
             trackInstagramEnabled = settings?.trackInstagramEnabled == true,
             trackFacebookEnabled = settings?.trackFacebookEnabled == true,
+            enabled = true,
             onPlatformTrackingChange = onPlatformTrackingChange,
         )
 
@@ -1010,6 +996,8 @@ private fun PlatformTrackingCard(
     trackTikTokEnabled: Boolean,
     trackInstagramEnabled: Boolean,
     trackFacebookEnabled: Boolean,
+    enabled: Boolean,
+    disabledHelperText: String? = null,
     onPlatformTrackingChange: (Platform, Boolean) -> Unit,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -1018,19 +1006,24 @@ private fun PlatformTrackingCard(
             PlatformTrackingRow(
                 label = "TikTok",
                 checked = trackTikTokEnabled,
+                enabled = enabled,
                 onCheckedChange = { onPlatformTrackingChange(Platform.TIKTOK, it) },
             )
             PlatformTrackingRow(
                 label = "Instagram",
                 checked = trackInstagramEnabled,
+                enabled = enabled,
                 onCheckedChange = { onPlatformTrackingChange(Platform.INSTAGRAM, it) },
             )
             PlatformTrackingRow(
                 label = "Facebook",
                 checked = trackFacebookEnabled,
+                enabled = enabled,
                 onCheckedChange = { onPlatformTrackingChange(Platform.FACEBOOK, it) },
             )
-            if (!trackTikTokEnabled && !trackInstagramEnabled && !trackFacebookEnabled) {
+            if (!enabled && disabledHelperText != null) {
+                SecondaryText(disabledHelperText)
+            } else if (!trackTikTokEnabled && !trackInstagramEnabled && !trackFacebookEnabled) {
                 SecondaryText("No platforms are selected, so REDU will not record monitoring sessions.")
             } else {
                 SecondaryText("Only selected platforms will be monitored by REDU.")
@@ -1043,6 +1036,7 @@ private fun PlatformTrackingCard(
 private fun PlatformTrackingRow(
     label: String,
     checked: Boolean,
+    enabled: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
@@ -1053,6 +1047,7 @@ private fun PlatformTrackingRow(
         Text(label, modifier = Modifier.weight(1f))
         Switch(
             checked = checked,
+            enabled = enabled,
             onCheckedChange = onCheckedChange,
         )
     }
