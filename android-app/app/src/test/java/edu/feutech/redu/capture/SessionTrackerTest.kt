@@ -143,6 +143,20 @@ class SessionTrackerTest {
     }
 
     @Test
+    fun discardActiveDropsCurrentSessionWithoutFinalizing() {
+        var now = 1_000L
+        val tracker = SessionTracker(clock = { now })
+        tracker.onTargetForeground(Platform.TIKTOK)
+        tracker.onContentObserved("caption-one", reliableNegativeSentiment())
+
+        now += 9_000L
+        tracker.discardActive()
+
+        assertEquals(null, tracker.snapshot())
+        assertEquals(null, tracker.forceFinalize())
+    }
+
+    @Test
     fun idleWithoutMicroInteractionCapsCurrentDwellAtFortyFiveSeconds() {
         var now = 1_000L
         val tracker = SessionTracker(clock = { now })
