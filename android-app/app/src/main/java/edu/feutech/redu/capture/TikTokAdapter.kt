@@ -12,8 +12,7 @@ object TikTokAdapter {
 
     fun isReelsSurface(root: AccessibilityNodeInfo?): Boolean {
         if (root == null || root.packageName?.toString() !in PACKAGE_NAMES) return false
-        if (root.containsUnsupportedSurfaceMarker()) return false
-        return root.containsReelsMarker()
+        return root.collectSurfaceSignals().isSupported()
     }
 
     fun isCommentSheetSurface(root: AccessibilityNodeInfo?): Boolean {
@@ -24,39 +23,29 @@ object TikTokAdapter {
     fun isReelsSurface(roots: List<AccessibilityNodeInfo>): Boolean {
         return roots.any { root ->
             root.packageName?.toString() in PACKAGE_NAMES &&
-            !root.containsUnsupportedSurfaceMarker() &&
-            root.containsReelsMarker()
+                root.collectSurfaceSignals().isSupported()
         }
     }
 
-    private fun AccessibilityNodeInfo.containsReelsMarker(): Boolean {
+    private fun AccessibilityNodeInfo.collectSurfaceSignals(signals: TikTokSurfaceSignals = TikTokSurfaceSignals()): TikTokSurfaceSignals {
+        if (TikTokCaptionRules.isBlockingSurfaceMarker(text?.toString(), contentDescription?.toString(), viewIdResourceName, isSelected)) {
+            signals.hasBlockingSurface = true
+        }
         if (TikTokCaptionRules.isReelsSurfaceMarker(text?.toString(), contentDescription?.toString(), viewIdResourceName, isSelected)) {
-            return true
+            signals.hasFeedNavigationMarker = true
+        }
+        if (isVisibleToUser && TikTokCaptionRules.isFeedEvidenceMarker(text?.toString(), contentDescription?.toString(), viewIdResourceName)) {
+            signals.hasFeedEvidence = true
         }
         for (index in 0 until childCount) {
             val child = getChild(index) ?: continue
             try {
-                if (child.containsReelsMarker()) return true
+                child.collectSurfaceSignals(signals)
             } finally {
                 child.recycle()
             }
         }
-        return false
-    }
-
-    private fun AccessibilityNodeInfo.containsUnsupportedSurfaceMarker(): Boolean {
-        if (TikTokCaptionRules.isUnsupportedSurfaceMarker(text?.toString(), contentDescription?.toString(), viewIdResourceName, isSelected)) {
-            return true
-        }
-        for (index in 0 until childCount) {
-            val child = getChild(index) ?: continue
-            try {
-                if (child.containsUnsupportedSurfaceMarker()) return true
-            } finally {
-                child.recycle()
-            }
-        }
-        return false
+        return signals
     }
     
     private fun AccessibilityNodeInfo.containsCommentSheetMarker(): Boolean {
@@ -151,5 +140,18 @@ object TikTokAdapter {
         val rect = Rect()
         getBoundsInScreen(rect)
         return TikTokBounds(rect.left, rect.top, rect.right, rect.bottom)
+    }
+
+    private data class TikTokSurfaceSignals(
+        var hasFeedNavigationMarker: Boolean = false,
+        var hasFeedEvidence: Boolean = false,
+        var hasBlockingSurface: Boolean = false,
+    ) {
+        fun isSupported(): Boolean =
+            TikTokCaptionRules.isSupportedReelsSurface(
+                hasFeedNavigationMarker = hasFeedNavigationMarker,
+                hasFeedEvidence = hasFeedEvidence,
+                hasBlockingSurface = hasBlockingSurface,
+            )
     }
 }

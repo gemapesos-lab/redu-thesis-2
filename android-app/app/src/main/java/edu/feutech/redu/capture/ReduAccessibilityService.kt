@@ -7,6 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -65,7 +69,9 @@ private const val VLM_CAPTURE_SIZE_PX = 448
 class ReduAccessibilityService : AccessibilityService() {
     companion object {
         const val ACTION_DEMO_PROMPT = "edu.feutech.redu.ACTION_DEMO_PROMPT"
+        const val ACTION_CLEAR_ACTIVE_CAPTURE_STATE = "edu.feutech.redu.ACTION_CLEAR_ACTIVE_CAPTURE_STATE"
         const val EXTRA_PROMPT_LEVEL = "prompt_level"
+        private const val BLANK_ITEM_DEBOUNCE_MILLIS = 250L
     }
     private val serviceJob = SupervisorJob()
     private val scope = CoroutineScope(serviceJob + Dispatchers.IO)
@@ -104,6 +110,12 @@ class ReduAccessibilityService : AccessibilityService() {
             }
         }
     }
+    private val clearActiveCaptureReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action != ACTION_CLEAR_ACTIVE_CAPTURE_STATE) return
+            discardActiveSession("history cleared", waitForTracker = true)
+        }
+    }
     private val tracker = SessionTracker()
     private val analyzer by lazy {
         VADERCompatibleAnalyzer.fromAsset(
@@ -115,7 +127,7 @@ class ReduAccessibilityService : AccessibilityService() {
     private val commentSheetSurfaceResolver = CommentSheetSurfaceResolver()
     private val visualSentimentResolverDelegate = lazy {
         edu.feutech.redu.sentiment.NativeVisualSentimentResolver(
-            edu.feutech.redu.vlm.ModelDownloadManager(this)
+            app.modelDownloadManager,
         )
     }
     private val visualSentimentResolver: edu.feutech.redu.sentiment.VisualSentimentResolver
@@ -134,6 +146,9 @@ class ReduAccessibilityService : AccessibilityService() {
 
     private var lastObservedTransitionFingerprint: String? = null
     private var lastObservedItemHasText = true
+    private var blankNoTextSequence = 0
+    private var lastBlankNoTextSequenceIncrementAtMillis = 0L
+    private var lastSuppressedPromptKey: SuppressedPromptKey? = null
     private var currentVlmRequest: VlmRequestToken? = null
     private var lastProcessTimeMillis = 0L
     private var pendingProcessingJob: Job? = null
@@ -155,6 +170,7 @@ class ReduAccessibilityService : AccessibilityService() {
             debugBuild = BuildConfig.DEBUG,
         )
         registerReceiver(screenStateReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+        registerReceiver(clearActiveCaptureReceiver, IntentFilter(ACTION_CLEAR_ACTIVE_CAPTURE_STATE), Context.RECEIVER_NOT_EXPORTED)
         if (BuildConfig.DEBUG) {
             registerReceiver(demoPromptReceiver, IntentFilter(ACTION_DEMO_PROMPT), Context.RECEIVER_NOT_EXPORTED)
         }
@@ -393,7 +409,11 @@ class ReduAccessibilityService : AccessibilityService() {
                         reliability = snapshot.sentimentReliability,
                         sessionDurationMillis = snapshot.durationMillis,
                     )
+                    if (prompt.cooldownActive) {
+                        logSuppressedPromptIfNeeded(snapshot, livePromptRisk.score, livePromptRisk.level)
+                    }
                     if (prompt.shouldShow) {
+                        lastSuppressedPromptKey = null
                         mainHandler.post {
                             PromptPresenter.show(
                                 service = this@ReduAccessibilityService,
@@ -430,15 +450,16 @@ class ReduAccessibilityService : AccessibilityService() {
         followUpProcessingJob?.cancel()
         cancelPendingVlm("service destroyed")
         runCatching { unregisterReceiver(screenStateReceiver) }
+        runCatching { unregisterReceiver(clearActiveCaptureReceiver) }
         if (BuildConfig.DEBUG) {
             runCatching { unregisterReceiver(demoPromptReceiver) }
         }
         runBlocking(Dispatchers.IO + NonCancellable) {
             finalizeNow()
             insertReliability(ReliabilityEventType.SERVICE_STOPPED, "service_destroyed")
+            if (visualSentimentResolverDelegate.isInitialized()) visualSentimentResolver.close()
         }
         serviceJob.cancel()
-        if (visualSentimentResolverDelegate.isInitialized()) visualSentimentResolver.close()
         if (::debugOverlayBridge.isInitialized) debugOverlayBridge.destroy()
         trackerDispatcher.close()
         trackerExecutor.shutdown()
@@ -495,7 +516,19 @@ class ReduAccessibilityService : AccessibilityService() {
         
         pendingTargetExitJob = scope.launch {
             delay(SessionTracker.BRIDGE_WINDOW_MILLIS)
-            if (isTargetWindowStillAvailable()) return@launch
+            if (isTargetWindowStillAvailable()) {
+                pendingTargetExitJob = null
+                val snapshot = withContext(trackerDispatcher) {
+                    val platform = tracker.snapshot()?.platform ?: return@withContext null
+                    tracker.onTargetForeground(platform)
+                    tracker.snapshot()
+                }
+                targetInForeground = snapshot != null
+                if (snapshot != null) {
+                    debugOverlayBridge.setTargetInForeground(true)
+                }
+                return@launch
+            }
             commentSheetSurfaceResolver.onTargetExit()
             finalizeInactive()
             removeDebugOverlay()
@@ -513,6 +546,7 @@ class ReduAccessibilityService : AccessibilityService() {
             debugOverlayBridge.setTargetInForeground(false)
         }
         removeDebugOverlay()
+        PromptPresenter.dismissActivePrompt()
         resetPerItemStateLocked()
         if (waitForTracker) {
             runBlocking(trackerDispatcher) {
@@ -531,6 +565,7 @@ class ReduAccessibilityService : AccessibilityService() {
         }
         if (finalized != null) {
             persistFinalized(finalized)
+            resetPerItemState()
         }
     }
 
@@ -540,6 +575,7 @@ class ReduAccessibilityService : AccessibilityService() {
         }
         if (finalized != null) {
             persistFinalized(finalized)
+            resetPerItemState()
         }
     }
 
@@ -564,10 +600,10 @@ class ReduAccessibilityService : AccessibilityService() {
                                 val bitmap = Bitmap.wrapHardwareBuffer(hwBuffer, screenshot.colorSpace)
                                 hwBuffer.close()
                                 if (bitmap != null) {
-                                    // Convert hardware bitmap to software, then crop/scale before VLM.
+                                    // Convert hardware bitmap to software, then letterbox before VLM.
                                     val swBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false)
                                     bitmap.recycle()
-                                    val vlmBitmap = swBitmap.centerCropSquare(VLM_CAPTURE_SIZE_PX)
+                                    val vlmBitmap = swBitmap.fitCenterSquare(VLM_CAPTURE_SIZE_PX)
                                     if (vlmBitmap != swBitmap) {
                                         swBitmap.recycle()
                                     }
@@ -596,15 +632,19 @@ class ReduAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun Bitmap.centerCropSquare(sizePx: Int): Bitmap {
-        val side = minOf(width, height)
-        val left = ((width - side) / 2).coerceAtLeast(0)
-        val top = ((height - side) / 2).coerceAtLeast(0)
-        val cropped = Bitmap.createBitmap(this, left, top, side, side)
-        if (cropped.width == sizePx && cropped.height == sizePx) return cropped
-        val scaled = Bitmap.createScaledBitmap(cropped, sizePx, sizePx, true)
-        if (scaled != cropped) cropped.recycle()
-        return scaled
+    private fun Bitmap.fitCenterSquare(sizePx: Int): Bitmap {
+        val output = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        canvas.drawColor(Color.BLACK)
+        val scale = minOf(sizePx.toFloat() / width.toFloat(), sizePx.toFloat() / height.toFloat())
+        val scaledWidth = width * scale
+        val scaledHeight = height * scale
+        val left = (sizePx - scaledWidth) / 2f
+        val top = (sizePx - scaledHeight) / 2f
+        val dest = RectF(left, top, left + scaledWidth, top + scaledHeight)
+        val paint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.DITHER_FLAG)
+        canvas.drawBitmap(this, null, dest, paint)
+        return output
     }
 
     private suspend fun persistFinalized(finalized: FinalizedSession) {
@@ -633,11 +673,17 @@ class ReduAccessibilityService : AccessibilityService() {
                 sentimentReliability = snapshot.sentimentReliability,
             ),
         )
-        if (snapshot.sentimentReliability == SentimentReliability.SENTIMENT_UNRELIABLE) {
+        if (snapshot.sentimentReliability == SentimentReliability.SENTIMENT_UNRELIABLE && snapshot.oovRatio >= 0.50) {
             insertReliability(ReliabilityEventType.HIGH_OOV, "sentiment_unreliable", sessionId, snapshot.platform)
         }
         app.database.promptEventDao().attachPendingToSession(
             sessionId = sessionId,
+            startedAtMillis = snapshot.startedAtMillis,
+            endedAtMillis = finalized.endedAtMillis,
+        )
+        app.database.reliabilityEventDao().attachPendingVlmUnresolvedToSession(
+            sessionId = sessionId,
+            platform = snapshot.platform,
             startedAtMillis = snapshot.startedAtMillis,
             endedAtMillis = finalized.endedAtMillis,
         )
@@ -694,23 +740,39 @@ class ReduAccessibilityService : AccessibilityService() {
             "cycle platform=$platform hasCaption=$hasCaptionContent textLength=${visibleText.length} transitionLength=${transitionFingerprint.length} previousPlatform=${previousSnapshot?.platform}",
         )
 
-        val isTransition = transitionFingerprint != lastObservedTransitionFingerprint &&
-            (transitionFingerprint.isNotBlank() || lastObservedTransitionFingerprint != null)
+        val noTextBlankItem = !hasCaptionContent && visibleText.isBlank() && transitionFingerprint.isBlank()
+        val effectiveTransitionFingerprint = if (noTextBlankItem) {
+            blankNoTextFingerprint(
+                platform = platform,
+                sessionStartedAtMillis = tracker.snapshot()?.startedAtMillis,
+                advanceForInteraction = isUserInteraction,
+            )
+        } else {
+            transitionFingerprint
+        }
+        val normalizedTransition = effectiveTransitionFingerprint.takeIf { it.isNotBlank() }
+        val firstNoTextItem = !hasCaptionContent &&
+            visibleText.isBlank() &&
+            lastObservedTransitionFingerprint == null &&
+            currentVlmRequest == null
+        val isTransition = (effectiveTransitionFingerprint != lastObservedTransitionFingerprint &&
+            (effectiveTransitionFingerprint.isNotBlank() || lastObservedTransitionFingerprint != null)) ||
+            firstNoTextItem
         var vlmRequest: VlmRequestToken? = null
         if (isTransition) {
             vlmCaptureJob?.cancel()
-            lastObservedTransitionFingerprint = transitionFingerprint
+            lastObservedTransitionFingerprint = effectiveTransitionFingerprint
             lastObservedItemHasText = false
             debugOverlayBridge.updateVlm(framesCaptured = 0, status = "waiting")
             vlmRequest = tracker.snapshot()?.let { snapshot ->
                 VlmRequestToken(
                     platform = snapshot.platform,
                     sessionStartedAtMillis = snapshot.startedAtMillis,
-                    transitionFingerprint = transitionFingerprint,
+                    transitionFingerprint = effectiveTransitionFingerprint,
                 )
             }
             currentVlmRequest = vlmRequest
-            debugLog("REDU_VLM", "transition scheduling capture")
+            debugLog("REDU_VLM", "transition scheduling capture fingerprint=$effectiveTransitionFingerprint")
         }
 
         if (hasCaptionContent) {
@@ -722,9 +784,9 @@ class ReduAccessibilityService : AccessibilityService() {
             debugLog("REDU_VLM", "skipped capture because caption text exists textLength=${visibleText.length}")
         }
 
-        if (visibleText.isNotBlank() || transitionFingerprint.isNotBlank()) {
+        if (visibleText.isNotBlank() || normalizedTransition != null) {
             tracker.onContentObserved(
-                transitionFingerprint = transitionFingerprint.takeIf { it.isNotBlank() },
+                transitionFingerprint = normalizedTransition,
                 sentiment = sentiment,
                 sentimentFingerprint = visibleText.normalizeForFingerprint().takeIf { it.isNotBlank() },
             )
@@ -760,6 +822,7 @@ class ReduAccessibilityService : AccessibilityService() {
             val frame = captureScreenshotAsBytes()
             if (frame == null) {
                 debugOverlayBridge.updateVlm(framesCaptured = 0, status = "no frames captured")
+                logReliability(ReliabilityEventType.VLM_UNRESOLVED, "vlm_frame_capture_failed", platform = token.platform)
                 return@launch
             }
             debugOverlayBridge.updateVlm(framesCaptured = 1, status = "captured 1")
@@ -778,7 +841,11 @@ class ReduAccessibilityService : AccessibilityService() {
             if (label == null) {
                 debugOverlayBridge.updateVlm(status = "timeout")
                 debugLog("REDU_VLM", "inference timeout")
+                logReliability(ReliabilityEventType.VLM_UNRESOLVED, "vlm_inference_timeout", platform = token.platform)
                 return@launch
+            }
+            if (label == VisualSentimentLabel.UNRESOLVED) {
+                logReliability(ReliabilityEventType.VLM_UNRESOLVED, "vlm_unresolved", platform = token.platform)
             }
             val applied = applyVlmResult(token, label)
             debugOverlayBridge.updateVlm(
@@ -924,6 +991,28 @@ class ReduAccessibilityService : AccessibilityService() {
         }
     }
 
+    private fun logSuppressedPromptIfNeeded(
+        snapshot: ActiveSessionSnapshot,
+        riskScore: Double,
+        riskLevel: RiskLevel,
+    ) {
+        val key = SuppressedPromptKey(
+            platform = snapshot.platform,
+            sessionStartedAtMillis = snapshot.startedAtMillis,
+            riskLevel = riskLevel,
+            riskBand = (riskScore / 10.0).toInt(),
+        )
+        if (lastSuppressedPromptKey == key) return
+        lastSuppressedPromptKey = key
+        logPromptAction(
+            PromptAction.SUPPRESSED,
+            PromptLevel.NONE,
+            riskScore,
+            riskLevel,
+            cooldownActive = true,
+        )
+    }
+
     private fun String.normalizeForFingerprint(): String =
         lowercase().replace(Regex("\\s+"), " ").trim()
 
@@ -935,9 +1024,31 @@ class ReduAccessibilityService : AccessibilityService() {
     private fun resetPerItemStateLocked() {
         lastObservedTransitionFingerprint = null
         lastObservedItemHasText = true
+        blankNoTextSequence = 0
+        lastBlankNoTextSequenceIncrementAtMillis = 0L
+        lastSuppressedPromptKey = null
         currentVlmRequest = null
         vlmCaptureJob?.cancel()
         vlmCaptureJob = null
+    }
+
+    private fun blankNoTextFingerprint(
+        platform: Platform,
+        sessionStartedAtMillis: Long?,
+        advanceForInteraction: Boolean,
+    ): String {
+        val now = System.currentTimeMillis()
+        if (blankNoTextSequence == 0) {
+            blankNoTextSequence = 1
+            lastBlankNoTextSequenceIncrementAtMillis = now
+        } else if (advanceForInteraction &&
+            now - lastBlankNoTextSequenceIncrementAtMillis >= BLANK_ITEM_DEBOUNCE_MILLIS
+        ) {
+            blankNoTextSequence += 1
+            lastBlankNoTextSequenceIncrementAtMillis = now
+        }
+        val sessionToken = sessionStartedAtMillis ?: 0L
+        return "__no_text_${platform.name}_${sessionToken}_$blankNoTextSequence"
     }
 
     private fun isActiveDirectTargetSurface(platform: Platform): Boolean {
@@ -982,4 +1093,12 @@ class ReduAccessibilityService : AccessibilityService() {
         val vlmRequest: VlmRequestToken?,
         val finalizedSession: FinalizedSession?,
     )
+
+    private data class SuppressedPromptKey(
+        val platform: Platform,
+        val sessionStartedAtMillis: Long,
+        val riskLevel: RiskLevel,
+        val riskBand: Int,
+    )
+
 }

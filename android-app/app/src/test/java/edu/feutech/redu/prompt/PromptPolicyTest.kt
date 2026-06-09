@@ -74,4 +74,28 @@ class PromptPolicyTest {
         assertFalse(decision.cooldownActive)
         assertEquals(PromptLevel.NONE, decision.level)
     }
+
+    @Test
+    fun safeRiskIsNotReportedAsCooldownSuppression() {
+        var now = 0L
+        val policy = PromptPolicy(clock = { now })
+        policy.decide(
+            score = 50.0,
+            riskLevel = RiskLevel.WARNING,
+            reliability = SentimentReliability.RELIABLE,
+            sessionDurationMillis = 15 * 60_000L,
+        )
+        now = 1_000L
+
+        val safe = policy.decide(
+            score = 16.67,
+            riskLevel = RiskLevel.SAFE,
+            reliability = SentimentReliability.RELIABLE,
+            sessionDurationMillis = 15 * 60_000L,
+        )
+
+        assertFalse(safe.shouldShow)
+        assertFalse(safe.cooldownActive)
+        assertEquals(PromptLevel.NONE, safe.level)
+    }
 }

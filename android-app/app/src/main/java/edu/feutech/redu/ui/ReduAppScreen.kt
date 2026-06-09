@@ -183,6 +183,7 @@ fun ReduAppScreen(
                     sessions = sessions,
                     onClearHistory = {
                         scope.launch {
+                            context.sendClearActiveCaptureStateBroadcast()
                             database.clearHistory()
                         }
                     },
@@ -274,6 +275,7 @@ fun ReduAppScreen(
                     accessibilityEnabled = accessibilityEnabled,
                     debugOverlayEnabled = debugOverlayEnabled,
                     modelState = modelState,
+                    hasExistingSessions = sessions.isNotEmpty(),
                     onDownloadModel = { modelDownloadManager.startDownload() },
                     onCancelModelDownload = { modelDownloadManager.cancelDownload() },
                     onDeleteModel = { modelDownloadManager.deleteModels() },
@@ -298,6 +300,12 @@ fun ReduAppScreen(
                                     updatedAtMillis = System.currentTimeMillis(),
                                 ),
                             )
+                        }
+                    },
+                    onResetStudyData = {
+                        scope.launch {
+                            context.sendClearActiveCaptureStateBroadcast()
+                            database.resetStudyData()
                         }
                     },
                     onPromptsEnabledChange = { enabled ->
@@ -384,6 +392,15 @@ internal fun availableDestinationsFor(setupComplete: Boolean): List<ReduDestinat
     } else {
         listOf(ReduDestination.SETUP)
     }
+
+internal fun exportIncludedFiles(): List<String> =
+    listOf(
+        "sessions.csv",
+        "daily_summaries.csv",
+        "prompt_events.csv",
+        "reliability_events.csv",
+        "risk_personalization.csv",
+    )
 
 @Composable
 private fun DashboardScreen(
@@ -804,10 +821,9 @@ private fun ExportScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text("Included files", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                SecondaryText("• sessions.csv")
-                SecondaryText("• daily_summaries.csv")
-                SecondaryText("• prompt_events.csv")
-                SecondaryText("• reliability_events.csv")
+                exportIncludedFiles().forEach { fileName ->
+                    SecondaryText("• $fileName")
+                }
             }
         }
     }
@@ -821,17 +837,20 @@ private fun SettingsScreen(
     accessibilityEnabled: Boolean,
     debugOverlayEnabled: Boolean,
     modelState: ModelState,
+    hasExistingSessions: Boolean,
     onDownloadModel: () -> Unit,
     onCancelModelDownload: () -> Unit,
     onDeleteModel: () -> Unit,
     onPlatformTrackingChange: (Platform, Boolean) -> Unit,
     onStudyCodeSave: (String) -> Unit,
+    onResetStudyData: () -> Unit,
     onPromptsEnabledChange: (Boolean) -> Unit,
     onDebugOverlayChange: (Boolean) -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
     onDemoIntervention: (PromptLevel) -> Unit = {},
 ) {
     var editCodeDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var resetStudyDataDialogOpen by rememberSaveable { mutableStateOf(false) }
     var editedStudyCode by rememberSaveable { mutableStateOf(settings?.studyCode?.takeIf { it != "UNSET" }.orEmpty()) }
     var debugToolsExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -912,6 +931,22 @@ private fun SettingsScreen(
             onDelete = onDeleteModel,
         )
 
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Study data reset", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                SecondaryText("Use only when starting a new participant or intentionally clearing personalization.")
+                OutlinedButton(
+                    onClick = { resetStudyDataDialogOpen = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error,
+                    ),
+                ) {
+                    Text("Reset study data")
+                }
+            }
+        }
+
         if (BuildConfig.DEBUG) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -971,13 +1006,18 @@ private fun SettingsScreen(
             onDismissRequest = { editCodeDialogOpen = false },
             title = { Text("Edit participant code") },
             text = {
-                OutlinedTextField(
-                    value = editedStudyCode,
-                    onValueChange = { editedStudyCode = it.trim() },
-                    label = { Text("Participant study code") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = editedStudyCode,
+                        onValueChange = { editedStudyCode = it.trim() },
+                        label = { Text("Participant study code") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    if (hasExistingSessions) {
+                        SecondaryText("Reset study data before changing the participant code.")
+                    }
+                }
             },
             confirmButton = {
                 TextButton(
@@ -985,13 +1025,41 @@ private fun SettingsScreen(
                         onStudyCodeSave(editedStudyCode)
                         editCodeDialogOpen = false
                     },
-                    enabled = editedStudyCode.isNotBlank(),
+                    enabled = editedStudyCode.isNotBlank() && !hasExistingSessions,
                 ) {
                     Text("Save")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { editCodeDialogOpen = false }) {
+                    Text("Cancel")
+                }
+            },
+        )
+    }
+
+    if (resetStudyDataDialogOpen) {
+        AlertDialog(
+            onDismissRequest = { resetStudyDataDialogOpen = false },
+            title = { Text("Reset study data?") },
+            text = {
+                Text("This will permanently delete saved sessions, prompt events, reliability logs, and personalization. Participant settings and downloaded models will be kept.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        resetStudyDataDialogOpen = false
+                        onResetStudyData()
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.error,
+                    ),
+                ) {
+                    Text("Reset data")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { resetStudyDataDialogOpen = false }) {
                     Text("Cancel")
                 }
             },
@@ -1084,6 +1152,14 @@ private fun AppSettingsEntity.withPlatformTracking(
         Platform.INSTAGRAM -> copy(trackInstagramEnabled = enabled, updatedAtMillis = updatedAtMillis)
         Platform.FACEBOOK -> copy(trackFacebookEnabled = enabled, updatedAtMillis = updatedAtMillis)
     }
+
+private fun Context.sendClearActiveCaptureStateBroadcast() {
+    sendBroadcast(
+        Intent(ReduAccessibilityService.ACTION_CLEAR_ACTIVE_CAPTURE_STATE).apply {
+            setPackage(packageName)
+        },
+    )
+}
 
 private fun RiskPersonalizationEntity.hasAnyPersonalizedBounds(): Boolean =
     durationQ25Minutes != null || nsdQ25Percent != null

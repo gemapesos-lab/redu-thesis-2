@@ -25,8 +25,6 @@ class PromptPolicy(
         sessionDurationMillis: Long = Long.MAX_VALUE,
     ): PromptDecision {
         val now = clock()
-        val cooldownActive = lastPromptAtMillis?.let { now - it < cooldownMillis } == true
-        if (cooldownActive) return PromptDecision(false, PromptLevel.NONE, true)
         if (sessionDurationMillis < minimumPromptDurationMillis) {
             return PromptDecision(false, PromptLevel.NONE, false)
         }
@@ -40,6 +38,8 @@ class PromptPolicy(
         }
 
         if (level == PromptLevel.NONE) return PromptDecision(false, level, false)
+        val cooldownActive = lastPromptAtMillis?.let { now - it < cooldownMillis } == true
+        if (cooldownActive) return PromptDecision(false, PromptLevel.NONE, true)
         lastPromptAtMillis = now
         return PromptDecision(true, level, false)
     }

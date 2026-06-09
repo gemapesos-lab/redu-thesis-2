@@ -105,6 +105,54 @@ object TikTokCaptionRules {
                (suffix == "bottom_tab_home" && isSelected)
     }
 
+    fun isFeedEvidenceMarker(text: String?, contentDescription: String?, resourceId: String?): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
+        val suffix = resourceSuffix(resourceId)
+
+        if (value.isBlank()) return false
+        if (suffix in postDescriptionIds || suffix in authorNameIds || suffix.isTikTokAuthorLikeId()) return true
+        return value.startsWith("@") ||
+            value.startsWith("#") ||
+            value.contains("#") ||
+            value.startsWith("read or add comments") ||
+            value.matches(Regex("""[\d,.]+\s*[km]?\s+comments?""")) ||
+            value.matches(Regex("""[\d,.]+\s*[km]?\s+likes?""")) ||
+            value.matches(Regex("""[\d,.]+\s*[km]?\s+shares?""")) ||
+            value == "share" ||
+            value.startsWith("share ") ||
+            value == "like" ||
+            value.startsWith("like ") ||
+            value.contains("add to favorites") ||
+            value.contains("profile picture")
+    }
+
+    fun isBlockingSurfaceMarker(text: String?, contentDescription: String?, resourceId: String?, isSelected: Boolean): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
+        if (isUnsupportedSurfaceMarker(text, contentDescription, resourceId, isSelected)) return true
+        if (value.isBlank()) return false
+        return value == "log in" ||
+            value == "sign up" ||
+            value == "get started" ||
+            value == "loading" ||
+            value == "loading..." ||
+            value == "loading…" ||
+            value == "tap to retry" ||
+            value == "no internet connection" ||
+            value == "something went wrong" ||
+            value.contains("log in to") ||
+            value.contains("continue with") ||
+            value.contains("use phone") ||
+            value.contains("use email") ||
+            value.contains("welcome to tiktok") ||
+            value.contains("date of birth")
+    }
+
+    fun isSupportedReelsSurface(
+        hasFeedNavigationMarker: Boolean,
+        hasFeedEvidence: Boolean,
+        hasBlockingSurface: Boolean,
+    ): Boolean = hasFeedNavigationMarker && hasFeedEvidence && !hasBlockingSurface
+
     fun isUnsupportedSurfaceMarker(text: String?, contentDescription: String?, resourceId: String?, isSelected: Boolean): Boolean {
         val valText = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
         val suffix = resourceSuffix(resourceId)
@@ -112,10 +160,15 @@ object TikTokCaptionRules {
         return (valText.contains("profile") && valText.contains("tab") && isSelected) ||
                (valText.contains("inbox") && valText.contains("tab") && isSelected) ||
                (valText.contains("friends") && valText.contains("tab") && isSelected) ||
+               (valText.contains("search") && valText.contains("tab") && isSelected) ||
+               (valText.contains("shop") && valText.contains("tab") && isSelected) ||
+               (valText.contains("explore") && valText.contains("tab") && isSelected) ||
                (valText == "messages") ||
                (suffix == "bottom_tab_profile" && isSelected) ||
                (suffix == "bottom_tab_inbox" && isSelected) ||
-               (suffix == "bottom_tab_friends" && isSelected)
+               (suffix == "bottom_tab_friends" && isSelected) ||
+               (suffix == "bottom_tab_search" && isSelected) ||
+               (suffix == "bottom_tab_shop" && isSelected)
     }
 
     fun isCommentSheetSurfaceMarker(text: String?, contentDescription: String?, resourceId: String?, isSelected: Boolean): Boolean {

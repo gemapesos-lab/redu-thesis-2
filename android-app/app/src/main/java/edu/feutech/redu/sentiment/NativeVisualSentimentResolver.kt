@@ -32,10 +32,11 @@ class NativeVisualSentimentResolver(
             }
         }
 
-    override fun close() {
+    override suspend fun close() {
         MoondreamLlamaNative.cancelInference()
-        resetNativeModels()
-        modelDownloadManager.close()
+        inferenceMutex.withLock {
+            resetNativeModels()
+        }
     }
 
     private suspend fun resolveNoTextItemLocked(frames: List<ByteArray>): VisualSentimentLabel {
@@ -56,12 +57,7 @@ class NativeVisualSentimentResolver(
                 cancellationHandle.dispose()
             }
             context.ensureActive()
-            try {
-                val cleanResponse = response.replace(Regex("[^A-Z_]"), "")
-                VisualSentimentLabel.valueOf(cleanResponse)
-            } catch (e: Exception) {
-                VisualSentimentLabel.UNRESOLVED
-            }
+            parseVisualSentimentLabel(response)
         }
 
         // Majority vote
@@ -121,4 +117,15 @@ class NativeVisualSentimentResolver(
         val mmprojPath: String,
         val mmprojLastModified: Long,
     )
+}
+
+internal fun parseVisualSentimentLabel(response: String): VisualSentimentLabel {
+    val normalized = response.uppercase()
+    return VisualSentimentLabel.entries
+        .filterNot { it == VisualSentimentLabel.UNRESOLVED }
+        .firstOrNull { label ->
+            Regex("""(^|[^A-Z0-9_])${Regex.escape(label.name)}([^A-Z0-9_]|$)""")
+                .containsMatchIn(normalized)
+        }
+        ?: VisualSentimentLabel.UNRESOLVED
 }

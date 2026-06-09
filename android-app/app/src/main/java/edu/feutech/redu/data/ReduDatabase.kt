@@ -32,8 +32,16 @@ abstract class ReduDatabase : RoomDatabase() {
         withTransaction {
             promptEventDao().clearAll()
             reliabilityEventDao().clearAll()
-            riskPersonalizationDao().clearAll()
             sessionDao().clearAll()
+        }
+    }
+
+    suspend fun resetStudyData() {
+        withTransaction {
+            promptEventDao().clearAll()
+            reliabilityEventDao().clearAll()
+            sessionDao().clearAll()
+            riskPersonalizationDao().clearAll()
         }
     }
 

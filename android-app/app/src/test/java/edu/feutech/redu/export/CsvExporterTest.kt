@@ -38,11 +38,11 @@ class CsvExporterTest {
 
         val lines = csv.trim().lines()
         assertEquals(
-            "study_code,group,platform,start_ms,end_ms,raw_duration_ms,prompt_excluded_duration_ms,mean_dwell_ms,swipe_count,risk_score,risk_level,sentiment_reliability,nsd_percent,oov_ratio",
+            "study_code,group,platform,start_ms,end_ms,raw_duration_ms,prompt_excluded_duration_ms,mean_dwell_ms,swipe_count,risk_score,risk_level,sentiment_reliability,nsd_percent,oov_ratio,session_id",
             lines[0],
         )
         assertTrue(lines[1].startsWith("\"P,01\",INTERVENTION,TIKTOK,"))
-        assertTrue(lines[1].contains(",CRITICAL,RELIABLE,50.0,0.1"))
+        assertTrue(lines[1].contains(",CRITICAL,RELIABLE,50.0,0.1,7"))
     }
 
     @Test
@@ -77,6 +77,17 @@ class CsvExporterTest {
                     action = PromptAction.SHOWN,
                     cooldownActive = false,
                 ),
+                PromptEventEntity(
+                    studyCode = "P01",
+                    studyGroup = StudyGroup.INTERVENTION,
+                    sessionId = 7L,
+                    timestampMillis = 124L,
+                    riskScore = 66.0,
+                    riskLevel = RiskLevel.CRITICAL,
+                    promptLevel = PromptLevel.NONE,
+                    action = PromptAction.SUPPRESSED,
+                    cooldownActive = true,
+                ),
             ),
         )
         val reliabilityCsv = CsvExporter.reliabilityEventsCsv(
@@ -93,7 +104,7 @@ class CsvExporterTest {
         )
 
         assertEquals(
-            "study_code,timestamp_ms,session_id,risk_level,prompt_level,action,cooldown_state\nP01,123,,WARNING,L2_PAUSE,SHOWN,false\n",
+            "study_code,timestamp_ms,session_id,risk_level,prompt_level,action,cooldown_state,group,risk_score\nP01,123,,WARNING,L2_PAUSE,SHOWN,false,INTERVENTION,44.0\nP01,124,7,CRITICAL,NONE,SUPPRESSED,true,INTERVENTION,66.0\n",
             promptCsv,
         )
         assertEquals(
@@ -157,6 +168,7 @@ class CsvExporterTest {
         nsdPercent: Double? = 20.0,
     ): SessionEntity =
         SessionEntity(
+            id = 7L,
             studyCode = studyCode,
             studyGroup = StudyGroup.INTERVENTION,
             platform = Platform.TIKTOK,

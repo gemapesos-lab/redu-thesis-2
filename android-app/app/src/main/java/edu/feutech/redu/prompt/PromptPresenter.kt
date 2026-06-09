@@ -53,6 +53,12 @@ object PromptPresenter {
         }
     }
 
+    fun dismissActivePrompt() {
+        mainHandler.post {
+            closeActivePrompt(emitDefaultClosed = false)
+        }
+    }
+
     private fun showPauseOverlay(
         service: AccessibilityService,
         onEvent: (PromptPresentationEvent) -> Unit,
@@ -60,7 +66,7 @@ object PromptPresenter {
         val windowManager = service.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         lateinit var overlay: LinearLayout
         fun close(action: PromptAction) {
-            closeActivePrompt(emitClosed = false)
+            closeActivePrompt(emitDefaultClosed = false)
             onEvent(PromptPresentationEvent.Closed(action))
         }
 
@@ -162,12 +168,13 @@ object PromptPresenter {
         }
 
         runCatching {
-            closeActivePrompt(emitClosed = true)
+            closeActivePrompt(emitDefaultClosed = true)
             windowManager.addView(frame, overlayParams(WindowManager.LayoutParams.MATCH_PARENT))
             activePrompt = ActivePromptOverlay(
                 windowManager = windowManager,
                 view = frame,
-                onClosed = { onEvent(PromptPresentationEvent.Closed(PromptAction.DISMISSED)) },
+                onClosed = {},
+                onDefaultClosed = { onEvent(PromptPresentationEvent.Closed(PromptAction.DISMISSED)) },
             )
             onEvent(PromptPresentationEvent.BlockingShown)
         }.onFailure {
@@ -211,7 +218,7 @@ object PromptPresenter {
         val windowManager = service.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         lateinit var overlay: LinearLayout
         fun close(action: PromptAction) {
-            closeActivePrompt(emitClosed = false)
+            closeActivePrompt(emitDefaultClosed = false)
             onEvent(PromptPresentationEvent.Closed(action))
         }
 
@@ -319,7 +326,7 @@ object PromptPresenter {
         }
 
         runCatching {
-            closeActivePrompt(emitClosed = true)
+            closeActivePrompt(emitDefaultClosed = true)
             windowManager.addView(overlay, overlayParams(WindowManager.LayoutParams.MATCH_PARENT))
             val timeout = Runnable { close(PromptAction.DISMISSED) }
 
@@ -343,7 +350,6 @@ object PromptPresenter {
                 onClosed = {
                     breathingView.stop()
                     mainHandler.removeCallbacks(tick)
-                    onEvent(PromptPresentationEvent.Closed(PromptAction.DISMISSED))
                 },
             )
             onEvent(PromptPresentationEvent.BlockingShown)
@@ -374,12 +380,13 @@ object PromptPresenter {
             }
         }
 
-    private fun closeActivePrompt(emitClosed: Boolean) {
+    private fun closeActivePrompt(emitDefaultClosed: Boolean = true) {
         val prompt = activePrompt ?: return
         activePrompt = null
         prompt.timeout?.let(mainHandler::removeCallbacks)
         runCatching { prompt.windowManager.removeViewImmediate(prompt.view) }
-        if (emitClosed) prompt.onClosed()
+        prompt.onClosed()
+        if (emitDefaultClosed) prompt.onDefaultClosed()
     }
 
     private data class ActivePromptOverlay(
@@ -387,5 +394,6 @@ object PromptPresenter {
         val view: View,
         val timeout: Runnable? = null,
         val onClosed: () -> Unit,
+        val onDefaultClosed: () -> Unit = {},
     )
 }

@@ -198,6 +198,18 @@ class SentimentAnalyzerTest {
     }
 
     @Test
+    fun repeatedEmojiAreScoredAsSeparateTokens() {
+        val analyzer = VADERCompatibleAnalyzer(MvlLexicon.extensionLexicon)
+
+        val result = analyzer.analyze("😭😭")
+
+        assertTrue("Repeated crying emoji should be negative", result.compound < -0.05)
+        assertEquals("Both emoji should be recognized", 2, result.recognizedTokens)
+        assertEquals("Both emoji should be tokenized", 2, result.totalTokens)
+        assertEquals(0.0, result.oovRatio, 0.0)
+    }
+
+    @Test
     fun handlesCapitalizationAmplification() {
         val analyzer = VADERCompatibleAnalyzer(MvlLexicon.extensionLexicon)
         

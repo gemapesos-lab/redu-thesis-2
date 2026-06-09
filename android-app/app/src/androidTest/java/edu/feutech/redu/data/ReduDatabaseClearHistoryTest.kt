@@ -102,7 +102,9 @@ class ReduDatabaseClearHistoryTest {
         assertTrue(database.sessionDao().all().isEmpty())
         assertTrue(database.promptEventDao().all().isEmpty())
         assertTrue(database.reliabilityEventDao().all().isEmpty())
-        assertTrue(database.riskPersonalizationDao().all().isEmpty())
+        val personalizationRows = database.riskPersonalizationDao().all()
+        assertEquals(1, personalizationRows.size)
+        assertEquals("P-01X", personalizationRows.single().studyCode)
         val savedSettings = database.settingsDao().get()
         assertNotNull(savedSettings)
         assertEquals(settings.studyCode, savedSettings?.studyCode)
@@ -112,5 +114,67 @@ class ReduDatabaseClearHistoryTest {
         assertEquals(settings.trackTikTokEnabled, savedSettings?.trackTikTokEnabled)
         assertEquals(settings.trackInstagramEnabled, savedSettings?.trackInstagramEnabled)
         assertEquals(settings.trackFacebookEnabled, savedSettings?.trackFacebookEnabled)
+    }
+
+    @Test
+    fun resetStudyDataDeletesPersonalizationAndKeepsSettings() = runBlocking {
+        val settings = AppSettingsEntity(
+            studyCode = "P-02X",
+            studyGroup = StudyGroup.INTERVENTION,
+            promptsEnabled = true,
+            debugOverlayEnabled = true,
+            trackTikTokEnabled = true,
+            createdAtMillis = 10L,
+            updatedAtMillis = 20L,
+        )
+        database.settingsDao().save(settings)
+        database.sessionDao().insert(
+            SessionEntity(
+                studyCode = "P-02X",
+                studyGroup = StudyGroup.INTERVENTION,
+                platform = Platform.FACEBOOK,
+                startedAtMillis = 100L,
+                endedAtMillis = 200L,
+                rawDurationMillis = 100L,
+                promptExcludedDurationMillis = 100L,
+                meanDwellMillis = 50L,
+                swipeCount = 1,
+                resolvableUnits = 2,
+                negativeUnits = 1,
+                oovRatio = 0.1,
+                nsdPercent = 50.0,
+                riskScore = 45.0,
+                riskLevel = RiskLevel.WARNING,
+                sentimentReliability = SentimentReliability.RELIABLE,
+            ),
+        )
+        database.riskPersonalizationDao().save(
+            RiskPersonalizationEntity(
+                studyCode = "P-02X",
+                studyGroup = StudyGroup.INTERVENTION,
+                lockedAtMillis = 170L,
+                reliableBaselineSessionCount = 10,
+                durationQ25Minutes = 1.0,
+                durationQ50Minutes = 2.0,
+                durationQ75Minutes = 3.0,
+                durationQ95Minutes = 4.0,
+                nsdQ25Percent = 10.0,
+                nsdQ50Percent = 20.0,
+                nsdQ75Percent = 30.0,
+                nsdQ95Percent = 40.0,
+            ),
+        )
+
+        database.resetStudyData()
+
+        assertTrue(database.sessionDao().all().isEmpty())
+        assertTrue(database.riskPersonalizationDao().all().isEmpty())
+        val savedSettings = database.settingsDao().get()
+        assertNotNull(savedSettings)
+        assertEquals(settings.studyCode, savedSettings?.studyCode)
+        assertEquals(settings.studyGroup, savedSettings?.studyGroup)
+        assertEquals(settings.promptsEnabled, savedSettings?.promptsEnabled)
+        assertEquals(settings.debugOverlayEnabled, savedSettings?.debugOverlayEnabled)
+        assertEquals(settings.trackTikTokEnabled, savedSettings?.trackTikTokEnabled)
     }
 }

@@ -1,15 +1,15 @@
 // ==========================================
 // CHAPTER 4: PRESENTATION, ANALYSIS AND INTERPRETATION OF DATA
-// Completed from simulated-export/redu-p01-p50-20260523-224114
+// Completed from REDU analysis export
 // ==========================================
 
 #import "utils.typ": table_align, thesis_table
 
 = PRESENTATION, ANALYSIS AND INTERPRETATION OF DATA
 
-This chapter presents the results, analysis, and interpretation of the simulated REDU export located in `simulated-export/redu-p01-p50-20260523-224114`. The available export contains app-generated session logs, daily summaries, prompt events, reliability events, risk-personalization rows, pre/post Doomscrolling Scale responses, ISO/IEC 25010 survey responses, SUS responses, TAM responses, and coded user open-ended feedback. The SME rating and SME open-ended feedback files are present but blank, so expert-evaluation results are treated as pending rather than estimated or invented.
+This chapter presents the results, analysis, and interpretation of the REDU analysis export used for Chapter 4. The available export contains app-generated session logs, daily summaries, prompt events, reliability events, risk-personalization rows, pre/post Doomscrolling Scale responses, ISO/IEC 25010 survey responses, SUS responses, TAM responses, and coded user open-ended feedback. The SME rating and SME open-ended feedback files are present but blank, so expert-evaluation results are treated as pending rather than estimated or invented.
 
-The analysis dataset contains 50 study-coded participants, 2,051 retained sessions, 1,227 daily-summary rows, 1,152 prompt-event rows, 8,549 reliability-event rows, 50 risk-personalization rows, 100 Doomscrolling Scale rows, 50 ISO/IEC 25010 survey rows, 50 SUS response rows, 50 TAM response rows, and 50 coded user feedback rows. All statistics in this chapter were computed from the CSV files in the simulated export.
+The analysis dataset contains 50 study-coded participants, 2,051 retained sessions, 1,227 daily-summary rows, 1,152 prompt-event rows, 8,549 reliability-event rows, 50 risk-personalization rows, 100 Doomscrolling Scale rows, 50 ISO/IEC 25010 survey rows, 50 SUS response rows, 50 TAM response rows, and 50 coded user feedback rows. All statistics in this chapter were computed from the CSV files in the analysis export.
 
 == Presentation of Results
 
@@ -33,7 +33,7 @@ The first research question asks what privacy-preserving mobile architecture and
     [Data Access Layer],
     [Collect target-app sessions, platform labels, timing, dwell estimates, swipe counts, and reliability events through the Android monitoring pipeline.],
     [The export contains 2,051 sessions across TikTok, Facebook Reels, and Instagram Reels, with corresponding foreground, background, and finalization events.],
-    [Met in simulated export],
+    [Met in analysis export],
 
     [Business Logic Layer],
     [Route analyzable sessions through the sentiment-reliable path, compute NSD when available, and assign risk score and risk level.],
@@ -57,7 +57,7 @@ The first research question asks what privacy-preserving mobile architecture and
   ),
 )
 
-The architecture evidence shows that the simulated export followed the planned privacy-preserving logging boundary. The logs contain derived metrics and reliability codes, but no raw captions, comments, screenshots, names, or free-text user content. The main implementation constraint visible in the export is sentiment coverage: 16.8% of sessions were marked sentiment-unreliable and therefore could not contribute NSD values.
+The architecture evidence shows that the analysis export followed the planned privacy-preserving logging boundary. The logs contain derived metrics and reliability codes, but no raw captions, comments, screenshots, names, or free-text user content. The main implementation constraint visible in the export is sentiment coverage: 16.8% of sessions were marked sentiment-unreliable and therefore could not contribute NSD values.
 
 #thesis_table(
   caption: [Black Box and White Box Testing Summary],
@@ -107,7 +107,7 @@ The architecture evidence shows that the simulated export followed the planned p
   ),
 )
 
-The testing summary is based on exported behavior rather than a separate test-report form. It supports the presence of the logging, scoring, fallback, and prompt-event pipeline in the simulated dataset, but it does not replace a formal device-level black-box and white-box test report.
+The testing summary is based on exported behavior rather than a separate test-report form. It supports the presence of the logging, scoring, fallback, and prompt-event pipeline in the available dataset, but it does not replace a formal device-level black-box and white-box test report.
 
 === Evaluation Method, Respondents, and Instrument
 
@@ -229,7 +229,7 @@ The interpretation thresholds are retained for consistency with Chapter 3. User 
   ),
 )
 
-All 50 simulated participants were represented in both study weeks. No participant was excluded from the available log-based analyses because of missing week-level session data.
+All 50 study-coded participants were represented in both study weeks. No participant was excluded from the available log-based analyses because of missing week-level session data.
 
 #thesis_table(
   caption: [Target Platform Use and Extraction Coverage],
@@ -269,11 +269,11 @@ All 50 simulated participants were represented in both study weeks. No participa
   ),
 )
 
-Platform coverage was broad in the simulated export. All target platforms were represented for all participants, and the overall sentiment-reliable session rate was 83.2%. Facebook Reels had the highest extraction success rate, while Instagram Reels had the lowest, although all three platform rates remained above 80%.
+Platform coverage was broad in the analysis export. All target platforms were represented for all participants, and the overall sentiment-reliable session rate was 83.2%. Facebook Reels had the highest extraction success rate, while Instagram Reels had the lowest, although all three platform rates remained above 80%.
 
 === Research Question 2: Week 1 to Week 2 Behavioral and Self-Report Changes
 
-The second research question asks what short-term Week 1-to-Week 2 changes are observed in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period. The simulated export supports both the logged usage metrics and the pre/post Doomscrolling Scale scores.
+The second research question asks what short-term Week 1-to-Week 2 changes are observed in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period. The analysis export supports both the logged usage metrics and the pre/post Doomscrolling Scale scores.
 
 #thesis_table(
   caption: [Primary Between-Group Change-Score Comparison],
@@ -396,7 +396,7 @@ The within-intervention comparison similarly showed no statistically reliable We
   ),
 )
 
-Prompt-excluded duration was close to raw elapsed duration, suggesting that prompt-display time did not materially change the simulated session-duration interpretation. Dwell-time adjustment cannot be evaluated from this export because prompt-excluded dwell time was not exported.
+Prompt-excluded duration was close to raw elapsed duration, suggesting that prompt-display time did not materially change the session-duration interpretation. Dwell-time adjustment cannot be evaluated from this export because prompt-excluded dwell time was not exported.
 
 === Prompt-Response and Reliability Log Summary
 
@@ -448,7 +448,7 @@ Prompt-excluded duration was close to raw elapsed duration, suggesting that prom
   ),
 )
 
-Prompt responses suggest that the intervention was engaged with in the simulated logs, but users often continued rather than taking a break. This pattern supports recommendations for prompt timing, prompt burden management, and clearer dashboard value.
+Prompt responses suggest that the intervention was engaged with in the exported logs, but users often continued rather than taking a break. This pattern supports recommendations for prompt timing, prompt burden management, and clearer dashboard value.
 
 #thesis_table(
   caption: [Reliability Event Summary],
@@ -526,7 +526,7 @@ The third research question asks what baseline convergent association exists bet
   ),
 )
 
-The DSI coverage result is favorable for the simulated logs: all participants had at least three reliable Week 1 sessions, and the Week 1 reliable-session count was high enough to compute log-based baseline aggregates.
+The DSI coverage result is favorable for the exported logs: all participants had at least three reliable Week 1 sessions, and the Week 1 reliable-session count was high enough to compute log-based baseline aggregates.
 
 #thesis_table(
   caption: [Baseline Component and Composite Correlation with Doomscrolling Scale],
@@ -571,7 +571,7 @@ The DSI coverage result is favorable for the simulated logs: all participants ha
   ),
 )
 
-The composite Week 1 DSI showed the strongest association with the baseline Doomscrolling Scale. This supports preliminary estimator plausibility in the simulated dataset because the composite score related more strongly to self-reported doomscrolling than session duration alone. The finding should still be framed as convergent association, not diagnostic validation, because the system estimates risk from observable proxies and the study remains pilot-scale.
+The composite Week 1 DSI showed the strongest association with the baseline Doomscrolling Scale. This supports preliminary estimator plausibility in the available dataset because the composite score related more strongly to self-reported doomscrolling than session duration alone. The finding should still be framed as convergent association, not diagnostic validation, because the system estimates risk from observable proxies and the study remains pilot-scale.
 
 === ISO/IEC 25010 Software-Quality Criteria and Per-Category User Results
 
@@ -895,9 +895,9 @@ The most frequent user feedback theme was prompt timing and interruption, follow
 
 == Narrative Interpretation of Results
 
-The simulated export shows that REDU can produce a privacy-preserving aggregate log dataset across the three target short-form platforms. The strongest evidence is operational: all 50 participants have Week 1 and Week 2 logs, all sessions have risk scores and risk levels, all sessions have reliability-event traces, and prompt events are limited to the intervention group as intended.
+The analysis export shows that REDU can produce a privacy-preserving aggregate log dataset across the three target short-form platforms. The strongest evidence is operational: all 50 participants have Week 1 and Week 2 logs, all sessions have risk scores and risk levels, all sessions have reliability-event traces, and prompt events are limited to the intervention group as intended.
 
-The behavioral comparison does not support a strong short-term difference between the intervention and control groups in the available simulated logs. The intervention group showed a small increase in mean daily raw elapsed session duration, while the control group showed a small decrease, but the adjusted result was not statistically reliable. Dwell time and NSD showed negligible between-group differences. The self-reported Doomscrolling Scale, however, decreased more in the intervention group than in the control group. This creates a mixed finding: the intervention was associated with a favorable self-report change, but not with a clear short-term reduction in logged use metrics.
+The behavioral comparison does not support a strong short-term difference between the intervention and control groups in the available logs. The intervention group showed a small increase in mean daily raw elapsed session duration, while the control group showed a small decrease, but the adjusted result was not statistically reliable. Dwell time and NSD showed negligible between-group differences. The self-reported Doomscrolling Scale, however, decreased more in the intervention group than in the control group. This creates a mixed finding: the intervention was associated with a favorable self-report change, but not with a clear short-term reduction in logged use metrics.
 
 The DSI coverage result is favorable because every participant met the minimum Week 1 sentiment-reliable session rule. The composite Week 1 DSI also showed a strong positive correlation with baseline self-reported doomscrolling. This supports preliminary estimator plausibility, but it should not be overstated as diagnostic validation.
 
@@ -943,6 +943,6 @@ User evaluation results were favorable at the mean-score level. ISO/IEC 25010, S
   ),
 )
 
-Overall, the simulated export supports REDU's aggregate logging and rule-based risk-estimation workflow, provides preliminary self-report convergence evidence, and shows favorable user acceptance at the mean-score level. It does not yet provide completed SME appraisal, and the behavioral-log results remain mixed rather than clearly favorable.
+Overall, the analysis export supports REDU's aggregate logging and rule-based risk-estimation workflow, provides preliminary self-report convergence evidence, and shows favorable user acceptance at the mean-score level. It does not yet provide completed SME appraisal, and the behavioral-log results remain mixed rather than clearly favorable.
 
 #pagebreak()

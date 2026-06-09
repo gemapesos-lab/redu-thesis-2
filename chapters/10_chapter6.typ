@@ -1,13 +1,13 @@
 // ==========================================
 // CHAPTER 6: RECOMMENDATIONS
-// Completed from simulated-export/redu-p01-p50-20260523-224114
+// Completed from REDU analysis export
 // ==========================================
 
 #import "utils.typ": table_align, thesis_table
 
 = RECOMMENDATIONS
 
-This chapter presents recommendations for system improvement, future research, and future implementation or deployment. The recommendations are based on the simulated export analyzed in Chapter 4. The available user data support recommendations about prompt timing, onboarding clarity, dashboard usefulness, privacy communication, survey reliability, and sentiment-reliability coverage. SME recommendations remain pending until the blank expert rating and comment files are completed.
+This chapter presents recommendations for system improvement, future research, and future implementation or deployment. The recommendations are based on the analysis export examined in Chapter 4. The available user data support recommendations about prompt timing, onboarding clarity, dashboard usefulness, privacy communication, survey reliability, and sentiment-reliability coverage. SME recommendations remain pending until the blank expert rating and comment files are completed.
 
 == Recommendations for System Improvement
 
@@ -96,7 +96,7 @@ Future-research recommendations are grounded in the final study limitations, sam
   ),
   body: (
     [Sample size and group balance],
-    [The simulated export had balanced groups of 25 participants each and complete week-level log and user-response coverage.],
+    [The analysis export had balanced groups of 25 participants each and complete week-level log and user-response coverage.],
     [Use at least the same balanced structure in field deployment, but plan for attrition and device incompatibility.],
 
     [Deployment duration],
@@ -105,7 +105,7 @@ Future-research recommendations are grounded in the final study limitations, sam
 
     [Validation anchors],
     [Composite Week 1 DSI correlated strongly with baseline DSS at r=0.989.],
-    [Replicate the convergent association with real field data and test whether DSI predicts later self-report or intervention response.],
+    [Replicate the convergent association in broader deployments and test whether DSI predicts later self-report or intervention response.],
 
     [Survey reliability],
     [Most alpha coefficients were below 0.70; Perceived Usefulness was closest at 0.687.],
@@ -117,7 +117,7 @@ Future-research recommendations are grounded in the final study limitations, sam
   ),
 )
 
-Future researchers should treat the current findings as pilot evidence. The most important next step is to verify whether the favorable self-report and user-evaluation results remain stable in field data and whether they eventually align with behavioral log changes.
+Future researchers should treat the current findings as pilot evidence. The most important next step is to verify whether the favorable self-report and user-evaluation results remain stable across broader deployment conditions and whether they eventually align with behavioral log changes.
 
 == Recommendations for Future Implementation and Deployment
 

@@ -11,7 +11,7 @@ class CommentSheetSurfaceResolverTest {
         val resolver = CommentSheetSurfaceResolver()
 
         assertTrue(resolver.resolve(1, directSupported = true, commentSheet = false, platformName = "INSTAGRAM") { false })
-        assertTrue(resolver.resolve(2, directSupported = false, commentSheet = true, platformName = "INSTAGRAM") { false })
+        assertTrue(resolver.resolve(1, directSupported = false, commentSheet = true, platformName = "INSTAGRAM") { false })
     }
 
     @Test
@@ -79,11 +79,11 @@ class CommentSheetSurfaceResolverTest {
         val resolver = CommentSheetSurfaceResolver()
 
         assertTrue(resolver.resolve(1, directSupported = true, commentSheet = false, platformName = "INSTAGRAM") { false })
-        assertTrue(resolver.resolve(2, directSupported = false, commentSheet = true, platformName = "INSTAGRAM") { false })
+        assertTrue(resolver.resolve(1, directSupported = false, commentSheet = true, platformName = "INSTAGRAM") { false })
     }
 
     @Test
-    fun transientUnsupportedSurfaceDoesNotClearCommentSheetInheritance() {
+    fun transientUnsupportedSurfaceKeepsInheritanceOnlyForSameWindow() {
         var now = 1_000L
         val resolver = CommentSheetSurfaceResolver(clock = { now }, transitionGraceMillis = 2_000L)
 
@@ -92,7 +92,8 @@ class CommentSheetSurfaceResolverTest {
         assertFalse(resolver.resolve(1, directSupported = false, commentSheet = false, platformName = "TIKTOK") { false })
         now += 300L
 
-        assertTrue(resolver.resolve(2, directSupported = false, commentSheet = true, platformName = "TIKTOK") { false })
+        assertTrue(resolver.resolve(1, directSupported = false, commentSheet = true, platformName = "TIKTOK") { false })
+        assertFalse(resolver.resolve(2, directSupported = false, commentSheet = true, platformName = "TIKTOK") { false })
     }
 
     @Test

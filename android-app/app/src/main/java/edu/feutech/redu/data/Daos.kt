@@ -66,6 +66,14 @@ interface ReliabilityEventDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(event: ReliabilityEventEntity): Long
 
+    @Query("UPDATE reliability_events SET affectedSessionId = :sessionId WHERE affectedSessionId IS NULL AND type = 'VLM_UNRESOLVED' AND platform = :platform AND timestampMillis BETWEEN :startedAtMillis AND :endedAtMillis")
+    suspend fun attachPendingVlmUnresolvedToSession(
+        sessionId: Long,
+        platform: Platform,
+        startedAtMillis: Long,
+        endedAtMillis: Long,
+    ): Int
+
     @Query("SELECT * FROM reliability_events ORDER BY timestampMillis DESC")
     suspend fun all(): List<ReliabilityEventEntity>
 

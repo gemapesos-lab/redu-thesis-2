@@ -24,4 +24,18 @@ class ReduAppScreenTest {
             availableDestinationsFor(setupComplete = true),
         )
     }
+
+    @Test
+    fun exportIncludedFilesIncludesRiskPersonalization() {
+        assertEquals(
+            listOf(
+                "sessions.csv",
+                "daily_summaries.csv",
+                "prompt_events.csv",
+                "reliability_events.csv",
+                "risk_personalization.csv",
+            ),
+            exportIncludedFiles(),
+        )
+    }
 }

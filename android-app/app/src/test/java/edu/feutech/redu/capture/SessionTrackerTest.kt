@@ -2,6 +2,8 @@ package edu.feutech.redu.capture
 
 import edu.feutech.redu.sentiment.SentimentResult
 import edu.feutech.redu.data.Platform
+import edu.feutech.redu.data.SentimentReliability
+import edu.feutech.redu.sentiment.VisualSentimentLabel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -262,6 +264,23 @@ class SessionTrackerTest {
         assertEquals(42_000L, snapshot?.durationMillis)
         assertEquals(27_000L, snapshot?.promptExcludedDurationMillis)
         assertEquals(7_000L, snapshot?.currentDwellMillis)
+    }
+
+    @Test
+    fun vlmOnlyResolvedItemCanProduceReliableNsd() {
+        var now = 1_000L
+        val tracker = SessionTracker(clock = { now })
+        tracker.onTargetForeground()
+
+        now += 5_000L
+        tracker.addDelayedVlmSentiment(VisualSentimentLabel.SEVERE_NEG)
+        val snapshot = tracker.snapshot()
+
+        assertEquals(SentimentReliability.RELIABLE, snapshot?.sentimentReliability)
+        assertEquals(1, snapshot?.resolvableUnits)
+        assertEquals(1, snapshot?.negativeUnits)
+        assertEquals(100.0, snapshot?.nsdPercent ?: -1.0, 0.0)
+        assertEquals(0.0, snapshot?.oovRatio ?: -1.0, 0.0)
     }
 
     private fun reliableNegativeSentiment(): SentimentResult =

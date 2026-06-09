@@ -1,6 +1,7 @@
 package edu.feutech.redu.export
 
 import android.content.Context
+import androidx.room.withTransaction
 import edu.feutech.redu.data.DailySummary
 import edu.feutech.redu.data.PromptEventEntity
 import edu.feutech.redu.data.ReduDatabase
@@ -24,12 +25,20 @@ class CsvExporter(
         val dir = File(context.cacheDir, "redu-export-${System.currentTimeMillis()}")
         dir.mkdirs()
 
-        val sessions = database.sessionDao().all()
+        val snapshot = database.withTransaction {
+            ExportSnapshot(
+                sessions = database.sessionDao().all(),
+                promptEvents = database.promptEventDao().all(),
+                reliabilityEvents = database.reliabilityEventDao().all(),
+                riskPersonalization = database.riskPersonalizationDao().all(),
+            )
+        }
+        val sessions = snapshot.sessions
         write(File(dir, "sessions.csv"), sessionsCsv(sessions))
         write(File(dir, "daily_summaries.csv"), dailySummariesCsv(sessions))
-        write(File(dir, "prompt_events.csv"), promptEventsCsv(database.promptEventDao().all()))
-        write(File(dir, "reliability_events.csv"), reliabilityEventsCsv(database.reliabilityEventDao().all()))
-        write(File(dir, "risk_personalization.csv"), riskPersonalizationCsv(database.riskPersonalizationDao().all()))
+        write(File(dir, "prompt_events.csv"), promptEventsCsv(snapshot.promptEvents))
+        write(File(dir, "reliability_events.csv"), reliabilityEventsCsv(snapshot.reliabilityEvents))
+        write(File(dir, "risk_personalization.csv"), riskPersonalizationCsv(snapshot.riskPersonalization))
         return dir
     }
 
@@ -64,7 +73,7 @@ class CsvExporter(
         }
 
         internal fun sessionsCsv(rows: List<SessionEntity>): String = buildString {
-            appendLine("study_code,group,platform,start_ms,end_ms,raw_duration_ms,prompt_excluded_duration_ms,mean_dwell_ms,swipe_count,risk_score,risk_level,sentiment_reliability,nsd_percent,oov_ratio")
+            appendLine("study_code,group,platform,start_ms,end_ms,raw_duration_ms,prompt_excluded_duration_ms,mean_dwell_ms,swipe_count,risk_score,risk_level,sentiment_reliability,nsd_percent,oov_ratio,session_id")
             rows.forEach {
                 appendLine(listOf(
                     it.studyCode,
@@ -81,6 +90,7 @@ class CsvExporter(
                     it.sentimentReliability.name,
                     it.nsdPercent ?: "",
                     it.oovRatio,
+                    it.id,
                 ).joinToString(",") { cell -> csv(cell.toString()) })
             }
         }
@@ -117,7 +127,7 @@ class CsvExporter(
         }
 
         internal fun promptEventsCsv(rows: List<PromptEventEntity>): String = buildString {
-            appendLine("study_code,timestamp_ms,session_id,risk_level,prompt_level,action,cooldown_state")
+            appendLine("study_code,timestamp_ms,session_id,risk_level,prompt_level,action,cooldown_state,group,risk_score")
             rows.forEach {
                 appendLine(listOf(
                     it.studyCode,
@@ -127,6 +137,8 @@ class CsvExporter(
                     it.promptLevel.name,
                     it.action.name,
                     it.cooldownActive,
+                    it.studyGroup.name,
+                    it.riskScore,
                 ).joinToString(",") { cell -> csv(cell.toString()) })
             }
         }
@@ -175,5 +187,12 @@ class CsvExporter(
             val escaped = value.replace("\"", "\"\"")
             return if (escaped.any { it == ',' || it == '"' || it == '\n' }) "\"$escaped\"" else escaped
         }
+
+        private data class ExportSnapshot(
+            val sessions: List<SessionEntity>,
+            val promptEvents: List<PromptEventEntity>,
+            val reliabilityEvents: List<ReliabilityEventEntity>,
+            val riskPersonalization: List<RiskPersonalizationEntity>,
+        )
     }
 }

@@ -136,6 +136,7 @@ class SessionTracker(
         val session = active ?: return
         
         if (label != edu.feutech.redu.sentiment.VisualSentimentLabel.UNRESOLVED) {
+            session.visualUnits += 1
             session.resolvableUnits += 1
             if (label == edu.feutech.redu.sentiment.VisualSentimentLabel.MILD_NEG || 
                 label == edu.feutech.redu.sentiment.VisualSentimentLabel.SEVERE_NEG) {
@@ -196,6 +197,7 @@ class SessionTracker(
         var swipeCount: Int = 0,
         var totalTokens: Int = 0,
         var recognizedTokens: Int = 0,
+        var visualUnits: Int = 0,
         var resolvableUnits: Int = 0,
         var negativeUnits: Int = 0,
         val dwellSamples: MutableList<Long> = mutableListOf(),
@@ -281,8 +283,10 @@ class SessionTracker(
                 dwellSamples
             }
             val meanDwellMillis = if (liveDwellSamples.isEmpty()) 0L else liveDwellSamples.average().roundToLong()
-            val oovRatio = if (totalTokens == 0) 1.0 else ((totalTokens - recognizedTokens).coerceAtLeast(0)).toDouble() / totalTokens
-            val reliable = totalTokens > 0 && oovRatio < 0.50 && resolvableUnits > 0
+            val oovRatio = if (totalTokens == 0) 0.0 else ((totalTokens - recognizedTokens).coerceAtLeast(0)).toDouble() / totalTokens
+            val hasReliableText = totalTokens > 0 && oovRatio < 0.50
+            val hasResolvedVisual = visualUnits > 0
+            val reliable = (hasReliableText || hasResolvedVisual) && resolvableUnits > 0
             val reliability = if (reliable) SentimentReliability.RELIABLE else SentimentReliability.SENTIMENT_UNRELIABLE
             val nsd = if (reliable) negativeUnits.toDouble() / resolvableUnits.toDouble() * 100.0 else null
             val risk = FuzzyRiskEngine.evaluate(

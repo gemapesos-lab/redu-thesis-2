@@ -8,6 +8,7 @@ class CommentSheetSurfaceResolver(
     private var lastCommentSheetWasReels: Boolean = false
     private var canInheritReelsSurface: Boolean = false
     private var lastDirectSupportedPlatformName: String? = null
+    private var lastDirectSupportedWindowId: Int = -1
     private var lastUnsupportedAtMillis: Long = NO_TIMESTAMP
 
     fun resolve(
@@ -23,13 +24,17 @@ class CommentSheetSurfaceResolver(
             lastCommentSheetWasReels = false
             canInheritReelsSurface = true
             lastDirectSupportedPlatformName = platformName
+            lastDirectSupportedWindowId = rootWindowId
             lastUnsupportedAtMillis = NO_TIMESTAMP
             return true
         }
 
         if (!commentSheet) {
             resetCommentSheet()
-            if (canInheritReelsSurface && platformName == lastDirectSupportedPlatformName) {
+            if (canInheritReelsSurface &&
+                platformName == lastDirectSupportedPlatformName &&
+                rootWindowId == lastDirectSupportedWindowId
+            ) {
                 lastUnsupportedAtMillis = now
             } else {
                 clearInheritance()
@@ -41,7 +46,7 @@ class CommentSheetSurfaceResolver(
             lastCommentSheetWasReels
         } else {
             val resolved = multiWindowSupported() ||
-                canInheritFromRecentTargetSurface(platformName, now)
+                canInheritFromRecentTargetSurface(platformName, rootWindowId, now)
             lastCommentSheetWindowId = rootWindowId
             lastCommentSheetWasReels = resolved
             resolved
@@ -61,8 +66,9 @@ class CommentSheetSurfaceResolver(
         clearInheritance()
     }
 
-    private fun canInheritFromRecentTargetSurface(platformName: String, now: Long): Boolean {
+    private fun canInheritFromRecentTargetSurface(platformName: String, rootWindowId: Int, now: Long): Boolean {
         if (!canInheritReelsSurface || platformName != lastDirectSupportedPlatformName) return false
+        if (rootWindowId != lastDirectSupportedWindowId) return false
         return lastUnsupportedAtMillis == NO_TIMESTAMP ||
             now - lastUnsupportedAtMillis <= transitionGraceMillis
     }
@@ -70,6 +76,7 @@ class CommentSheetSurfaceResolver(
     private fun clearInheritance() {
         canInheritReelsSurface = false
         lastDirectSupportedPlatformName = null
+        lastDirectSupportedWindowId = -1
         lastUnsupportedAtMillis = NO_TIMESTAMP
     }
 

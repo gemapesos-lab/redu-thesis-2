@@ -10,14 +10,10 @@ object FacebookAdapter {
 
     fun supports(packageName: CharSequence?): Boolean = packageName?.toString() in PACKAGE_NAMES
 
-    /**
-     * Pure allowlist approach: scans the accessibility tree for tab elements
-     * and returns true ONLY if the currently selected tab is "Reels".
-     * Does NOT use a blocklist — any page that is not Reels is simply not supported.
-     */
     fun isReelsSurface(root: AccessibilityNodeInfo?): Boolean {
         if (root == null || root.packageName?.toString() !in PACKAGE_NAMES) return false
-        return root.hasSelectedReelsTab()
+        val signals = root.collectSurfaceSignals()
+        return signals.hasSelectedReelsTab || signals.isFullscreenReelsViewer()
     }
 
     fun isCommentSheetSurface(root: AccessibilityNodeInfo?): Boolean {
@@ -28,7 +24,7 @@ object FacebookAdapter {
     fun isReelsSurface(roots: List<AccessibilityNodeInfo>): Boolean {
         return roots.any { root ->
             root.packageName?.toString() in PACKAGE_NAMES &&
-            root.hasSelectedReelsTab()
+                root.collectSurfaceSignals().let { it.hasSelectedReelsTab || it.isFullscreenReelsViewer() }
         }
     }
 
@@ -126,16 +122,7 @@ object FacebookAdapter {
         }
     }
 
-    /**
-     * Single-pass allowlist scan: walks the entire tree looking for tab elements.
-     * Returns true ONLY if a "Reels" tab is found AND it is the selected tab.
-     * Returns false for ALL other cases (home, friends, profile, etc.).
-     *
-     * A node is considered a "tab" if its text/contentDescription contains the word "tab"
-     * or matches known Facebook bottom-bar tab patterns.
-     */
-    private fun AccessibilityNodeInfo.hasSelectedReelsTab(): Boolean {
-        // Check this node: is it a tab-like element that is selected and is "Reels"?
+    private fun AccessibilityNodeInfo.collectSurfaceSignals(signals: FacebookSurfaceSignals = FacebookSurfaceSignals()): FacebookSurfaceSignals {
         if (isSelected && FacebookCaptionRules.isReelsTabElement(text?.toString(), contentDescription?.toString())) {
             if (BuildConfig.DEBUG) {
                 android.util.Log.d(
@@ -143,18 +130,37 @@ object FacebookAdapter {
                     "REELS_TAB_FOUND textLength=${text?.length ?: 0} contentDescriptionLength=${contentDescription?.length ?: 0} isSelected=$isSelected",
                 )
             }
-            return true
+            signals.hasSelectedReelsTab = true
+        } else if (FacebookCaptionRules.isUnsupportedSurfaceText(text?.toString(), contentDescription?.toString(), isSelected)) {
+            signals.hasUnsupportedSelectedTab = true
+        }
+        if (isVisibleToUser) {
+            if (FacebookCaptionRules.isReelsHeaderText(text?.toString(), contentDescription?.toString())) {
+                signals.hasReelsHeader = true
+            }
+            if (FacebookCaptionRules.isCommentActionText(text?.toString(), contentDescription?.toString())) {
+                signals.hasCommentAction = true
+            }
+            if (FacebookCaptionRules.isShareActionText(text?.toString(), contentDescription?.toString())) {
+                signals.hasShareAction = true
+            }
+            if (FacebookCaptionRules.isActionRailText(text?.toString(), contentDescription?.toString())) {
+                signals.hasActionRail = true
+            }
+            if (FacebookCaptionRules.isCaptionOrCreatorText(text?.toString(), contentDescription?.toString())) {
+                signals.hasCaptionOrCreator = true
+            }
         }
 
         for (index in 0 until childCount) {
             val child = getChild(index) ?: continue
             try {
-                if (child.hasSelectedReelsTab()) return true
+                child.collectSurfaceSignals(signals)
             } finally {
                 child.recycle()
             }
         }
-        return false
+        return signals
     }
 
     private fun AccessibilityNodeInfo.containsCommentSheetMarker(): Boolean {
@@ -176,5 +182,25 @@ object FacebookAdapter {
         val rect = Rect()
         getBoundsInScreen(rect)
         return TikTokBounds(rect.left, rect.top, rect.right, rect.bottom)
+    }
+
+    private data class FacebookSurfaceSignals(
+        var hasSelectedReelsTab: Boolean = false,
+        var hasReelsHeader: Boolean = false,
+        var hasCommentAction: Boolean = false,
+        var hasShareAction: Boolean = false,
+        var hasActionRail: Boolean = false,
+        var hasCaptionOrCreator: Boolean = false,
+        var hasUnsupportedSelectedTab: Boolean = false,
+    ) {
+        fun isFullscreenReelsViewer(): Boolean =
+            FacebookCaptionRules.isFullscreenReelsSurfaceSupported(
+                hasReelsHeader = hasReelsHeader,
+                hasCommentAction = hasCommentAction,
+                hasShareAction = hasShareAction,
+                hasActionRail = hasActionRail,
+                hasCaptionOrCreator = hasCaptionOrCreator,
+                hasUnsupportedSelectedTab = hasUnsupportedSelectedTab,
+            )
     }
 }

@@ -11,7 +11,7 @@ enum class VisualSentimentLabel {
 
 interface VisualSentimentResolver {
     suspend fun resolveNoTextItem(frames: List<ByteArray>): VisualSentimentLabel
-    fun close() = Unit
+    suspend fun close() = Unit
 }
 
 class StubVisualSentimentResolver : VisualSentimentResolver {

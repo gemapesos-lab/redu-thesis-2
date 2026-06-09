@@ -22,6 +22,65 @@ class TikTokCaptionRulesTest {
     }
 
     @Test
+    fun selectedForYouTabAloneIsNotSupportedReelsSurface() {
+        assertFalse(
+            TikTokCaptionRules.isSupportedReelsSurface(
+                hasFeedNavigationMarker = true,
+                hasFeedEvidence = false,
+                hasBlockingSurface = false,
+            ),
+        )
+    }
+
+    @Test
+    fun selectedForYouTabWithFeedEvidenceIsSupportedReelsSurface() {
+        assertTrue(
+            TikTokCaptionRules.isSupportedReelsSurface(
+                hasFeedNavigationMarker = true,
+                hasFeedEvidence = true,
+                hasBlockingSurface = false,
+            ),
+        )
+    }
+
+    @Test
+    fun loginAndLoadingMarkersVetoTikTokSurface() {
+        assertTrue(
+            TikTokCaptionRules.isBlockingSurfaceMarker(
+                text = "Log in to existing account",
+                contentDescription = null,
+                resourceId = null,
+                isSelected = false,
+            ),
+        )
+        assertFalse(
+            TikTokCaptionRules.isSupportedReelsSurface(
+                hasFeedNavigationMarker = true,
+                hasFeedEvidence = true,
+                hasBlockingSurface = true,
+            ),
+        )
+    }
+
+    @Test
+    fun commonTikTokFeedEvidenceMarkersAreRecognized() {
+        assertTrue(
+            TikTokCaptionRules.isFeedEvidenceMarker(
+                text = "@creator.name",
+                contentDescription = null,
+                resourceId = "com.ss.android.ugc.trill:id/author",
+            ),
+        )
+        assertTrue(
+            TikTokCaptionRules.isFeedEvidenceMarker(
+                text = "Read or add comments. 155 comments",
+                contentDescription = null,
+                resourceId = "com.ss.android.ugc.trill:id/e8n",
+            ),
+        )
+    }
+
+    @Test
     fun viewPagerAloneDoesNotMatchReelsSurface() {
         assertFalse(
             TikTokCaptionRules.isReelsSurfaceMarker(

@@ -205,4 +205,50 @@ class FacebookCaptionRulesTest {
         // Generic ad/install markers should always be unsupported surface markers
         org.junit.Assert.assertTrue(FacebookCaptionRules.isUnsupportedSurfaceText("ad", null, false))
     }
+
+    @Test
+    fun fullscreenReelsEvidenceCanSupportSurfaceWithoutSelectedTab() {
+        org.junit.Assert.assertTrue(
+            FacebookCaptionRules.isFullscreenReelsSurfaceSupported(
+                hasReelsHeader = true,
+                hasCommentAction = true,
+                hasShareAction = true,
+                hasActionRail = false,
+                hasCaptionOrCreator = true,
+                hasUnsupportedSelectedTab = false,
+            ),
+        )
+    }
+
+    @Test
+    fun fullscreenReelsEvidenceRequiresHeaderAndRejectsNonReelsTabs() {
+        org.junit.Assert.assertFalse(
+            FacebookCaptionRules.isFullscreenReelsSurfaceSupported(
+                hasReelsHeader = false,
+                hasCommentAction = true,
+                hasShareAction = true,
+                hasActionRail = true,
+                hasCaptionOrCreator = true,
+                hasUnsupportedSelectedTab = false,
+            ),
+        )
+        org.junit.Assert.assertFalse(
+            FacebookCaptionRules.isFullscreenReelsSurfaceSupported(
+                hasReelsHeader = true,
+                hasCommentAction = true,
+                hasShareAction = true,
+                hasActionRail = true,
+                hasCaptionOrCreator = true,
+                hasUnsupportedSelectedTab = true,
+            ),
+        )
+    }
+
+    @Test
+    fun facebookReelsActionEvidenceRecognizesQaDumpPatterns() {
+        org.junit.Assert.assertTrue(FacebookCaptionRules.isReelsHeaderText("Reels", null))
+        org.junit.Assert.assertTrue(FacebookCaptionRules.isCommentActionText("683 comments", null))
+        org.junit.Assert.assertTrue(FacebookCaptionRules.isShareActionText("Share, 1.5K shares", null))
+        org.junit.Assert.assertTrue(FacebookCaptionRules.isCaptionOrCreatorText("BenchWarmer Highlights #basketball", null))
+    }
 }

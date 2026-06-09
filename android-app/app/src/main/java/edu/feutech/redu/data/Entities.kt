@@ -35,6 +35,7 @@ enum class PromptLevel {
 
 enum class PromptAction {
     SHOWN,
+    SUPPRESSED,
     DISMISSED,
     CONTINUE,
     TAKE_BREAK,

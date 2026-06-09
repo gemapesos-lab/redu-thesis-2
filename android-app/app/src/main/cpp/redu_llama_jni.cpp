@@ -24,8 +24,9 @@ static bool generation_batch_ready = false;
 static std::atomic<bool> abort_inference(false);
 static std::chrono::steady_clock::time_point inference_deadline;
 static constexpr int kInferenceThreads = 4;
-static constexpr int kContextSize = 768;
+static constexpr int kContextSize = 2048;
 static constexpr int kBatchSize = 256;
+static constexpr int kMaxGenerationTokens = 32;
 
 static long long elapsed_ms(std::chrono::steady_clock::time_point start) {
     return std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -259,6 +260,16 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobje
         abort_inference.store(false);
         return env->NewStringUTF("UNRESOLVED");
     }
+    const llama_pos total_pos = chunks.ptr ? mtmd_helper_get_n_pos(chunks.ptr.get()) : 0;
+    if (total_pos + kMaxGenerationTokens >= kContextSize) {
+        LOGE("Inference context too small total_pos=%d generation_budget=%d n_ctx=%d elapsed_ms=%lld",
+             static_cast<int>(total_pos),
+             kMaxGenerationTokens,
+             kContextSize,
+             elapsed_ms(start));
+        abort_inference.store(false);
+        return env->NewStringUTF("UNRESOLVED");
+    }
 
     for (size_t i = 0; i < mtmd_input_chunks_size(chunks.ptr.get()); ++i) {
         const mtmd_input_chunk * chunk = mtmd_input_chunks_get(chunks.ptr.get(), i);
@@ -292,7 +303,7 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobje
 
     std::string response = "";
     LOGI("inferenceImage generation start elapsed_ms=%lld n_past=%d", elapsed_ms(start), n_past);
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < kMaxGenerationTokens; i++) {
         if (should_abort_inference(nullptr)) {
             LOGE("Inference aborted during generation token=%d elapsed_ms=%lld", i, elapsed_ms(start));
             break;

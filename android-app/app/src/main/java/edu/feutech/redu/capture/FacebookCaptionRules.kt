@@ -136,6 +136,64 @@ object FacebookCaptionRules {
         return false
     }
 
+    fun isReelsHeaderText(text: String?, contentDescription: String?): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
+        return value == "reels" || value.startsWith("reels,")
+    }
+
+    fun isCommentActionText(text: String?, contentDescription: String?): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
+        return value.matches(Regex("""[\d,.]+\s*[km]?\s+comments?""")) ||
+            value.contains(" comments")
+    }
+
+    fun isShareActionText(text: String?, contentDescription: String?): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
+        return value == "share" ||
+            value.startsWith("share,") ||
+            value.matches(Regex("""[\d,.]+\s*[km]?\s+shares?""")) ||
+            value.contains(" shares")
+    }
+
+    fun isActionRailText(text: String?, contentDescription: String?): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace().lowercase()
+        return value == "like" ||
+            value.startsWith("like,") ||
+            value.matches(Regex("""[\d,.]+\s*[km]?\s+likes?""")) ||
+            value.matches(Regex("""[\d,.]+\s*[km]?\s+reactions?""")) ||
+            value == "save" ||
+            value == "send" ||
+            value == "more" ||
+            value.contains("profile picture")
+    }
+
+    fun isCaptionOrCreatorText(text: String?, contentDescription: String?): Boolean {
+        val value = (text.takeUnless { it.isNullOrBlank() } ?: contentDescription).normalizeWhitespace()
+        val lower = value.lowercase()
+        if (value.isBlank() || lower.isFacebookUiText()) return false
+        return value.startsWith("#") ||
+            value.contains("#") ||
+            value.length >= 8
+    }
+
+    fun isFullscreenReelsSurfaceSupported(
+        hasReelsHeader: Boolean,
+        hasCommentAction: Boolean,
+        hasShareAction: Boolean,
+        hasActionRail: Boolean,
+        hasCaptionOrCreator: Boolean,
+        hasUnsupportedSelectedTab: Boolean,
+    ): Boolean {
+        if (hasUnsupportedSelectedTab || !hasReelsHeader) return false
+        val evidenceCount = listOf(
+            hasCommentAction,
+            hasShareAction,
+            hasActionRail,
+            hasCaptionOrCreator,
+        ).count { it }
+        return evidenceCount >= 2
+    }
+
     /**
      * @deprecated Use [isReelsTabElement] + isSelected check from the adapter.
      * Kept for backward compatibility with tests.

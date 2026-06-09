@@ -1,13 +1,13 @@
 // ==========================================
 // CHAPTER 5: CONCLUSION
-// Completed from simulated-export/redu-p01-p50-20260523-224114
+// Completed from REDU analysis export
 // ==========================================
 
 #import "utils.typ": table_align, thesis_table
 
 = CONCLUSION
 
-This chapter presents the summary of findings and conclusions of the study based on the simulated export analyzed in Chapter 4. The conclusions are bounded by the available data. The export supports conclusions about aggregate logging, fallback flagging, prompt-event generation, pre/post self-reported doomscrolling, baseline convergent association, ISO/IEC 25010 user ratings, SUS usability, TAM acceptance, and coded user feedback. SME ratings and SME comments remain pending because the expert files are present but blank.
+This chapter presents the summary of findings and conclusions of the study based on the analysis export examined in Chapter 4. The conclusions are bounded by the available data. The export supports conclusions about aggregate logging, fallback flagging, prompt-event generation, pre/post self-reported doomscrolling, baseline convergent association, ISO/IEC 25010 user ratings, SUS usability, TAM acceptance, and coded user feedback. SME ratings and SME comments remain pending because the expert files are present but blank.
 
 == Summary of Findings
 
@@ -55,11 +55,11 @@ The strongest findings are that REDU produced a complete aggregate logging workf
 
 == Conclusions Based on Research Objectives and Questions
 
-For the first research question, the simulated export supports the conclusion that the implemented architecture can produce privacy-preserving aggregate records for the target study workflow. The exported files contain study codes, platform labels, timing metrics, risk scores, reliability codes, and prompt actions without raw captions, comments, screenshots, or directly identifying content. The system also produced fallback flags for 345 sentiment-unreliable sessions and preserved analyzable NSD values for 1,706 sessions. Therefore, the architecture and estimation framework are supported at the exported-log level, although SME review is still needed for expert appraisal of the design.
+For the first research question, the analysis export supports the conclusion that the implemented architecture can produce privacy-preserving aggregate records for the target study workflow. The exported files contain study codes, platform labels, timing metrics, risk scores, reliability codes, and prompt actions without raw captions, comments, screenshots, or directly identifying content. The system also produced fallback flags for 345 sentiment-unreliable sessions and preserved analyzable NSD values for 1,706 sessions. Therefore, the architecture and estimation framework are supported at the exported-log level, although SME review is still needed for expert appraisal of the design.
 
-For the second research question, the available log metrics do not show a reliable short-term between-group behavioral difference. The intervention group's mean daily raw elapsed session duration increased by 0.59 minutes while the control group's decreased by 0.38 minutes, but the Holm-adjusted p-value was 0.200 and the effect-size confidence interval crossed zero. Dwell time and NSD differences were smaller. However, the Doomscrolling Scale mean score decreased more in the intervention group than in the control group, with an adjusted p-value of 0.005. Thus, the simulated data support a favorable self-report change but not a corresponding reliable reduction in logged behavior within the two-week pilot window.
+For the second research question, the available log metrics do not show a reliable short-term between-group behavioral difference. The intervention group's mean daily raw elapsed session duration increased by 0.59 minutes while the control group's decreased by 0.38 minutes, but the Holm-adjusted p-value was 0.200 and the effect-size confidence interval crossed zero. Dwell time and NSD differences were smaller. However, the Doomscrolling Scale mean score decreased more in the intervention group than in the control group, with an adjusted p-value of 0.005. Thus, the available data support a favorable self-report change but not a corresponding reliable reduction in logged behavior within the two-week pilot window.
 
-For the third research question, the coverage requirement for DSI computation was met because all 50 participants had at least three sentiment-reliable Week 1 sessions. The composite Week 1 DSI correlated strongly with baseline Doomscrolling Scale scores ($r=0.989$, $p < 0.001$), and it showed a stronger association than session duration, dwell time, or NSD alone. This supports preliminary estimator plausibility in the simulated dataset, but it remains a convergent association finding rather than diagnostic validation.
+For the third research question, the coverage requirement for DSI computation was met because all 50 participants had at least three sentiment-reliable Week 1 sessions. The composite Week 1 DSI correlated strongly with baseline Doomscrolling Scale scores ($r=0.989$, $p < 0.001$), and it showed a stronger association than session duration, dwell time, or NSD alone. This supports preliminary estimator plausibility in the available dataset, but it remains a convergent association finding rather than diagnostic validation.
 
 For the fourth research question, users evaluated the system favorably at the mean-score level. Functional Suitability (3.97), Performance Efficiency (3.83), Reliability (3.91), SUS usability (76.35), Perceived Usefulness (4.01), and Perceived Ease of Use (4.06) all met the study-defined targets. Open-ended feedback identified prompt timing, permission/onboarding clarity, and dashboard usefulness as the most frequent user concerns. Because most Cronbach's alpha values were below 0.70, the favorable means should be interpreted with caution and supported by future instrument refinement.
 

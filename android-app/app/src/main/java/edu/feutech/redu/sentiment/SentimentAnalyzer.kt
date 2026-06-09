@@ -315,8 +315,40 @@ class VADERCompatibleAnalyzer internal constructor(
     private fun tokenize(text: String): List<String> =
         Regex("[\\p{L}\\p{N}_']+(?:-[\\p{L}\\p{N}_']+)*|[\\p{So}\\p{Sk}\\p{Sm}\\uFE0F\\u200D]+|[:;=8B][-~]?[)D(P/\\\\|oO3D]+")
             .findAll(text)
-            .map { it.value }
+            .flatMap { match ->
+                val value = match.value
+                if (value.any { it.isLetterOrDigit() } || value.firstOrNull()?.let { it in charArrayOf(':', ';', '=', '8', 'B') } == true) {
+                    sequenceOf(value)
+                } else {
+                    value.splitSymbolRun().asSequence()
+                }
+            }
             .toList()
+
+    private fun String.splitSymbolRun(): List<String> {
+        if (isBlank()) return emptyList()
+        val tokens = mutableListOf<String>()
+        var current = StringBuilder()
+        var previousWasJoiner = false
+        var pendingVariation = false
+        for (codePoint in codePoints().toArray()) {
+            val chars = String(Character.toChars(codePoint))
+            val isVariation = codePoint == 0xFE0F
+            val isJoiner = codePoint == 0x200D
+            when {
+                current.isEmpty() -> current.append(chars)
+                isVariation || previousWasJoiner || pendingVariation || isJoiner -> current.append(chars)
+                else -> {
+                    tokens += current.toString()
+                    current = StringBuilder(chars)
+                }
+            }
+            previousWasJoiner = isJoiner
+            pendingVariation = isVariation
+        }
+        if (current.isNotEmpty()) tokens += current.toString()
+        return tokens
+    }
 
     private fun String.withoutUserMentions(): String =
         replace(USER_MENTION_REGEX, " ")
