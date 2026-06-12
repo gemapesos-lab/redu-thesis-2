@@ -285,14 +285,34 @@ Full fuzzy engine:
 - All other rules are Warning.
 - Main defense logic: duration and NSD are the main risk axes; dwell is an intensifier, not a standalone doomscrolling trigger.
 
-Representative full rules:
+Complete full 27-rule base:
 
 | Rule | Dwell | NSD | Duration | Risk |
 |---:|---|---|---|---|
 | 1 | Low | Low | Low | Safe |
+| 2 | Low | Low | Medium | Safe |
+| 3 | Low | Low | High | Warning |
+| 4 | Low | Medium | Low | Safe |
+| 5 | Low | Medium | Medium | Warning |
+| 6 | Low | Medium | High | Warning |
+| 7 | Low | High | Low | Warning |
+| 8 | Low | High | Medium | Warning |
 | 9 | Low | High | High | Critical |
+| 10 | Medium | Low | Low | Safe |
+| 11 | Medium | Low | Medium | Warning |
+| 12 | Medium | Low | High | Warning |
+| 13 | Medium | Medium | Low | Warning |
 | 14 | Medium | Medium | Medium | Warning |
+| 15 | Medium | Medium | High | Critical |
+| 16 | Medium | High | Low | Warning |
+| 17 | Medium | High | Medium | Critical |
+| 18 | Medium | High | High | Critical |
 | 19 | High | Low | Low | Safe |
+| 20 | High | Low | Medium | Warning |
+| 21 | High | Low | High | Warning |
+| 22 | High | Medium | Low | Warning |
+| 23 | High | Medium | Medium | Critical |
+| 24 | High | Medium | High | Critical |
 | 25 | High | High | Low | Warning |
 | 26 | High | High | Medium | Critical |
 | 27 | High | High | High | Critical |
