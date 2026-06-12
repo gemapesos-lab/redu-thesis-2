@@ -211,6 +211,10 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobje
     jsize len = env->GetArrayLength(image_bytes);
     LOGI("inferenceImage input bytes=%d elapsed_ms=%lld", len, elapsed_ms(start));
     jbyte* bytes = env->GetByteArrayElements(image_bytes, 0);
+    if (bytes == nullptr) {
+        LOGE("GetByteArrayElements returned null elapsed_ms=%lld", elapsed_ms(start));
+        return env->NewStringUTF("UNRESOLVED");
+    }
 
     LOGI("inferenceImage mtmd bitmap decode start elapsed_ms=%lld", elapsed_ms(start));
     mtmd::bitmap bitmap(mtmd_helper_bitmap_init_from_buf(

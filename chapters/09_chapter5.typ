@@ -1,70 +1,35 @@
 // ==========================================
 // CHAPTER 5: CONCLUSION
-// Completed from REDU analysis export
 // ==========================================
-
-#import "utils.typ": table_align, thesis_table
 
 = CONCLUSION
 
-This chapter presents the summary of findings and conclusions of the study based on the analysis export examined in Chapter 4. The conclusions are bounded by the available data. The export supports conclusions about aggregate logging, fallback flagging, prompt-event generation, pre/post self-reported doomscrolling, baseline convergent association, ISO/IEC 25010 user ratings, SUS usability, TAM acceptance, and coded user feedback. SME ratings and SME comments remain pending because the expert files are present but blank.
+This chapter presents the summary of findings and conclusions based on the completed data analysis in Chapter 4. The conclusions are written within the study's actual scope: a pilot-scale software-engineering evaluation of a privacy-preserving Android system for heuristic doomscrolling-related risk estimation.
 
 == Summary of Findings
 
-The study was guided by five research questions. The first question focused on the design and implementation of a privacy-preserving architecture and estimation framework. The second question examined short-term Week 1-to-Week 2 changes in logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group. The third question examined the baseline convergent association between the fixed-prior Week 1 DSI and participants' self-reported doomscrolling scores. The fourth question evaluated the system from the users' perspective using ISO/IEC 25010 and TAM. The fifth question obtained subject matter expert evaluation of the technical design, privacy safeguards, heuristic logic, and intervention structure.
+For the first research question, the study found that the implemented Android system could support privacy-preserving local risk estimation using observable behavioral and sentiment-related proxies. The final logs contained 10,134 sessions across TikTok, Facebook Reels, and Instagram Reels, with 8,817 sessions classified as sentiment-reliable and 1,317 sessions classified as sentiment-unreliable. The system implemented local processing, study-code-based export, text-first VADER-compatible sentiment analysis, Filipino/Taglish MVL support, a no-text VLM fallback, fuzzy inference, and conservative fallback handling. The MVL concordance data also showed exact agreement between the expert ratings and deployed runtime valences for all 57 runtime lexicon entries.
 
-#thesis_table(
-  caption: [Summary of Findings],
-  columns: (0.55fr, 1.6fr, 1.45fr, 1.2fr),
-  cell_align: table_align((center, left, left, left)),
-  header: (
-    [*RQ*],
-    [*Research Question Focus*],
-    [*Finding from Chapter 4*],
-    [*Conclusion Direction*],
-  ),
-  body: (
-    [1],
-    [Architecture and estimation framework],
-    [The export contained 2,051 aggregate sessions, 1,706 sentiment-reliable sessions, 345 fallback cases, and 576 intervention-only prompt displays.],
-    [Objective supported by logs],
+For the second research question, the intervention group showed larger Week 1-to-Week 2 reductions than the control group across the four primary outcomes. Session duration, video dwell time, NSD, and the self-reported Doomscrolling Scale all favored the intervention group after the final assumption-selected tests and Holm-Bonferroni correction. Supplementary results for sessions per day and DSI followed the same direction, and the within-intervention paired comparisons showed reductions from Week 1 to Week 2.
 
-    [2],
-    [Week 1 to Week 2 behavioral and self-report changes],
-    [Log metrics showed no reliable between-group reduction, but the Doomscrolling Scale decreased more in the intervention group than in the control group.],
-    [Mixed; self-report favorable],
+For the third research question, Week 1 DSI showed a strong positive baseline association with the Week 1 Doomscrolling Scale among the 48 eligible participants. The composite DSI had Spearman's $rho = 0.76$, supporting convergent plausibility, while Week 1 mean daily session duration had the highest rank association with self-report at $rho = 0.92$. The finding supports convergence between DSI and self-reported doomscrolling rather than superiority of the composite over its individual components.
 
-    [3],
-    [Baseline DSI and Doomscrolling Scale association],
-    [All 50 participants met the Week 1 reliable-session coverage rule, and composite DSI correlated strongly with baseline DSS.],
-    [Preliminary estimator plausibility],
+For the fourth research question, the user evaluation met all pre-set software-acceptability targets. Functional Suitability, Performance Efficiency, Reliability, SUS Usability, TAM Perceived Usefulness, and TAM Perceived Ease of Use all reached the favorable thresholds. The SUS composite was 80.95, above the study target of 70. Cronbach's alpha values ranged from 0.717 to 0.957, meeting the $alpha >= 0.70$ internal-consistency benchmark. Open-ended feedback showed that users valued the dashboard, break reminders, privacy approach, and self-monitoring support, while also identifying needs around prompt timing, onboarding, score clarity, platform monitoring, breathing-break length, export transparency, and battery/performance feedback.
 
-    [4],
-    [User ISO/IEC 25010 and TAM evaluation],
-    [ISO/IEC 25010, SUS, and TAM means met targets, while alpha coefficients were mostly below 0.70.],
-    [User acceptance favorable with reliability caution],
-
-    [5],
-    [SME evaluation],
-    [SME files were present but rating and comment fields were blank.],
-    [Expert appraisal pending],
-  ),
-)
-
-The strongest findings are that REDU produced a complete aggregate logging workflow, met the user-evaluation mean targets, and showed a strong baseline association between composite DSI and self-reported doomscrolling. The short-term behavioral logs did not show reliable between-group improvement, so the self-report improvement should be interpreted cautiously rather than as definitive behavioral effectiveness.
+For the fifth research question, both subject matter experts rated the system favorably. The mobile/software expert gave an overall mean of 5.00, while the digital well-being/behavioral psychology expert gave an overall mean of 4.33. Their comments supported the non-clinical framing, privacy-conscious design, and general intervention structure, while recommending clearer fallback criteria, clearer stored-data wording, softer risk terminology, and more configurable intervention behavior.
 
 == Conclusions Based on Research Objectives and Questions
 
-For the first research question, the analysis export supports the conclusion that the implemented architecture can produce privacy-preserving aggregate records for the target study workflow. The exported files contain study codes, platform labels, timing metrics, risk scores, reliability codes, and prompt actions without raw captions, comments, screenshots, or directly identifying content. The system also produced fallback flags for 345 sentiment-unreliable sessions and preserved analyzable NSD values for 1,706 sessions. Therefore, the architecture and estimation framework are supported at the exported-log level, although SME review is still needed for expert appraisal of the design.
+Based on the first research objective, the study concludes that the proposed system architecture was feasible for a bounded Android-based pilot deployment. The system was able to combine local monitoring, sentiment-aware processing, fallback handling, fuzzy inference, and adaptive prompts without requiring raw content retention in the research dataset. This supports the technical feasibility of the privacy-preserving design.
 
-For the second research question, the available log metrics do not show a reliable short-term between-group behavioral difference. The intervention group's mean daily raw elapsed session duration increased by 0.59 minutes while the control group's decreased by 0.38 minutes, but the Holm-adjusted p-value was 0.200 and the effect-size confidence interval crossed zero. Dwell time and NSD differences were smaller. However, the Doomscrolling Scale mean score decreased more in the intervention group than in the control group, with an adjusted p-value of 0.005. Thus, the available data support a favorable self-report change but not a corresponding reliable reduction in logged behavior within the two-week pilot window.
+Based on the second research objective, the study concludes that the intervention condition was associated with favorable observed short-term differences in logged usage metrics and self-reported doomscrolling scores. These results support the promise of adaptive prompts as a short-term behavioral support mechanism under the study conditions; establishing long-term efficacy requires a longer deployment and a larger sample.
 
-For the third research question, the coverage requirement for DSI computation was met because all 50 participants had at least three sentiment-reliable Week 1 sessions. The composite Week 1 DSI correlated strongly with baseline Doomscrolling Scale scores ($r=0.989$, $p < 0.001$), and it showed a stronger association than session duration, dwell time, or NSD alone. This supports preliminary estimator plausibility in the available dataset, but it remains a convergent association finding rather than diagnostic validation.
+Based on the third research objective, the study concludes that the DSI has baseline convergent plausibility because it correlated strongly with the Doomscrolling Scale. Because session duration alone showed a stronger rank association in this sample, the DSI is best characterized as a transparent composite indicator that converges with self-report and still requires further validation and calibration.
 
-For the fourth research question, users evaluated the system favorably at the mean-score level. Functional Suitability (3.97), Performance Efficiency (3.83), Reliability (3.91), SUS usability (76.35), Perceived Usefulness (4.01), and Perceived Ease of Use (4.06) all met the study-defined targets. Open-ended feedback identified prompt timing, permission/onboarding clarity, and dashboard usefulness as the most frequent user concerns. Because most Cronbach's alpha values were below 0.70, the favorable means should be interpreted with caution and supported by future instrument refinement.
+Based on the fourth research objective, the study concludes that users evaluated the system favorably in terms of selected ISO/IEC 25010 characteristics, usability, and technology acceptance. The reliability coefficients also indicate acceptable to excellent internal consistency for the evaluation instruments in this sample. The qualitative feedback shows that the system was usable enough for pilot evaluation, but several parts of the user experience need refinement before broader deployment.
 
-For the fifth research question, no conclusion can be made about subject matter expert evaluation from the current export. Expert ratings and comments are still required to judge the technical soundness of the risk-estimation framework, input ranges, fuzzy rule base, privacy safeguards, and intervention structure.
+Based on the fifth research objective, the study concludes that the system received favorable expert plausibility appraisal from the available SME reviewers. The expert results support the appropriateness of the privacy framing, heuristic logic, and intervention structure for a non-clinical prototype. However, the two-expert panel and the absence of a dedicated fuzzy-systems or data-science reviewer limit the strength of the expert-validation claim.
 
-The overall conclusion is that REDU is supported as a privacy-preserving, aggregate-log-producing prototype with visible risk scoring, fallback handling, prompt-event recording, preliminary self-report convergence, and favorable user-evaluation means. It should not yet be described as behaviorally effective in logged use or expert-approved. The study remains a pilot-scale software evaluation rather than a clinical or diagnostic validation study.
+Overall, the thesis concludes that the Heuristic Risk-State Estimation System is a defensible pilot prototype for privacy-preserving doomscrolling-related risk estimation and digital mindfulness prompting on Android short-form-video platforms. Its strongest contribution is the integration of local behavioral logging, text-first sentiment analysis, no-text fallback handling, fuzzy risk estimation, and user-facing prompts in one bounded software artifact. Its strongest limitation is that the evidence remains exploratory: the sample was purposive-convenience, the study lasted two weeks, some sentiment-dependent outcomes excluded unreliable sessions, and expert review was limited to two reviewers.
 
 #pagebreak()

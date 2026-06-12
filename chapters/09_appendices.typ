@@ -10,7 +10,7 @@
 
 #v(2em)
 
-#align(center)[*APPENDIX A*]
+#heading(level: 1, numbering: none)[APPENDIX A]
 #v(1em)
 #align(center)[*Complete 27-Rule Fuzzy Inference Base*]
 
@@ -58,7 +58,7 @@ converge under the fixed study priors.
 )
 
 #continued_thesis_table(
-  caption: [Table 6. Full 27-Rule Fuzzy Inference Base (continued)],
+  caption: [Table 19. Full 27-Rule Fuzzy Inference Base (continued)],
   columns: (0.65fr, 1.1fr, 1.1fr, 1.1fr, 0.95fr),
   cell_align: table_align((center, center, center, center, center)),
   header: (
@@ -77,7 +77,7 @@ converge under the fixed study priors.
     [22], [High], [Medium], [Low], [Warning],
     [23], [High], [Medium], [Medium], [Critical],
     [24], [High], [Medium], [High], [Critical],
-    [25], [High], [High], [Low], [Critical],
+    [25], [High], [High], [Low], [Warning],
     [26], [High], [High], [Medium], [Critical],
     [27], [High], [High], [High], [Critical],
   ),
@@ -104,23 +104,25 @@ reinforced by another non-low axis; High Dwell Time alone is insufficient for
 concerning but not yet strongly convergent.
 
 Read in groups, the table has three layers. Rules 1, 2, 4, 10, and 19 remain
-*Safe* because at least two axes stay low. Rules 3, 5-8, 11-14, 16, and 20-22
-remain *Warning* because they show mixed evidence without strong convergence
-between duration and negativity. Rules 9, 15, 17-18, and 23-27 become
-*Critical* because prolonged use and negative exposure rise together, or because
-High NSD is reinforced by High Dwell Time even before the session becomes long.
+*Safe* because at least two axes stay low. Rules 3, 5-8, 11-14, 16, 20-22,
+and 25 remain *Warning* because they show mixed evidence without strong
+convergence between duration and negativity. Rules 9, 15, 17-18, 23-24, and
+26-27 become *Critical* because prolonged use and negative exposure rise
+together, or because High NSD is reinforced by High Dwell Time in sessions
+that are no longer brief.
 
 Within that Critical layer, the strongest challenge cases are still explainable.
 Rule 15 becomes *Critical* because a High-duration session with both other axes
 already at Medium no longer reflects time alone. Rule 23 becomes *Critical*
 because High Dwell Time, Medium NSD, and Medium Session Duration already show
-three non-low signals in the same direction. Rule 25 also remains *Critical*
-because a short session can still contain concentrated negative immersion when
-the viewed items are mostly negative and each item holds attention for longer.
+three non-low signals in the same direction. Rule 25 is retained as *Warning*
+after psychology expert review because high negative exposure and high dwell in
+a short session can be concerning, but the brief duration is not sufficient for
+the strongest intervention level.
 
 #pagebreak()
 
-#align(center)[*APPENDIX B*]
+#heading(level: 1, numbering: none)[APPENDIX B]
 #v(1em)
 #align(center)[*Fallback Rules and Trigger Thresholds*]
 
@@ -128,7 +130,7 @@ the viewed items are mostly negative and each item holds attention for longer.
 
 Unless otherwise noted, the following thresholds are fixed study priors selected for reproducibility and conservative intervention behavior. They are design parameters, not empirically validated clinical or population cutoffs. Because the fallback engine retains two inputs with three linguistic levels each, exhaustive coverage requires $3^2 = 9$ rules.
 
-In the current field-tested artifact, the two-input fallback rule base below is reserved for *Sentiment-Unreliable* sessions, specifically sessions where negativity cannot be resolved reliably after the available text or no-text path is attempted. This includes sessions whose extracted text is at least half unresolved vocabulary (study-defined unreliability trigger: session OOV ratio >= 50%) and sessions where the no-text VLM path cannot produce a stable item label because `AccessibilityService.takeScreenshot` is unavailable, screenshot capture fails, or VLM inference fails. The `>= 50%` value is not treated as a validated linguistic cutoff. It is a mathematically derived majority-representativeness screen: once unresolved tokens reach half of the valid tokens in a session, the recognized tokens no longer form the majority of the lexical content available to the text path. This is therefore used as a practical safeguard for noisy code-mixed text with spelling variation, lexical borrowing, and other textual variation rather than as a claimed language norm (Mohammed & Prasad, 2023; Perera & Caldera, 2024; Nazir et al., 2026; Khan et al., 2025). In those cases, the system degrades to a two-input fallback rule base (Video Dwell Time + Session Duration):
+In the implemented Android system, the two-input fallback rule base below is reserved for *Sentiment-Unreliable* sessions, specifically sessions where negativity cannot be resolved reliably after the available text or no-text path is attempted. This includes sessions whose extracted text is at least half unresolved vocabulary (study-defined unreliability trigger: session OOV ratio >= 50%) and sessions where the no-text VLM path cannot produce a stable item label because `AccessibilityService.takeScreenshot` is unavailable, screenshot capture fails, or VLM inference fails. The `>= 50%` value is not treated as a validated linguistic cutoff. It is a mathematically derived majority-representativeness screen: once unresolved tokens reach half of the valid tokens in a session, the recognized tokens no longer form the majority of the lexical content available to the text path. This is therefore used as a practical safeguard for noisy code-mixed text with spelling variation, lexical borrowing, and other textual variation rather than as a claimed language norm (Mohammed & Prasad, 2023; Perera & Caldera, 2024; Nazir et al., 2026; Khan et al., 2025). In those cases, the system degrades to a two-input fallback rule base (Video Dwell Time + Session Duration):
 
 #thesis_table(
   caption: [Fallback 9-Rule Base (Sentiment-Unreliable Sessions)],
@@ -152,7 +154,7 @@ In the current field-tested artifact, the two-input fallback rule base below is 
 )
 
 #continued_thesis_table(
-  caption: [Table 7. Fallback 9-Rule Base (Sentiment-Unreliable Sessions) (continued)],
+  caption: [Table 20. Fallback 9-Rule Base (Sentiment-Unreliable Sessions) (continued)],
   columns: (0.75fr, 1.2fr, 1.2fr, 1fr),
   cell_align: table_align((center, center, center, center)),
   header: (
@@ -177,19 +179,19 @@ RiskScore cutoffs used across both full and fallback modes (equal-width reportin
 Prompt mapping (study-specified defaults derived from the reporting bands):
 - Level 1: RiskScore 33.33 to 49.99
 - Level 2: RiskScore 50.00 to 66.66
-- Level 3: RiskScore 66.67 to 100 (disabled in fallback mode)
+- Level 3 (Pause and Reset / Short Breathing Break): RiskScore 66.67 to 100 (disabled in fallback mode)
 - The Warning band is split at its midpoint 50.00 so lower- and upper-Warning states receive different prompt intensities without introducing extra off-band cutoffs; Level 3 is reserved for the Critical band.
-- Cooldown: fixed 15-minute prototype cooldown between prompts, intentionally reusing the same literature-bounded 15-minute live gate as the minimum re-eligibility interval so the system does not introduce a second unsupported minute constant; a repeat prompt therefore requires another prolonged interval of continued use. Recent JITAI work supports managing timing, receptivity, and dose, but not this exact interval (Teepe et al., 2021; Wang et al., 2023; Fiedler et al., 2024; Hsu et al., 2025; van Genugten et al., 2025)
+- Cooldown: fixed 15-minute prototype cooldown between prompts, intentionally reusing the same literature-bounded 15-minute live gate as the minimum re-eligibility interval so the system does not introduce a second unsupported minute constant; a repeat prompt therefore requires another prolonged interval of continued use. Recent JITAI work supports managing timing, receptivity, and dose (Teepe et al., 2021; Wang et al., 2023; Fiedler et al., 2024; Hsu et al., 2025; van Genugten et al., 2025)
 
 #pagebreak()
 
-#align(center)[*APPENDIX C*]
+#heading(level: 1, numbering: none)[APPENDIX C]
 #v(1em)
 #align(center)[*Core Algorithmic Logic and Reproducibility Specifications*]
 
 #v(1em)
 
-The field-tested artifact separates fixed analytic priors from Week 2 live-prompt personalization. Fixed global memberships are retained for week-level DSI computation across both study weeks so baseline and intervention summaries remain comparable. A separate live prompt engine is then allowed to replace only the Session Duration and NSD memberships after Week 1; Video Dwell Time remains fixed.
+The Android implementation separates fixed analytic priors from Week 2 live-prompt personalization. Fixed global memberships are retained for week-level DSI computation across both study weeks so baseline and intervention summaries remain comparable. A separate live prompt engine is then allowed to replace only the Session Duration and NSD memberships after Week 1; Video Dwell Time remains fixed.
 
 *Fixed Analytic Priors (used for week-level DSI across both study weeks and as the Week 1 live default):*
 Where $ "tri"(a, b, c) $ is the standard triangular membership function, the study uses the following fixed memberships:
@@ -221,7 +223,7 @@ $ "Low"_(X,"prompt",u) = "tri"(0, 0, Q_(50,u,X)) $
 $ "Medium"_(X,"prompt",u) = "tri"(Q_(25,u,X), Q_(50,u,X), Q_(75,u,X)) $
 $ "High"_(X,"prompt",u) = "tri"(Q_(50,u,X), Q_(75,u,X), Q_(95,u,X)) $
 
-These quantiles are not treated as validated behavioral cutoffs. They are nonparametric order-statistic anchors chosen to map a three-term Low/Medium/High partition onto each participant's Week 1 distribution with the smallest transparent summary set: $Q_(25)/Q_(50)/Q_(75)$ summarize the interquartile core, while $Q_(95)$ caps the High set without letting one raw maximum set the upper endpoint. Video Dwell Time remains fixed to the global priors above. If $n_u < 10$ sentiment-reliable Week 1 sessions, the default priors are retained for that participant rather than locking personalized bounds. This 10-session minimum remains a numerical sufficiency safeguard rather than a validated population cutoff: below $n_u = 10$, the empirical $Q_(95)$ is governed too heavily by the single largest observation or a nearly maximal order statistic, so the personalized High endpoint becomes too sensitive to one extreme session. Recent personalized intervention-criteria work supports deriving live criteria from a first-week baseline, but recent JITAI reviews also note that empirical decision rules and points remain underdeveloped, which is why the fielded artifact prefers participant-specific Week 2 criteria only when enough baseline data exist (Ikegaya et al., 2025; Hsu et al., 2025; van Genugten et al., 2025; Elmer et al., 2025). Because fallback prompting uses the same live prompt engine, personalized Session Duration bounds also carry into fallback mode when personalization is available; only the rule base and prompt cap differ.
+These quantiles are not treated as validated behavioral cutoffs. They are nonparametric order-statistic anchors chosen to map a three-term Low/Medium/High partition onto each participant's Week 1 distribution with the smallest transparent summary set: $Q_(25)/Q_(50)/Q_(75)$ summarize the interquartile core, while $Q_(95)$ caps the High set without letting one raw maximum set the upper endpoint. Video Dwell Time remains fixed to the global priors above. If $n_u < 10$ sentiment-reliable Week 1 sessions, the default priors are retained for that participant rather than locking personalized bounds. This 10-session minimum remains a numerical sufficiency safeguard rather than a validated population cutoff: below $n_u = 10$, the empirical $Q_(95)$ is governed too heavily by the single largest observation or a nearly maximal order statistic, so the personalized High endpoint becomes too sensitive to one extreme session. Recent personalized intervention-criteria work supports deriving live criteria from a first-week baseline, but recent JITAI reviews also note that empirical decision rules and points remain underdeveloped, which is why the implemented prompt engine uses participant-specific Week 2 criteria only when enough baseline data exist (Ikegaya et al., 2025; Hsu et al., 2025; van Genugten et al., 2025; Elmer et al., 2025). Because fallback prompting uses the same live prompt engine, personalized Session Duration bounds also carry into fallback mode when personalization is available; only the rule base and prompt cap differ.
 
 *Risk Score Category Cutoffs (0-100 scale):*
 - Safe: $0 <= "RiskScore" < 33.33$
@@ -239,15 +241,93 @@ These fixed centers are the band midpoints of the equal-width thirds above, so t
 - No intervention when RiskScore < 33.33
 - Level 1 (Awareness Notification): $33.33 <= "RiskScore" < 50$
 - Level 2 (Pause Prompt): $50 <= "RiskScore" < 66.67$
-- Level 3 (Breathing Exercise): $66.67 <= "RiskScore" <= 100$
+- Level 3 (Pause and Reset / Short Breathing Break): $66.67 <= "RiskScore" <= 100$
 - The Warning band is split at its midpoint 50.00 so lower- and upper-Warning states receive different prompt intensities without introducing extra off-band cutoffs; Level 3 is reserved for the Critical band.
-- Fixed cooldown: minimum 15-minute prototype interval between any two prompts, intentionally reusing the same literature-bounded 15-minute live gate as the minimum re-eligibility interval so the system does not introduce a second unsupported minute constant; a repeat prompt therefore requires another prolonged interval of continued use. Recent JITAI work supports managing timing, receptivity, and dose, but not this exact interval (Teepe et al., 2021; Wang et al., 2023; Fiedler et al., 2024; Hsu et al., 2025; van Genugten et al., 2025)
+- Fixed cooldown: minimum 15-minute prototype interval between any two prompts, intentionally reusing the same literature-bounded 15-minute live gate as the minimum re-eligibility interval so the system does not introduce a second unsupported minute constant; a repeat prompt therefore requires another prolonged interval of continued use. Recent JITAI work supports managing timing, receptivity, and dose (Teepe et al., 2021; Wang et al., 2023; Fiedler et al., 2024; Hsu et al., 2025; van Genugten et al., 2025)
 
 When the 2-input behavioral fallback mode is active (Sentiment-Unreliable), Level 3 is disabled by safety lock and the maximum permitted prompt is Level 2.
 
 #pagebreak()
 
-#align(center)[*APPENDIX D*]
+#heading(level: 1, numbering: none)[APPENDIX D]
+#v(1em)
+#align(center)[*Filipino MVL and Neutral OOV-Reduction Inventory*]
+
+#v(1em)
+
+The current Android implementation extends the VADER-compatible analyzer with the Filipino/Taglish Minimum Viable Lexicon (MVL) and neutral Filipino stop-word entries documented in the Filipino MVL review instrument. The Filipino MVL review was completed by one Filipino language expert and cross-checked against the deployed runtime lexicon in the workbook's `mvl_concordance` sheet. The review supports the deployed runtime inventory as a single-expert concordance check rather than as inter-rater validation. All 57 runtime entries (56 affective entries and one neutral candidate entry) matched the deployed valence values within the review window, and the neutral OOV-reduction terms were confirmed as sentiment-neutral. The neutral entries are assigned 0.0 valence only to reduce false OOV inflation from high-frequency Filipino function words; they do not add positive or negative sentiment to the compound score.
+
+#thesis_table(
+  caption: [Filipino/Taglish MVL Runtime Terms],
+  columns: (1.05fr, 0.7fr, 3.25fr),
+  cell_align: table_align((left, center, left)),
+  header: (
+    [*Runtime group*],
+    [*Valence*],
+    [*Terms included in the runtime lexicon*],
+  ),
+  body: (
+    [Most negative],
+    [-4.0],
+    [`bobo`, `gago`, `kupal`, `poot`, `tanga`],
+
+    [Strongly negative],
+    [-3.0],
+    [`bwisit`, `dusa`, `galit`, `lungkot`, `masama`, `nakagagalit`, `nakakagalit`, `nakalulungkot`, `nakakalungkot`, `pangit`, `pighati`, `sakit`],
+
+    [Moderately negative],
+    [-2.0],
+    [`ayaw`, `hirap`, `inis`, `iyak`, `kasalanan`, `luha`, `mahirap`, `nakaiinis`, `nakakainis`, `nakatatakot`, `nakakatakot`, `selos`, `sisi`, `takot`, `talo`],
+
+    [Neutral candidate],
+    [0.0],
+    [`buhay`],
+
+    [Moderately positive],
+    [2.0],
+    [`aliw`, `ayos`, `gusto`, `ngiti`, `payapa`, `tawa`],
+
+    [Strongly positive],
+    [3.0],
+    [`bilib`, `galing`, `kilig`, `ligaya`, `lodi`, `mabait`, `maganda`, `mahal`, `masaya`, `paborito`, `pag-asa`, `petmalu`, `salamat`, `sigla`, `swerte`, `tiwala`, `tuwa`, `wagi`],
+  ),
+)
+
+The runtime list contains the Filipino/Taglish candidate terms used by the app and preserves common/formal spelling counterparts for four `naka-` roots. These counterparts are mapped to the same valence as their corresponding common form so that spelling variation does not unnecessarily increase the OOV ratio.
+
+#pagebreak()
+
+#thesis_table(
+  caption: [Neutral Filipino OOV-Reduction Terms],
+  columns: (1.3fr, 0.65fr, 3fr),
+  cell_align: table_align((left, center, left)),
+  header: (
+    [*Neutral term group*],
+    [*Valence*],
+    [*Terms counted as recognized but sentiment-neutral*],
+  ),
+  body: (
+    [Markers, linkers, and particles],
+    [0.0],
+    [`ang`, `ng`, `sa`, `mga`, `na`, `ay`, `at`, `pa`, `si`, `ni`, `kay`, `lang`, `naman`, `ba`, `nga`, `din`, `rin`, `raw`, `daw`, `lamang`],
+
+    [Demonstratives and locatives],
+    [0.0],
+    [`ito`, `iyon`, `doon`, `dito`, `nito`, `niyan`],
+
+    [Pronouns and possessives],
+    [0.0],
+    [`nila`, `namin`, `ninyo`, `ako`, `ikaw`, `siya`, `kami`, `tayo`, `kayo`, `sila`, `ko`, `mo`, `niya`, `akin`, `iyo`, `kanila`, `kanya`, `ating`, `aming`, `inyong`],
+
+    [Connectors and discourse terms],
+    [0.0],
+    [`kapag`, `dahil`, `pero`, `kasi`, `upang`, `habang`, `bago`, `kaya`, `sana`, `kung`, `para`, `kapwa`],
+  ),
+)
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX E]
 #v(1em)
 #align(center)[*Short-Form Doomscrolling Scale Administration Sheet*]
 

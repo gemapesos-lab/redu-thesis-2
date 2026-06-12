@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -210,6 +211,70 @@ class ReduDatabaseMigrationTest {
             assertEquals(0, cursor.getInt(3))
             assertEquals(0, cursor.getInt(4))
             assertEquals(0, cursor.getInt(5))
+        }
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migration5To6AddsPromptTriggerReasonDefaultNoneAndPreservesPromptEvents() {
+        helper.createDatabase(TEST_DB, 5).apply {
+            execSQL(
+                """
+                INSERT INTO prompt_events (
+                    studyCode, studyGroup, sessionId, timestampMillis,
+                    riskScore, riskLevel, promptLevel, action, cooldownActive
+                ) VALUES (
+                    'P01', 'INTERVENTION', NULL, 123,
+                    50.0, 'WARNING', 'L2_PAUSE', 'SHOWN', 0
+                )
+                """.trimIndent(),
+            )
+            close()
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 6, true, ReduDatabase.MIGRATION_5_6)
+
+        db.query("SELECT studyCode, triggerReason FROM prompt_events").use { cursor ->
+            cursor.moveToFirst()
+            assertEquals("P01", cursor.getString(0))
+            assertEquals("NONE", cursor.getString(1))
+        }
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migration6To7AddsNullableStudyPeriodFieldsAndPreservesSettings() {
+        helper.createDatabase(TEST_DB, 6).apply {
+            execSQL(
+                """
+                INSERT INTO app_settings (
+                    id, studyCode, studyGroup, promptsEnabled, debugOverlayEnabled,
+                    trackTikTokEnabled, trackInstagramEnabled, trackFacebookEnabled,
+                    createdAtMillis, updatedAtMillis
+                ) VALUES (
+                    1, 'P01', 'INTERVENTION', 1, 1,
+                    1, 0, 1,
+                    10, 20
+                )
+                """.trimIndent(),
+            )
+            close()
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 7, true, ReduDatabase.MIGRATION_6_7)
+
+        db.query(
+            """
+            SELECT studyCode, week1StartMillis, week1EndMillis, week2StartMillis, week2EndMillis
+            FROM app_settings WHERE id = 1
+            """.trimIndent(),
+        ).use { cursor ->
+            cursor.moveToFirst()
+            assertEquals("P01", cursor.getString(0))
+            assertTrue(cursor.isNull(1))
+            assertTrue(cursor.isNull(2))
+            assertTrue(cursor.isNull(3))
+            assertTrue(cursor.isNull(4))
         }
     }
 

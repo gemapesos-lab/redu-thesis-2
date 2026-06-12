@@ -8,7 +8,7 @@
 
 Doomscrolling refers to the compulsive consumption of distressing or negative online content despite its adverse emotional and behavioral effects #cite(<sharma-2022>). Mainstream device- and platform-level digital well-being tools still emphasize screen-time summaries, app timers, or break reminders instead of session-level interpretation of fast-changing feed content #cite(<apple-screen-time-2025>) #cite(<google-digital-wellbeing-2024>) #cite(<tiktok-wellbeing-2024>) #cite(<mosseri-2021>) #cite(<rahmillah-2023>). This thesis addresses that gap through the design, development, and evaluation of the *Heuristic Risk-State Estimation System* — a privacy-preserving Android app that performs on-device risk estimation using behavioral signals, a text-first sentiment path, and an on-device Vision-Language Model (VLM) fallback for no-text items. Here, "detection" refers to computational risk estimation from observable proxies, not diagnostic classification.
 
-The system combines threshold-based heuristics, interpretable fuzzy rule-based inference #cite(<vashishtha-2023>) #cite(<pickering-2025>), a VADER-compatible text-first sentiment pipeline for low-resource code-mixed text #cite(<hutto-2014>) #cite(<mohammed-2023>) #cite(<nazir-2026>), and an on-device no-text VLM fallback implemented with Moondream 0.5B #cite(<das-2023>) #cite(<sharshar-2025>). All processing occurs locally on the user's device to preserve privacy under real-world mobile constraints. It is evaluated as a bounded software-engineering study, not a clinical trial, and focuses on practical usefulness, software quality, user acceptance, expert review, baseline convergent association, and short-term behavioral differences during a two-week field deployment.
+The system combines threshold-based heuristics, interpretable fuzzy rule-based inference #cite(<vashishtha-2023>) #cite(<pickering-2025>), a VADER-compatible text-first sentiment pipeline for low-resource code-mixed text #cite(<hutto-2014>) #cite(<mohammed-2023>) #cite(<nazir-2026>), and an on-device no-text VLM fallback implemented with Moondream 0.5B #cite(<das-2023>) #cite(<sharshar-2025>). All processing occurs locally on the user's device to preserve privacy under real-world mobile constraints. It is evaluated as a bounded software-engineering study covering software quality, user acceptance, expert review, baseline convergent association, and short-term behavioral differences during a two-week field deployment.
 
 == Background of the Study
 
@@ -16,7 +16,7 @@ In recent years, doomscrolling has emerged as a behavioral concern in algorithm-
 
 Existing digital well-being tools address this problem only partly. Prior work shows that the emotional effects of scrolling depend on what users are exposed to, not just how long they scroll #cite(<buchanan-2021>). Mainstream responses still center on time limits, usage summaries, or fixed break reminders, while app-level interventions reviewed in the literature remain heterogeneous and do not foreground privacy-by-design as a core requirement #cite(<apple-screen-time-2025>) #cite(<google-digital-wellbeing-2024>) #cite(<tiktok-wellbeing-2024>) #cite(<mosseri-2021>) #cite(<rahmillah-2023>) #cite(<tewari-2023>). This suggests a narrower engineering gap for the present study: whether a private mobile tool can move beyond time alone by combining observable interaction patterns with a text-first sentiment proxy while still handling no-text items through an on-device visual fallback.
 
-Mindfulness-oriented digital interventions provide limited support for brief app-delivered self-regulation prompts #cite(<mitsea-2023>). Just-in-time smartphone interventions have also shown that smartphone-based support can be delivered in the moment, with feasibility and acceptability depending on timing, receptivity, and burden management #cite(<roffarello-2021>) #cite(<teepe-2021>) #cite(<mair-2022>) #cite(<yang-2023>). These works support in-the-moment prompting, but they do not show whether one system can continuously monitor short-form video behavior, process extracted text locally, resolve no-text items through the VLM fallback, and issue adaptive prompts without cloud transmission or remote dashboards.
+Mindfulness-oriented digital interventions provide limited support for brief app-delivered self-regulation prompts #cite(<mitsea-2023>). Just-in-time smartphone interventions have also shown that smartphone-based support can be delivered in the moment, with feasibility and acceptability depending on timing, receptivity, and burden management #cite(<roffarello-2021>) #cite(<teepe-2021>) #cite(<mair-2022>) #cite(<yang-2023>). These works support in-the-moment prompting; what remains untested is a single system that continuously monitors short-form video behavior, processes extracted text locally, resolves no-text items through a visual fallback, and issues adaptive prompts entirely on-device.
 
 In the Philippine context, local peer-reviewed studies indicate that doomscrolling, problematic social-media use, and digital well-being are relevant concerns, although the strongest available evidence remains student-focused #cite(<canila-2023>) #cite(<cardoso-2024>) #cite(<punzalan-2024>). Nearby adult Philippine contexts are more indirect, including social-media use among older adults and anxiety-related social-media exposure findings in adult workers #cite(<castillo-2022>) #cite(<zamora-2021>). The local literature therefore supports contextual relevance, but not adult prevalence, validated thresholds, or expected intervention effects. Against that backdrop, the study examines whether the system can combine behavioral monitoring, a text-first sentiment proxy, the no-text VLM fallback, and adaptive prompting within a privacy-by-design architecture, then be evaluated for usability, reliability, and practical usefulness among adult Filipino users.
 
@@ -33,7 +33,7 @@ This study addresses the gap left by time-based or platform-controlled digital w
 == Significance of the Study
 
 #block(width: 100%)[
-  *Contribution to the Body of Knowledge:* This study contributes a mobile-systems design and pilot-scale field evaluation of one app that integrates behavioral monitoring, a text-first sentiment proxy, a no-text VLM fallback, adaptive prompting, and on-device privacy. Its contribution is an engineering evaluation framework for feasibility, acceptability, and estimator plausibility. The *Minimum Viable Lexicon (MVL)* workflow supports low-resource, code-mixed text handling within the system rather than functioning as a separate lexicon-development study.
+  *Contribution to the Body of Knowledge:* This study contributes a mobile-systems design and pilot-scale field evaluation of one app that integrates behavioral monitoring, a text-first sentiment proxy, a no-text VLM fallback, adaptive prompting, and on-device privacy. Its contribution is an engineering evaluation framework for feasibility, acceptability, and estimator plausibility. The *Minimum Viable Lexicon (MVL)* workflow supports low-resource, code-mixed text handling within the system.
 ]
 
 Beyond its academic contribution, the study may offer value to the following stakeholders:
@@ -44,7 +44,7 @@ Beyond its academic contribution, the study may offer value to the following sta
 
 *Digital well-being researchers* may use the study as an example of how behavioral logging, lightweight sentiment analysis, and adaptive prompting can be combined in a mobile field evaluation.
 
-*Educational institutions and digital well-being advocates* may use the findings to support responsible discussions about privacy-preserving, user-directed self-regulation tools rather than surveillance-oriented monitoring systems.
+*Educational institutions and digital well-being advocates* may use the completed study output to support responsible discussions about privacy-preserving, user-directed self-regulation tools.
 
 == Objectives of the Study
 
@@ -72,15 +72,15 @@ This study covers the design, development, and evaluation of the system. The sco
 - Use of the Android Accessibility Service API for text extraction, interaction-event monitoring, and screenshot-assisted no-text routing through `AccessibilityService.takeScreenshot`, with related interaction signals used to estimate session duration, compute video dwell time from content transitions, and process sentiment-related indicators from visible text or no-text visual items. Swipe counts are retained only as supporting logs.
 - Design of a modular architecture with separation between data collection, processing, and user interface components.
 - Implementation of the core estimation framework using threshold-based rules, text-first VADER sentiment analysis, an on-device no-text VLM fallback using Moondream 0.5B, and fuzzy-logic inference, with unresolved cases handled through sentiment-unreliable classification and 2-input behavioral fallback.
-- The system is designed for TikTok, Facebook Reels, and Instagram Reels as target platforms, although actual platform exposure during field deployment may vary by participant and empirical claims are limited to platforms that yield stable extraction.
+- The system is designed for TikTok, Facebook Reels, and Instagram Reels as target platforms, although actual platform exposure during the field deployment varied by participant and empirical claims are limited to platforms that yielded stable extraction.
 - On-device processing, where raw text and temporary no-text screen frames are processed locally in RAM and discarded after scoring, while only aggregate local metrics and configuration data are retained on-device.
 - A user-directed design in which risk estimates and prompts are delivered only to the consenting user on their own device, with no remote administrator dashboard.
-- Evaluation uses a pilot-scale two-week deployment: all participants complete a one-week baseline logging phase, after which the intervention group receives adaptive prompts during Week 2 while the control group continues logging-only.
+- The evaluation used a pilot-scale two-week deployment: participants completed a one-week baseline logging phase, after which the intervention group received adaptive prompts during Week 2 while the control group continued logging-only.
 - Evaluation uses the ISO/IEC 25010 Software Quality Model (Functional Suitability, Performance Efficiency, Usability, Reliability), the Technology Acceptance Model (Perceived Usefulness, Perceived Ease of Use), subject matter expert review, and short-term observed differences under the study conditions.
 
 *Delimitations:*
 - The study targets Filipino Android users aged 18 years and above who actively use at least one of the target short-form video platforms. Its external validity does not extend to minors, iOS users, or users who primarily consume long-form or non-short-form content.
-- Field deployment is limited to Android devices that can install the study build, maintain the required permissions, and keep the monitoring service sufficiently stable during the evaluation window.
+- Any field deployment is limited to Android devices that can install the study build, maintain the required permissions, and keep the monitoring service sufficiently stable during the evaluation window.
 - The risk-estimation framework addresses only short-form video platforms and does not cover long-form video, news websites, general web browsing, or other social media formats outside TikTok, Facebook Reels, and Instagram Reels.
 - The study is not designed as a clinical diagnostic system, medical intervention, psychotherapy tool, or long-term habit-formation trial.
 - The study does not claim to prevent doomscrolling. It evaluates a heuristic risk-estimation system and observes short-term behavioral differences between intervention and control groups.
@@ -104,7 +104,7 @@ The following limitations describe constraints beyond the researchers' control t
 - Sessions with high out-of-vocabulary text, or no-text items that still cannot be resolved reliably after VLM routing, are treated as sentiment-unreliable and excluded from some sentiment-dependent analyses, which may reduce the effective analyzable sample for some outcomes.
 - Self-reported profile data and Doomscrolling Scale responses remain subject to recall bias and social desirability bias.
 - Because recruitment is limited to consenting participants willing to install a monitoring application, the sample may overrepresent users who are already receptive to self-regulation tools.
-- Although a logging-only control group is included to isolate prompt effects from monitoring awareness and natural fluctuation, the study remains non-blinded: intervention-group participants know they are receiving prompts, which may introduce expectancy or novelty effects beyond the prompt mechanism itself.
+- Although the logging-only control group was intended to isolate prompt effects from monitoring awareness and natural fluctuation, the study remains non-blinded: intervention-group participants know they are receiving prompts, which may introduce expectancy or novelty effects beyond the prompt mechanism itself.
 - For the intervention group, prompt-excluded active-use metrics can be mechanically lower by design when prompts occur because prompt-display time is removed from session duration and dwell-time calculations. For this reason, Chapter 3 treats raw elapsed session duration and raw elapsed dwell time as the primary behavioral comparison, while prompt-excluded metrics are kept only as supplementary traces of prompt-interrupted use.
 - The two-week deployment window captures only short-term behavior. It is insufficient for demonstrating long-term habit formation, retention, or sustained behavioral change.
 - Participants know they are being monitored, which introduces Hawthorne-effect risk and may reduce the naturalism of observed behavior.
@@ -170,11 +170,11 @@ The study uses the *Input-Process-Output (IPO) model* to illustrate the implemen
   caption: "Conceptual Framework of the Study using IPO Model",
 )
 
-The IPO model here refers to the runtime application pipeline rather than the full research workflow. During Week 2, a *feedback loop* operates once the live duration gate is met and the live RiskScore enters the Warning or Critical bands: the app selects an intervention level (L1 awareness, L2 pause, or L3 breathing exercise), closes the current interval, and begins a new one only if the user returns to the target platform. When sufficient reliable baseline sessions exist, the live prompt engine may personalize Session Duration and NSD memberships from Week 1 quantiles while Video Dwell Time remains fixed. Usable caption or visible-comment text stays on the text path; no-text items are routed through `AccessibilityService.takeScreenshot` and the VLM fallback; unresolved cases degrade to 2-input behavioral inference with conservative L1/L2 prompts.
+The IPO model here refers to the runtime application pipeline rather than the full research workflow. During the Week 2 intervention phase, a *feedback loop* operates once the live duration gate is met and the live RiskScore enters the Warning or Critical bands: the app selects an intervention level (L1 awareness, L2 pause, or L3 pause-and-reset short breathing break), closes the current interval, and begins a new one only if the user returns to the target platform. When sufficient reliable baseline sessions exist, the live prompt engine may personalize Session Duration and NSD memberships from Week 1 quantiles while Video Dwell Time remains fixed. Usable caption or visible-comment text stays on the text path; no-text items are routed through `AccessibilityService.takeScreenshot` and the VLM fallback; unresolved cases degrade to 2-input behavioral inference with conservative L1/L2 prompts.
 
 == Theoretical Framework
 
-The system is informed by the *Doomscrolling Feedback Loop Model* derived from #cite(<sharma-2022>, form: "prose"). The model is used as a design guide for content exposure, prolonged engagement, and interruption points, but the study does not directly measure the internal emotional states described by the model.
+The system is informed by the *Doomscrolling Feedback Loop Model* derived from #cite(<sharma-2022>, form: "prose"). The model is used as a design guide for content exposure, prolonged engagement, and interruption points.
 
 The model conceptualizes doomscrolling as a three-phase cycle:
 
@@ -182,9 +182,9 @@ The model conceptualizes doomscrolling as a three-phase cycle:
 2. *Behavior:* Users engage in persistent, repetitive scrolling through negative or emotionally charged content.
 3. *Outcome:* Exposure to such content contributes to distress or negative affect, which may in turn reinforce further scrolling.
 
-This framework informs the system's variable selection. The system estimates risk at the behavior and exposure level by observing video dwell time, session duration, and NSD as proxies for heightened maladaptive engagement. Swipe or scroll events are used only as transition signals to determine when one short-form item ends and another begins, allowing video dwell-time computation rather than serving as a separate estimator input. Its adaptive prompts are intended to interrupt potentially escalating patterns before exposure becomes more sustained.
+This framework informs the system's variable selection. The system estimates risk at the behavior and exposure level by observing video dwell time, session duration, and NSD as proxies for heightened maladaptive engagement. Swipe or scroll events are used only as transition signals that mark when one short-form item ends and the next begins, enabling video dwell-time computation. Its adaptive prompts are intended to interrupt potentially escalating patterns before exposure becomes more sustained.
 
-The framework thus justifies using observable proxies and non-clinical prompts. Evaluation is guided by ISO/IEC 25010 and TAM, while the baseline-to-intervention design supports short-term behavioral comparison.
+The framework thus justifies using observable proxies and non-clinical prompts. The evaluation is guided by ISO/IEC 25010 and TAM, while the baseline-to-intervention design supports short-term behavioral comparison.
 
 #figure(
   kind: image,
@@ -223,7 +223,7 @@ The system is therefore a *heuristic risk-estimation tool* that uses behavioral 
 
 == Definition of Terms
 
-*Adaptive Digital Mindfulness Prompts* - Non-clinical system-generated interventions, such as awareness notifications, pause prompts, or short breathing exercises, that are triggered according to estimated risk severity to encourage reflective interruption of scrolling behavior.
+*Adaptive Digital Wellness Prompts* - Non-clinical system-generated prompts, such as awareness notifications, pause prompts, or short pause-and-reset breathing breaks, that are triggered according to estimated activity pattern severity to encourage reflective interruption of scrolling behavior.
 
 *Digital Mindfulness* - A practice of intentional and self-aware technology use that promotes attention, presence, and self-regulation in digital environments #cite(<aggarwal-2024>).
 
@@ -239,7 +239,11 @@ The system is therefore a *heuristic risk-estimation tool* that uses behavioral 
 
 *ISO/IEC 25010* - An international software quality model used in this study to evaluate selected quality characteristics of the system, specifically Functional Suitability, Performance Efficiency, Usability, and Reliability #cite(<iso-25010-2023>).
 
+*Minimum Viable Lexicon (MVL)* - The limited Filipino/Taglish lexicon extension used by the system to supplement VADER for recurring code-mixed social-media terms. It includes Filipino review-instrument candidate terms with implementation runtime valence values and separate neutral Filipino function-word entries used only to reduce false OOV inflation.
+
 *Negative Sentiment Density (NSD)* - The proportion of resolvable content units within a session that are classified as negative. In this study, it is computed from analyzable caption and visible-comment text units that pass the text-side reliability screen together with no-text items resolved through the VLM fallback. It is used as a limited proxy for negative exposure.
+
+*Out-of-Vocabulary (OOV) Ratio* - The proportion of extracted text tokens that are not recognized by the base VADER lexicon, emoji/emoticon handling, Filipino MVL extension, booster/negation rules, or neutral OOV-reduction list. High OOV values are used as a reliability screen rather than as a sentiment score.
 
 *Technology Acceptance Model (TAM)* - A framework used to assess user acceptance of digital systems, particularly through the constructs of Perceived Usefulness and Perceived Ease of Use, and still commonly applied in mHealth acceptability evaluation #cite(<adnan-2025>).
 

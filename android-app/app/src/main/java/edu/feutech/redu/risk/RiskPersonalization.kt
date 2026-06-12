@@ -16,7 +16,9 @@ object RiskPersonalization {
         studyGroup: StudyGroup,
         lockedAtMillis: Long = System.currentTimeMillis(),
     ): RiskPersonalizationEntity {
-        database.riskPersonalizationDao().getFor(studyCode, studyGroup)?.let { return it }
+        database.riskPersonalizationDao().getFor(studyCode, studyGroup)
+            ?.takeIf { shouldReuseExistingLock(it) }
+            ?.let { return it }
         val baseline = database.sessionDao().reliableBaselineSessions(studyCode, studyGroup, lockedAtMillis)
         val personalization = buildLock(
             studyCode = studyCode,
@@ -27,6 +29,9 @@ object RiskPersonalization {
         database.riskPersonalizationDao().save(personalization)
         return personalization
     }
+
+    internal fun shouldReuseExistingLock(existing: RiskPersonalizationEntity): Boolean =
+        existing.hasAnyPersonalizedBounds()
 
     fun buildLock(
         studyCode: String,
@@ -120,3 +125,13 @@ data class Quantiles(
     val q75: Double,
     val q95: Double,
 )
+
+internal fun RiskPersonalizationEntity.hasAnyPersonalizedBounds(): Boolean =
+    durationQ25Minutes != null ||
+        durationQ50Minutes != null ||
+        durationQ75Minutes != null ||
+        durationQ95Minutes != null ||
+        nsdQ25Percent != null ||
+        nsdQ50Percent != null ||
+        nsdQ75Percent != null ||
+        nsdQ95Percent != null

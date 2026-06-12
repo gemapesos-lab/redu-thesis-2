@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
 
 /**
  * Animated breathing guide circle for the L3 intervention overlay.
@@ -67,6 +68,7 @@ class BreathingCircleView(context: Context) : View(context) {
     private var phaseLabel = "Breathe in"
     private var phaseSubLabel = ""
 
+    private val phaseInterpolator = AccelerateDecelerateInterpolator()
     private var animator: ValueAnimator? = null
 
     fun start() {
@@ -74,7 +76,7 @@ class BreathingCircleView(context: Context) : View(context) {
         animator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = CYCLE_MS
             repeatCount = ValueAnimator.INFINITE
-            interpolator = AccelerateDecelerateInterpolator()
+            interpolator = LinearInterpolator()
             addUpdateListener { anim ->
                 val t = anim.animatedValue as Float
                 val cycleProgress = t * CYCLE_MS
@@ -94,7 +96,7 @@ class BreathingCircleView(context: Context) : View(context) {
         when {
             // Inhale phase: 0 → INHALE_MS
             progressMs < INHALE_MS -> {
-                val t = progressMs / INHALE_MS
+                val t = phaseInterpolator.getInterpolation(progressMs / INHALE_MS)
                 radiusFraction = lerp(MIN_RADIUS_FRACTION, MAX_RADIUS_FRACTION, t)
                 circlePaint.alpha = lerp(CIRCLE_ALPHA_MIN.toFloat(), CIRCLE_ALPHA_MAX.toFloat(), t).toInt()
                 phaseLabel = "Breathe in"
@@ -109,7 +111,7 @@ class BreathingCircleView(context: Context) : View(context) {
             }
             // Exhale phase: INHALE_MS + HOLD_MS → CYCLE_MS
             else -> {
-                val t = (progressMs - INHALE_MS - HOLD_MS) / EXHALE_MS
+                val t = phaseInterpolator.getInterpolation((progressMs - INHALE_MS - HOLD_MS) / EXHALE_MS)
                 radiusFraction = lerp(MAX_RADIUS_FRACTION, MIN_RADIUS_FRACTION, t)
                 circlePaint.alpha = lerp(CIRCLE_ALPHA_MAX.toFloat(), CIRCLE_ALPHA_MIN.toFloat(), t).toInt()
                 phaseLabel = "Breathe out"

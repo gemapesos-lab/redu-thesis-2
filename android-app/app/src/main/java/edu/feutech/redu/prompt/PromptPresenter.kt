@@ -26,6 +26,7 @@ sealed class PromptPresentationEvent {
 object PromptPresenter {
     private val mainHandler = Handler(Looper.getMainLooper())
     private const val BREATHING_PROMPT_MILLIS = 45_000L
+    private const val CONTINUE_UNLOCK_DELAY_MILLIS = 3_000L
     private var activePrompt: ActivePromptOverlay? = null
 
     fun show(
@@ -76,6 +77,21 @@ object PromptPresenter {
         val cardBackground = android.graphics.drawable.GradientDrawable().apply {
             setColor(0xF01E1E2E.toInt())
             cornerRadius = dp(24).toFloat()
+        }
+
+        // Tertiary — Continue scrolling becomes tappable only after a short
+        // delay so the pause cannot be reflex-dismissed.
+        val continueOption = TextView(service).apply {
+            text = "Continue scrolling"
+            textSize = 14f
+            setTextColor(0x99FFFFFF.toInt())
+            gravity = Gravity.CENTER
+            setPadding(0, dp(8), 0, dp(4))
+            alpha = 0.4f
+        }
+        val unlockContinue = Runnable {
+            continueOption.alpha = 1f
+            continueOption.setOnClickListener { close(PromptAction.CONTINUE) }
         }
 
         overlay = LinearLayout(service).apply {
@@ -147,15 +163,7 @@ object PromptPresenter {
                 ).apply { bottomMargin = dp(6) }
             })
 
-            // Tertiary — Continue scrolling (text-only)
-            addView(TextView(service).apply {
-                text = "Continue scrolling"
-                textSize = 14f
-                setTextColor(0x99FFFFFF.toInt())
-                gravity = Gravity.CENTER
-                setPadding(0, dp(8), 0, dp(4))
-                setOnClickListener { close(PromptAction.CONTINUE) }
-            })
+            addView(continueOption)
         }
 
         // Wrap in a full-width frame to position the card at bottom
@@ -173,9 +181,10 @@ object PromptPresenter {
             activePrompt = ActivePromptOverlay(
                 windowManager = windowManager,
                 view = frame,
-                onClosed = {},
+                onClosed = { mainHandler.removeCallbacks(unlockContinue) },
                 onDefaultClosed = { onEvent(PromptPresentationEvent.Closed(PromptAction.DISMISSED)) },
             )
+            mainHandler.postDelayed(unlockContinue, CONTINUE_UNLOCK_DELAY_MILLIS)
             onEvent(PromptPresentationEvent.BlockingShown)
         }.onFailure {
             Toast.makeText(service, "Consider taking a short pause.", Toast.LENGTH_LONG).show()

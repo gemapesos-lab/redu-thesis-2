@@ -20,6 +20,21 @@ class NativeVisualSentimentResolver(
     private var initialized = false
     private var loadedModelFiles: ModelFileSnapshot? = null
 
+    override suspend fun warmUp(): Boolean =
+        withContext(Dispatchers.Default) {
+            inferenceMutex.withLock {
+                try {
+                    ensureModelsReady()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    initialized = false
+                    loadedModelFiles = null
+                    false
+                }
+            }
+        }
+
     override suspend fun resolveNoTextItem(frames: List<ByteArray>): VisualSentimentLabel =
         withContext(Dispatchers.Default) {
             try {
@@ -27,15 +42,22 @@ class NativeVisualSentimentResolver(
                     resolveNoTextItemLocked(frames)
                 }
             } catch (e: CancellationException) {
-                MoondreamLlamaNative.cancelInference()
+                runCatching { MoondreamLlamaNative.cancelInference() }
                 throw e
+            } catch (e: Throwable) {
+                // Native library load, model init, or inference failures
+                // (UnsatisfiedLinkError, OutOfMemoryError, JNI exceptions) must
+                // degrade to UNRESOLVED instead of crashing the monitoring service.
+                initialized = false
+                loadedModelFiles = null
+                VisualSentimentLabel.UNRESOLVED
             }
         }
 
     override suspend fun close() {
-        MoondreamLlamaNative.cancelInference()
+        runCatching { MoondreamLlamaNative.cancelInference() }
         inferenceMutex.withLock {
-            resetNativeModels()
+            runCatching { resetNativeModels() }
         }
     }
 
@@ -48,7 +70,7 @@ class NativeVisualSentimentResolver(
             context.ensureActive()
             val cancellationHandle = context.job.invokeOnCompletion { cause ->
                 if (cause is CancellationException) {
-                    MoondreamLlamaNative.cancelInference()
+                    runCatching { MoondreamLlamaNative.cancelInference() }
                 }
             }
             val response = try {
@@ -79,9 +101,11 @@ class NativeVisualSentimentResolver(
 
         resetNativeModels()
 
-        if (modelDownloadManager.validateModels() !is ModelValidationResult.Valid) return false
+        if (modelDownloadManager.validateModels(checkHash = false) !is ModelValidationResult.Valid) return false
 
-        initialized = MoondreamLlamaNative.initModels(snapshot.textModelPath, snapshot.mmprojPath)
+        initialized = runCatching {
+            MoondreamLlamaNative.initModels(snapshot.textModelPath, snapshot.mmprojPath)
+        }.getOrDefault(false)
         loadedModelFiles = if (initialized) snapshot else null
         return initialized
     }

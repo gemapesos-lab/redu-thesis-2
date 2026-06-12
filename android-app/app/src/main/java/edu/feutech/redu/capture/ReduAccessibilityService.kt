@@ -17,6 +17,7 @@ import android.os.Looper
 import android.view.Display
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.ContextCompat
 import edu.feutech.redu.BuildConfig
 import edu.feutech.redu.ReduApp
 import edu.feutech.redu.data.ReliabilityEventEntity
@@ -25,6 +26,7 @@ import edu.feutech.redu.data.Platform
 import edu.feutech.redu.data.PromptAction
 import edu.feutech.redu.data.PromptEventEntity
 import edu.feutech.redu.data.PromptLevel
+import edu.feutech.redu.data.PromptTrigger
 import edu.feutech.redu.data.RiskLevel
 import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.SentimentReliability
@@ -48,7 +50,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.CancellationException
@@ -65,6 +66,7 @@ import kotlin.coroutines.resume
 
 private const val VLM_INFERENCE_TIMEOUT_MILLIS = 25_000L
 private const val VLM_CAPTURE_SIZE_PX = 448
+private const val TEARDOWN_TIMEOUT_MILLIS = 5_000L
 
 class ReduAccessibilityService : AccessibilityService() {
     companion object {
@@ -136,7 +138,7 @@ class ReduAccessibilityService : AccessibilityService() {
     private lateinit var debugOverlay: DebugOverlayController
     private lateinit var debugOverlayBridge: DebugOverlayBridge
     private lateinit var app: ReduApp
-    private var targetInForeground = false
+    @Volatile private var targetInForeground = false
     private var pendingTargetExitJob: Job? = null
     @Volatile private var debugOverlayEnabled = false
     @Volatile private var studyGroup = StudyGroup.INTERVENTION
@@ -144,18 +146,18 @@ class ReduAccessibilityService : AccessibilityService() {
     @Volatile private var enabledPlatforms: Set<Platform> = emptySet()
     @Volatile private var liveRiskMembershipConfig = RiskMembershipConfig.Fixed
 
-    private var lastObservedTransitionFingerprint: String? = null
-    private var lastObservedItemHasText = true
-    private var blankNoTextSequence = 0
-    private var lastBlankNoTextSequenceIncrementAtMillis = 0L
-    private var lastSuppressedPromptKey: SuppressedPromptKey? = null
-    private var currentVlmRequest: VlmRequestToken? = null
+    @Volatile private var lastObservedTransitionFingerprint: String? = null
+    @Volatile private var lastObservedItemHasText = true
+    @Volatile private var blankNoTextSequence = 0
+    @Volatile private var lastBlankNoTextSequenceIncrementAtMillis = 0L
+    @Volatile private var lastSuppressedPromptKey: SuppressedPromptKey? = null
+    @Volatile private var currentVlmRequest: VlmRequestToken? = null
     private var lastProcessTimeMillis = 0L
     private var pendingProcessingJob: Job? = null
     private var followUpProcessingJob: Job? = null
 
     // On-demand VLM screenshot capture via AccessibilityService.takeScreenshot.
-    private var vlmCaptureJob: Job? = null
+    @Volatile private var vlmCaptureJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -169,10 +171,25 @@ class ReduAccessibilityService : AccessibilityService() {
             snapshotProvider = { tracker.snapshot() },
             debugBuild = BuildConfig.DEBUG,
         )
-        registerReceiver(screenStateReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
-        registerReceiver(clearActiveCaptureReceiver, IntentFilter(ACTION_CLEAR_ACTIVE_CAPTURE_STATE), Context.RECEIVER_NOT_EXPORTED)
+        ContextCompat.registerReceiver(
+            this,
+            screenStateReceiver,
+            IntentFilter(Intent.ACTION_SCREEN_OFF),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
+        ContextCompat.registerReceiver(
+            this,
+            clearActiveCaptureReceiver,
+            IntentFilter(ACTION_CLEAR_ACTIVE_CAPTURE_STATE),
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
         if (BuildConfig.DEBUG) {
-            registerReceiver(demoPromptReceiver, IntentFilter(ACTION_DEMO_PROMPT), Context.RECEIVER_NOT_EXPORTED)
+            ContextCompat.registerReceiver(
+                this,
+                demoPromptReceiver,
+                IntentFilter(ACTION_DEMO_PROMPT),
+                ContextCompat.RECEIVER_NOT_EXPORTED,
+            )
         }
         observeSettings()
     }
@@ -180,7 +197,10 @@ class ReduAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         serviceInfo = serviceInfo.apply {
-            packageNames = if (BuildConfig.DEBUG) null else PlatformAdapterRegistry.packageNames.toTypedArray()
+            // Keep the framework package filter disabled in all variants:
+            // non-target events are required to detect when a participant
+            // leaves a monitored app. REDU filters target packages in code.
+            packageNames = null
             flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
                 AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
         }
@@ -394,20 +414,31 @@ class ReduAccessibilityService : AccessibilityService() {
                     }
 
                     if (studyGroup == StudyGroup.CONTROL || !promptsEnabled) return@launch
+                    // NSD may only drive prompts once enough sentiment units resolved;
+                    // tiny samples (e.g. 1 negative of 2) fall back to dwell+duration rules.
+                    val nsdEvidenceSufficient = snapshot.resolvableUnits >= PromptPolicy.MIN_NSD_EVIDENCE_UNITS
+                    val promptNsdPercent = snapshot.nsdPercent?.takeIf { nsdEvidenceSufficient }
+                    val promptReliability = if (nsdEvidenceSufficient) {
+                        snapshot.sentimentReliability
+                    } else {
+                        SentimentReliability.SENTIMENT_UNRELIABLE
+                    }
                     val livePromptRisk = FuzzyRiskEngine.evaluate(
                         RiskInputs(
                             meanDwellSeconds = snapshot.meanDwellMillis / 1000.0,
-                            nsdPercent = snapshot.nsdPercent,
+                            nsdPercent = promptNsdPercent,
                             sessionDurationMinutes = snapshot.durationMillis / 60_000.0,
-                            sentimentReliable = snapshot.sentimentReliability == SentimentReliability.RELIABLE,
+                            sentimentReliable = promptReliability == SentimentReliability.RELIABLE,
                         ),
                         membershipConfig = liveRiskMembershipConfig,
                     )
                     val prompt = promptPolicy.decide(
                         score = livePromptRisk.score,
                         riskLevel = livePromptRisk.level,
-                        reliability = snapshot.sentimentReliability,
+                        reliability = promptReliability,
                         sessionDurationMillis = snapshot.durationMillis,
+                        nsdPercent = promptNsdPercent,
+                        sessionKey = snapshot.startedAtMillis,
                     )
                     if (prompt.cooldownActive) {
                         logSuppressedPromptIfNeeded(snapshot, livePromptRisk.score, livePromptRisk.level)
@@ -426,6 +457,7 @@ class ReduAccessibilityService : AccessibilityService() {
                                         riskScore = livePromptRisk.score,
                                         riskLevel = livePromptRisk.level,
                                         cooldownActive = prompt.cooldownActive,
+                                        trigger = prompt.trigger,
                                     )
                                 }
                             )
@@ -449,20 +481,29 @@ class ReduAccessibilityService : AccessibilityService() {
         pendingProcessingJob?.cancel()
         followUpProcessingJob?.cancel()
         cancelPendingVlm("service destroyed")
+        PromptPresenter.dismissActivePrompt()
         runCatching { unregisterReceiver(screenStateReceiver) }
         runCatching { unregisterReceiver(clearActiveCaptureReceiver) }
         if (BuildConfig.DEBUG) {
             runCatching { unregisterReceiver(demoPromptReceiver) }
         }
-        runBlocking(Dispatchers.IO + NonCancellable) {
-            finalizeNow()
-            insertReliability(ReliabilityEventType.SERVICE_STOPPED, "service_destroyed")
-            if (visualSentimentResolverDelegate.isInitialized()) visualSentimentResolver.close()
+        runBlocking(Dispatchers.IO) {
+            withTimeoutOrNull(TEARDOWN_TIMEOUT_MILLIS) {
+                finalizeNow()
+                insertReliability(ReliabilityEventType.SERVICE_STOPPED, "service_destroyed")
+            }
         }
         serviceJob.cancel()
         if (::debugOverlayBridge.isInitialized) debugOverlayBridge.destroy()
         trackerDispatcher.close()
         trackerExecutor.shutdown()
+        if (visualSentimentResolverDelegate.isInitialized()) {
+            // Close native VLM models off the service thread so teardown
+            // cannot block on JNI cleanup.
+            Thread({
+                runCatching { runBlocking { visualSentimentResolver.close() } }
+            }, "ReduVlmClose").start()
+        }
         super.onDestroy()
     }
 
@@ -547,13 +588,14 @@ class ReduAccessibilityService : AccessibilityService() {
         }
         removeDebugOverlay()
         PromptPresenter.dismissActivePrompt()
-        resetPerItemStateLocked()
         if (waitForTracker) {
             runBlocking(trackerDispatcher) {
+                resetPerItemStateLocked()
                 tracker.discardActive()
             }
         } else {
             scope.launch(trackerDispatcher) {
+                resetPerItemStateLocked()
                 tracker.discardActive()
             }
         }
@@ -565,7 +607,9 @@ class ReduAccessibilityService : AccessibilityService() {
         }
         if (finalized != null) {
             persistFinalized(finalized)
-            resetPerItemState()
+            withContext(trackerDispatcher) {
+                resetPerItemState()
+            }
         }
     }
 
@@ -575,7 +619,9 @@ class ReduAccessibilityService : AccessibilityService() {
         }
         if (finalized != null) {
             persistFinalized(finalized)
-            resetPerItemState()
+            withContext(trackerDispatcher) {
+                resetPerItemState()
+            }
         }
     }
 
@@ -817,6 +863,21 @@ class ReduAccessibilityService : AccessibilityService() {
                 return@launch
             }
 
+            debugOverlayBridge.updateVlm(status = "warming up")
+            val warmedUp = try {
+                visualSentimentResolver.warmUp()
+            } catch (e: CancellationException) {
+                debugOverlayBridge.updateVlm(status = "canceled")
+                debugLog("REDU_VLM", "warm-up canceled")
+                throw e
+            }
+            if (!warmedUp) {
+                debugOverlayBridge.updateVlm(status = "models unavailable")
+                debugLog("REDU_VLM", "warm-up failed")
+                logReliability(ReliabilityEventType.VLM_UNRESOLVED, "vlm_models_unavailable", platform = token.platform)
+                return@launch
+            }
+
             debugOverlayBridge.updateVlm(status = "capturing")
             debugLog("REDU_VLM", "capturing screenshot")
             val frame = captureScreenshotAsBytes()
@@ -873,10 +934,11 @@ class ReduAccessibilityService : AccessibilityService() {
         riskScore: Double,
         riskLevel: RiskLevel,
         cooldownActive: Boolean,
+        trigger: PromptTrigger = PromptTrigger.NONE,
     ) {
         when (event) {
             PromptPresentationEvent.BlockingShown -> {
-                logPromptAction(PromptAction.SHOWN, level, riskScore, riskLevel, cooldownActive)
+                logPromptAction(PromptAction.SHOWN, level, riskScore, riskLevel, cooldownActive, trigger)
                 scope.launch {
                     withContext(trackerDispatcher) {
                         tracker.closeForPrompt()
@@ -885,11 +947,12 @@ class ReduAccessibilityService : AccessibilityService() {
             }
 
             PromptPresentationEvent.NonBlockingShown -> {
-                logPromptAction(PromptAction.SHOWN, level, riskScore, riskLevel, cooldownActive)
+                logPromptAction(PromptAction.SHOWN, level, riskScore, riskLevel, cooldownActive, trigger)
             }
 
             is PromptPresentationEvent.Closed -> {
-                logPromptAction(event.action, level, riskScore, riskLevel, cooldownActive)
+                promptPolicy.onPromptOutcome(event.action)
+                logPromptAction(event.action, level, riskScore, riskLevel, cooldownActive, trigger)
                 scope.launch {
                     withContext(trackerDispatcher) {
                         tracker.onPromptClosed()
@@ -971,6 +1034,7 @@ class ReduAccessibilityService : AccessibilityService() {
         riskScore: Double,
         riskLevel: RiskLevel,
         cooldownActive: Boolean,
+        trigger: PromptTrigger = PromptTrigger.NONE,
     ) {
         if (!::app.isInitialized) return
         scope.launch {
@@ -986,6 +1050,7 @@ class ReduAccessibilityService : AccessibilityService() {
                     promptLevel = level,
                     action = action,
                     cooldownActive = cooldownActive,
+                    trigger = trigger,
                 ),
             )
         }

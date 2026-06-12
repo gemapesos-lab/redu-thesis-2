@@ -47,7 +47,7 @@ FEU Institute of Technology
 
 #v(0.5em)
 
-Month/Year
+June 2026
 
 #v(2fr)
 

@@ -51,6 +51,11 @@ class ModelDownloadManager(context: Context) {
         private const val BASE_URL =
             "https://huggingface.co/ggml-org/moondream2-20250414-GGUF/resolve/main"
 
+        // The official ggml-org 20250414 release ships the text model only as
+        // F16, which is too large for the field-study phones. REDU pairs the
+        // ggml-org 20250414 vision projector with the third-party Q4_K_M text
+        // quant from salivosa/moondream2-gguf; both files are pinned by
+        // SHA-256 and the pairing has been validated on-device.
         val MODEL_FILES = listOf(
             ModelFile(
                 filename = "moondream2-text-model-Q4_K_M.gguf",
@@ -75,7 +80,7 @@ class ModelDownloadManager(context: Context) {
     private val modelDir: File
         get() = File(appContext.filesDir, MODEL_DIR).also { it.mkdirs() }
 
-    private val _state = MutableStateFlow(checkCurrentState(checkHash = false))
+    private val _state = MutableStateFlow<ModelState>(ModelState.NotDownloaded)
     val state: StateFlow<ModelState> = _state.asStateFlow()
 
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -87,16 +92,19 @@ class ModelDownloadManager(context: Context) {
     private var downloadGeneration = 0L
 
     init {
-        if (_state.value !is ModelState.Ready) {
-            managerScope.launch {
-                if (stateMutex.withLock { recoverActiveDownloadsLocked() }) {
+        managerScope.launch {
+            stateMutex.withLock {
+                if (_state.value !is ModelState.NotDownloaded) return@withLock
+                if (recoverActiveDownloadsLocked()) {
                     _state.value = ModelState.Downloading(0f, "Restoring active download")
                     registerCompletionReceiver()
                     startProgressPolling()
-                    return@launch
+                    return@withLock
                 }
                 recoverCompletedExternalDownloads()
-                _state.value = checkCurrentState(checkHash = false)
+                if (_state.value is ModelState.NotDownloaded) {
+                    _state.value = checkCurrentState(checkHash = false)
+                }
             }
         }
     }
@@ -106,10 +114,10 @@ class ModelDownloadManager(context: Context) {
     val isReady: Boolean
         get() = _state.value is ModelState.Ready
 
-    suspend fun validateModels(deleteInvalid: Boolean = false): ModelValidationResult =
+    suspend fun validateModels(deleteInvalid: Boolean = false, checkHash: Boolean = true): ModelValidationResult =
         withContext(Dispatchers.IO) {
             stateMutex.withLock {
-                validateModelsBlocking(deleteInvalid = deleteInvalid, checkHash = true)
+                validateModelsBlocking(deleteInvalid = deleteInvalid, checkHash = checkHash)
             }
         }
 
@@ -238,26 +246,41 @@ class ModelDownloadManager(context: Context) {
         if (generation != downloadGeneration || activeDownloadIds[downloadId] != file) return
         val query = DownloadManager.Query().setFilterById(downloadId)
         val cursor = downloadManager.query(query) ?: return
+        fun failLocked(message: String) {
+            Log.e(TAG, "${file.displayName} $message")
+            if (generation == downloadGeneration) {
+                activeDownloadIds.remove(downloadId)
+                persistActiveDownloads()
+                _state.value = ModelState.Error("${file.displayName} $message")
+                cleanupLocked()
+            }
+        }
         cursor.use {
             if (!it.moveToFirst()) return
             val statusIdx = it.getColumnIndex(DownloadManager.COLUMN_STATUS)
+            if (statusIdx < 0) {
+                failLocked("download completed without status metadata")
+                return
+            }
             val status = it.getInt(statusIdx)
             if (status != DownloadManager.STATUS_SUCCESSFUL) {
                 val reasonIdx = it.getColumnIndex(DownloadManager.COLUMN_REASON)
-                val reason = it.getInt(reasonIdx)
-                Log.e(TAG, "${file.displayName} download failed: status=$status reason=$reason")
-                if (generation == downloadGeneration) {
-                    activeDownloadIds.remove(downloadId)
-                    persistActiveDownloads()
-                    _state.value = ModelState.Error("${file.displayName} download failed (${downloadReasonText(status, reason)})")
-                    cleanupLocked()
-                }
+                val reason = if (reasonIdx >= 0) it.getInt(reasonIdx) else 0
+                failLocked("download failed (${downloadReasonText(status, reason)})")
                 return
             }
 
             val localUriIdx = it.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI)
-            val localUri = it.getString(localUriIdx)
-            val downloadedFile = File(Uri.parse(localUri).path!!)
+            val localPath = if (localUriIdx >= 0) {
+                it.getString(localUriIdx)?.let { uri -> Uri.parse(uri).path }
+            } else {
+                null
+            }
+            if (localPath == null) {
+                failLocked("download completed without a local file")
+                return
+            }
+            val downloadedFile = File(localPath)
             val targetFile = modelFile(file.filename)
 
             _state.value = ModelState.Verifying("Moving ${file.displayName}…")
@@ -309,8 +332,9 @@ class ModelDownloadManager(context: Context) {
                 // Query active downloads
                 for ((downloadId, file) in activeSnapshot) {
                     val query = DownloadManager.Query().setFilterById(downloadId)
-                    val cursor = downloadManager.query(query)
-                    if (cursor != null && cursor.moveToFirst()) {
+                    var failedDetail: String? = null
+                    downloadManager.query(query)?.use { cursor ->
+                        if (!cursor.moveToFirst()) return@use
                         val bytesIdx = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
                         if (bytesIdx >= 0) {
                             totalDownloaded += cursor.getLong(bytesIdx)
@@ -321,24 +345,23 @@ class ModelDownloadManager(context: Context) {
                             val status = cursor.getInt(statusIdx)
                             val reason = cursor.getInt(reasonIdx)
                             if (status == DownloadManager.STATUS_FAILED) {
-                                val detail = "${file?.displayName ?: "Model file"}: ${downloadReasonText(status, reason)}"
-                                Log.e(TAG, "Download #$downloadId $detail")
-                                stateMutex.withLock {
-                                    activeDownloadIds.remove(downloadId)
-                                    persistActiveDownloads()
-                                    downloadGeneration += 1
-                                    cleanupLocked()
-                                }
-                                _state.value = ModelState.Error(detail)
-                                cursor.close()
-                                return@launch
-                            }
-                            if (status == DownloadManager.STATUS_PAUSED || status == DownloadManager.STATUS_FAILED) {
-                                statusDetail = "${file?.displayName ?: "Model file"}: ${downloadReasonText(status, reason)}"
+                                failedDetail = "${file.displayName}: ${downloadReasonText(status, reason)}"
+                            } else if (status == DownloadManager.STATUS_PAUSED) {
+                                statusDetail = "${file.displayName}: ${downloadReasonText(status, reason)}"
                                 Log.w(TAG, "Download #$downloadId ${statusDetail.orEmpty()}")
                             }
                         }
-                        cursor.close()
+                    }
+                    failedDetail?.let { detail ->
+                        Log.e(TAG, "Download #$downloadId $detail")
+                        stateMutex.withLock {
+                            activeDownloadIds.remove(downloadId)
+                            persistActiveDownloads()
+                            downloadGeneration += 1
+                            cleanupLocked()
+                        }
+                        _state.value = ModelState.Error(detail)
+                        return@launch
                     }
                 }
                 val progress = (totalDownloaded.toFloat() / TOTAL_SIZE_BYTES).coerceIn(0f, 1f)

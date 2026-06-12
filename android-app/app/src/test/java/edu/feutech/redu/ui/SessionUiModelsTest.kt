@@ -7,6 +7,7 @@ import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.StudyGroup
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.Instant
 import java.time.ZoneId
@@ -100,6 +101,39 @@ class SessionUiModelsTest {
         assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("p-01x"))
         assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("P-02Y"))
         assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("p-02y"))
+    }
+
+    @Test
+    fun studyPeriodParserAcceptsFourOrderedDates() {
+        val parsed = parseStudyPeriodInputs(
+            week1StartInput = "2026-05-20",
+            week1EndInput = "2026-05-26",
+            week2StartInput = "2026-05-27",
+            week2EndInput = "2026-06-02",
+        )
+
+        assertTrue(parsed is StudyPeriodParseResult.Valid)
+        parsed as StudyPeriodParseResult.Valid
+        assertEquals(1779206400000L, parsed.week1StartMillis)
+        assertEquals(1779811199999L, parsed.week1EndMillis)
+        assertEquals(1779811200000L, parsed.week2StartMillis)
+        assertEquals(1780415999999L, parsed.week2EndMillis)
+    }
+
+    @Test
+    fun studyPeriodParserRejectsPartialInvalidOrOverlappingDates() {
+        assertTrue(
+            parseStudyPeriodInputs("2026-05-20", "", "2026-05-27", "2026-06-02")
+                is StudyPeriodParseResult.Invalid,
+        )
+        assertTrue(
+            parseStudyPeriodInputs("05/20/2026", "2026-05-26", "2026-05-27", "2026-06-02")
+                is StudyPeriodParseResult.Invalid,
+        )
+        assertTrue(
+            parseStudyPeriodInputs("2026-05-20", "2026-05-27", "2026-05-27", "2026-06-02")
+                is StudyPeriodParseResult.Invalid,
+        )
     }
 
     private fun session(

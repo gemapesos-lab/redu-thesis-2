@@ -1,5 +1,6 @@
 package edu.feutech.redu
 
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -24,12 +25,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun isReduAccessibilityServiceEnabled(): Boolean {
-        val expectedService = "$packageName/${packageName}.capture.ReduAccessibilityService"
+        val expectedService = ComponentName(this, edu.feutech.redu.capture.ReduAccessibilityService::class.java)
         val enabledServices = Settings.Secure.getString(
             contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
         ) ?: return false
-        val splitter = enabledServices.split(':')
-        return splitter.any { it.equals(expectedService, ignoreCase = true) }
+        return enabledServices.split(':')
+            .mapNotNull(ComponentName::unflattenFromString)
+            .any { it == expectedService }
     }
 }

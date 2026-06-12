@@ -8,7 +8,20 @@ class ReduAppScreenTest {
     fun availableDestinationsBeforeSetupOnlyIncludesSetup() {
         assertEquals(
             listOf(ReduDestination.SETUP),
-            availableDestinationsFor(setupComplete = false),
+            availableDestinationsFor(setupComplete = false, hasSessions = false),
+        )
+    }
+
+    @Test
+    fun availableDestinationsBeforeSetupKeepsExportReachableWhenSessionsExist() {
+        assertEquals(
+            listOf(
+                ReduDestination.SETUP,
+                ReduDestination.HISTORY,
+                ReduDestination.EXPORT,
+                ReduDestination.SETTINGS,
+            ),
+            availableDestinationsFor(setupComplete = false, hasSessions = true),
         )
     }
 
@@ -21,7 +34,7 @@ class ReduAppScreenTest {
                 ReduDestination.EXPORT,
                 ReduDestination.SETTINGS,
             ),
-            availableDestinationsFor(setupComplete = true),
+            availableDestinationsFor(setupComplete = true, hasSessions = false),
         )
     }
 
@@ -31,6 +44,7 @@ class ReduAppScreenTest {
             listOf(
                 "sessions.csv",
                 "daily_summaries.csv",
+                "study_periods.csv",
                 "prompt_events.csv",
                 "reliability_events.csv",
                 "risk_personalization.csv",

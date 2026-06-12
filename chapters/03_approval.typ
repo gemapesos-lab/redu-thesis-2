@@ -33,14 +33,14 @@ In partial fulfillment of the course of requirement for the *Degree of Bachelor 
   align(center)[
     #line(length: 80%)
     #v(-0.5em)
-    *MS. MAY FLORENCE SAN PABLO* \
-    Panelist 1
+    *DR. DENNIS GONZALES* \
+    External Panelist
   ],
   align(center)[
     #line(length: 80%)
     #v(-0.5em)
     *PROF. JUSTINE PURA* \
-    Panelist 2
+    Internal Panelist
   ],
 )
 
@@ -49,7 +49,7 @@ In partial fulfillment of the course of requirement for the *Degree of Bachelor 
 #align(center)[
   #line(length: 40%)
   #v(-0.5em)
-  *MS. JUAN C. DELA CRUZ* \
+  *MS. MAY FLORENCE SAN PABLO* \
   Head Panelist
 ]
 

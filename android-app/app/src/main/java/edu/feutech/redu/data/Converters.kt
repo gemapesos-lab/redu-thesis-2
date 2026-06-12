@@ -21,6 +21,9 @@ class Converters {
     @TypeConverter fun toPromptAction(value: String): PromptAction = enumValueOf(value)
     @TypeConverter fun fromPromptAction(value: PromptAction): String = value.name
 
+    @TypeConverter fun toPromptTrigger(value: String): PromptTrigger = enumValueOf(value)
+    @TypeConverter fun fromPromptTrigger(value: PromptTrigger): String = value.name
+
     @TypeConverter fun toReliabilityEventType(value: String): ReliabilityEventType = enumValueOf(value)
     @TypeConverter fun fromReliabilityEventType(value: ReliabilityEventType): String = value.name
 }

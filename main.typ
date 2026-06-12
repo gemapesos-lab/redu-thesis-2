@@ -53,7 +53,8 @@
 #include "chapters/01_title_page.typ"
 #include "chapters/02_copyright.typ"
 #include "chapters/03_approval.typ"
-#include "chapters/04_acknowledgment.typ"
+// Acknowledgment page dropped (optional per template; several groups omitted it).
+// To restore: #include "chapters/04_acknowledgment.typ"
 
 // ==========================================
 // TABLE OF CONTENTS (Page v onwards)
@@ -66,7 +67,7 @@
 
 #align(center)[#heading(level: 1, numbering: none, outlined: true)[#text(size: 12pt)[TABLE OF CONTENTS]]]
 #v(1em)
-#outline(title: none, indent: auto, depth: 2)
+#outline(title: none, indent: auto, depth: 3)
 #pagebreak()
 
 #align(center)[#heading(level: 1, numbering: none, outlined: true)[#text(size: 12pt)[LIST OF TABLES]]]
@@ -78,6 +79,9 @@
 #v(1em)
 #outline(title: none, target: figure.where(kind: image))
 #pagebreak()
+
+#include "chapters/04a_abbreviations.typ"
+#include "chapters/04b_abstract.typ"
 
 // ==========================================
 // MAIN CONTENT (Arabic numerals starting at 1)
@@ -130,26 +134,26 @@
 // Chapters 1-3 use a house style where only the first prose paragraph after
 // each heading gets a first-line indent. Later paragraphs stay flush-left.
 #{
-  let first-par-indent-pending = state("chapter-first-par-indent-pending", false)
+  let first-par-indent-ready = state("chapter-first-par-indent-ready", false)
 
   show heading.where(level: 1): it => {
     render_level1_heading(it)
-    first-par-indent-pending.update(true)
+    first-par-indent-ready.update(true)
   }
 
   show heading.where(level: 2): it => {
     render_level2_heading(it)
-    first-par-indent-pending.update(true)
+    first-par-indent-ready.update(true)
   }
 
   show heading.where(level: 3): it => {
     render_level3_heading(it)
-    first-par-indent-pending.update(true)
+    first-par-indent-ready.update(true)
   }
 
   show par: it => context {
-    if first-par-indent-pending.get() {
-      first-par-indent-pending.update(false)
+    if first-par-indent-ready.get() {
+      first-par-indent-ready.update(false)
       // Pad the paragraph and use a negative hanging indent so only the first
       // line shifts right while later lines return to the normal left edge.
       block(width: 100%)[#h(0.5in)#it.body]

@@ -17,7 +17,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ReliabilityEventEntity::class,
         RiskPersonalizationEntity::class,
     ],
-    version = 5,
+    version = 7,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -98,9 +98,33 @@ abstract class ReduDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE `prompt_events` ADD COLUMN `triggerReason` TEXT NOT NULL DEFAULT 'NONE'",
+                )
+            }
+        }
+
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `app_settings` ADD COLUMN `week1StartMillis` INTEGER")
+                db.execSQL("ALTER TABLE `app_settings` ADD COLUMN `week1EndMillis` INTEGER")
+                db.execSQL("ALTER TABLE `app_settings` ADD COLUMN `week2StartMillis` INTEGER")
+                db.execSQL("ALTER TABLE `app_settings` ADD COLUMN `week2EndMillis` INTEGER")
+            }
+        }
+
         fun create(context: Context): ReduDatabase =
             Room.databaseBuilder(context, ReduDatabase::class.java, "redu.db")
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(
+                    MIGRATION_1_2,
+                    MIGRATION_2_3,
+                    MIGRATION_3_4,
+                    MIGRATION_4_5,
+                    MIGRATION_5_6,
+                    MIGRATION_6_7,
+                )
                 .build()
     }
 }

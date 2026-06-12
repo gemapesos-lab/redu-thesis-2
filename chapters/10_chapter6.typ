@@ -1,160 +1,57 @@
 // ==========================================
 // CHAPTER 6: RECOMMENDATIONS
-// Completed from REDU analysis export
 // ==========================================
-
-#import "utils.typ": table_align, thesis_table
 
 = RECOMMENDATIONS
 
-This chapter presents recommendations for system improvement, future research, and future implementation or deployment. The recommendations are based on the analysis export examined in Chapter 4. The available user data support recommendations about prompt timing, onboarding clarity, dashboard usefulness, privacy communication, survey reliability, and sentiment-reliability coverage. SME recommendations remain pending until the blank expert rating and comment files are completed.
+This chapter presents recommendations derived from the findings, limitations, user feedback, expert comments, and implementation constraints discussed in Chapter 4 and Chapter 5. The recommendations focus on improving the current system, strengthening future versions, and guiding future researchers who may replicate or extend the study.
 
 == Recommendations for System Improvement
 
-System-improvement recommendations are tied to verified implementation results, user survey results, and coded user feedback.
+The system should include a guided onboarding flow for enabling the Android Accessibility Service and other required permissions. Onboarding and setup were among the most frequent participant feedback themes, and several respondents reported difficulty finding or understanding Android settings. A step-by-step setup guide with screen-specific instructions would reduce early friction and improve deployment consistency.
 
-#thesis_table(
-  caption: [System Improvement Recommendations],
-  columns: (1.25fr, 1.35fr, 1.35fr),
-  cell_align: table_align((left, left, left)),
-  header: (
-    [*Improvement Area*],
-    [*Condition Observed in Chapter 4*],
-    [*Recommendation*],
-  ),
-  body: (
-    [Platform extraction robustness],
-    [All platforms produced logs, but sentiment reliability varied: TikTok 82.6%, Facebook 86.3%, and Instagram 81.9%.],
-    [Maintain platform-specific extraction tests and update selectors when target-app UI structures change.],
+The application should explain the risk or activity score more clearly. User feedback showed recurring confusion about what the score meant and why some sessions received elevated labels. Future versions should show a simple component breakdown for session duration, video dwell time, and negative sentiment contribution. This would make the fuzzy score more transparent without exposing raw user content.
 
-    [Android compatibility and performance],
-    [Performance Efficiency met the target with mean 3.83, but technical reliability appeared in 6 user feedback rows.],
-    [Add CPU, memory, battery, and background-service survival logs, and expose reliability status in the dashboard.],
+Prompt timing should be made more configurable. Since prompt timing was the most frequent open-ended feedback theme, the system should add options such as snooze, quiet hours, adjustable sensitivity, and clearer cooldown feedback. These changes would preserve the intervention function while giving users more control over interruptions.
 
-    [Sentiment and fallback handling],
-    [345 of 2,051 sessions, or 16.8%, were sentiment-unreliable and marked HIGH_OOV.],
-    [Expand the Filipino/Taglish lexicon review process and improve reliability diagnostics for high-OOV sessions.],
+The pause-and-reset or breathing-break feature should be shortened or made configurable. Both participant and expert feedback suggested that the breathing screen may feel too long in some contexts. A shorter default duration, or a user-selectable range, would better support autonomy while retaining the intended interruption effect.
 
-    [Prompt timing and burden management],
-    [Prompt timing and interruption was the most frequent feedback theme with 14 responses.],
-    [Add quiet hours, gentler prompt-frequency controls, and clearer cooldown behavior.],
+The dashboard should include platform-monitoring status indicators for TikTok, Facebook Reels, and Instagram Reels. Some participants noticed inconsistent platform monitoring, especially around Instagram. A visible status indicator would help users understand whether each platform is actively being tracked, whether permissions are still enabled, and whether recent sessions were successfully logged.
 
-    [Dashboard and user-facing transparency],
-    [Dashboard usefulness appeared in 12 feedback rows, and only 9.0% of prompt responses selected view-dashboard.],
-    [Add weekly trends, plain-language Safe/Warning/Critical explanations, and clearer DSI component summaries.],
-  ),
-)
-
-The highest-priority system improvements are prompt timing and dashboard clarity because these were the most frequent user-facing concerns. Sentiment-reliability handling remains technically important because unresolved or high-OOV sessions directly reduce NSD and DSI interpretability.
+The export feature should provide a preview or confirmation screen before sharing study data. Some participants were unsure which files were included in the export or whether the export had completed. The system should list exported file names, explain that raw text and screenshots are not included, and show a completion confirmation.
 
 == Recommendations for Future Development
 
-Future-development recommendations should address the prototype limitations shown by the logs, user survey results, and coded feedback.
+Future versions should improve platform-specific extraction reliability. The system already logs reliability events, but future development should use those events to diagnose recurring extraction failures, high-OOV cases, and unresolved no-text cases by platform. This would help reduce sentiment-unreliable sessions and improve DSI coverage.
 
-#thesis_table(
-  caption: [Future Development Recommendations],
-  columns: (1.25fr, 1.35fr, 1.35fr),
-  cell_align: table_align((left, left, left)),
-  header: (
-    [*Development Area*],
-    [*Observed Basis*],
-    [*Recommendation*],
-  ),
-  body: (
-    [Risk-estimation model refinement],
-    [DSI coverage was complete and DSI correlated strongly with baseline DSS, but 16.8% of sessions lacked reliable sentiment.],
-    [Retain the interpretable fuzzy model while adding better missing-sentiment diagnostics and sensitivity summaries.],
+The VLM fallback should be further optimized and documented. Since unresolved VLM events contributed to reliability issues, future development should test prompt wording, model-response mapping, screenshot timing, and fallback thresholds. The goal should be to improve no-text handling while preserving local-only processing and avoiding persistent storage of screen frames.
 
-    [Platform support expansion],
-    [All three target platforms were represented, but extraction success differed by platform.],
-    [Build automated regression checks for each target platform and document platform-specific failure modes.],
+The terminology used in the interface should be softened. Expert feedback recommended reducing alarming labels such as "Risk Score," "Warning," and "Critical." Future versions may use terms such as "Activity Pattern Score," "Elevated Use," and "Extended Exposure," as long as the thesis or documentation clearly maps these labels to the underlying analytic bands.
 
-    [User interface and dashboard iteration],
-    [SUS met the target at 76.35, but dashboard usefulness and prompt timing were recurring feedback themes.],
-    [Iterate the dashboard and prompt flow around the most frequent feedback categories.],
-
-    [Data export and reporting workflow],
-    [User files are now present, but SME rating and comment files remain blank.],
-    [Keep the expanded export format and complete the SME data collection fields before final defense.],
-  ),
-)
-
-Future development should preserve the expanded export package because it now supports Chapter 4 user analyses. The remaining export gap is expert review completion.
+The system should retain the privacy-preserving local architecture. The favorable user and expert feedback around local processing indicates that privacy is a key strength of the system. Future enhancements should avoid unnecessary cloud processing and continue storing only aggregate metrics unless a new ethics review and consent procedure justifies a different design.
 
 == Recommendations for Future Researchers
 
-Future-research recommendations are grounded in the final study limitations, sample coverage, statistical results, and survey reliability findings.
+Future researchers should conduct a longer deployment with a larger and more diverse sample. The present study used 50 purposively recruited participants over two weeks, which is appropriate for a pilot software evaluation but not enough for long-term efficacy or population-level claims. A longer study would help assess whether behavioral changes persist after novelty effects and initial prompting wear off.
 
-#thesis_table(
-  caption: [Future Research Recommendations],
-  columns: (1.25fr, 1.35fr, 1.35fr),
-  cell_align: table_align((left, left, left)),
-  header: (
-    [*Research Area*],
-    [*Observed Basis*],
-    [*Recommendation*],
-  ),
-  body: (
-    [Sample size and group balance],
-    [The analysis export had balanced groups of 25 participants each and complete week-level log and user-response coverage.],
-    [Use at least the same balanced structure in field deployment, but plan for attrition and device incompatibility.],
+Future researchers should include a dedicated data science, machine learning, or fuzzy-logic expert in the SME panel. The current two-expert panel provided useful software and behavioral feedback, but a dedicated fuzzy-systems reviewer would strengthen appraisal of membership functions, rule coherence, fallback thresholds, and defuzzification choices.
 
-    [Deployment duration],
-    [Log metrics did not show reliable Week 1-to-Week 2 behavioral reduction, while DSS improved.],
-    [Use a longer deployment window if the goal is to evaluate sustained behavior change in logs.],
+Future researchers should validate the DSI against additional external anchors. The present study found strong convergence with self-reported doomscrolling but also found that session duration had a higher rank association than the composite DSI. Future studies should compare DSI with full-scale doomscrolling instruments, ecological momentary reports, platform-independent digital well-being logs, or other validated behavioral measures.
 
-    [Validation anchors],
-    [Composite Week 1 DSI correlated strongly with baseline DSS at r=0.989.],
-    [Replicate the convergent association in broader deployments and test whether DSI predicts later self-report or intervention response.],
+Future researchers should evaluate whether the fuzzy composite adds explanatory value beyond simpler metrics. Because mean daily session duration showed the strongest baseline rank association with self-report, later studies should test whether DSI improves prediction, interpretability, or intervention timing after controlling for duration alone.
 
-    [Survey reliability],
-    [Most alpha coefficients were below 0.70; Perceived Usefulness was closest at 0.687.],
-    [Refine item wording, add or revise weak items, and pilot the instrument before final deployment.],
-
-    [Qualitative feedback],
-    [The top themes were prompt timing (14), onboarding clarity (12), and dashboard usefulness (12).],
-    [Use follow-up interviews or structured probes to explain why these issues recur.],
-  ),
-)
-
-Future researchers should treat the current findings as pilot evidence. The most important next step is to verify whether the favorable self-report and user-evaluation results remain stable across broader deployment conditions and whether they eventually align with behavioral log changes.
+Future researchers should report effective sample sizes and sentiment coverage transparently. Sentiment-unreliable sessions affect NSD and DSI analysis, so future reports should continue to disclose retained sessions, excluded sessions, participant-level coverage, and platform-specific reliability patterns.
 
 == Recommendations for Future Implementation and Deployment
 
-Future implementation and deployment recommendations are based on verified deployment constraints, privacy considerations, prompt interaction behavior, and user feedback.
+Future implementation should treat the system as a digital well-being support tool, not as a diagnostic or therapeutic application. The strongest defensible use case is self-monitoring and gentle interruption of prolonged short-form-video use. Any expansion toward mental-health claims would require a different clinical design, additional safeguards, and appropriate professional review.
 
-#thesis_table(
-  caption: [Future Implementation and Deployment Recommendations],
-  columns: (1.25fr, 1.35fr, 1.35fr),
-  cell_align: table_align((left, left, left)),
-  header: (
-    [*Deployment Area*],
-    [*Observed Basis*],
-    [*Recommendation*],
-  ),
-  body: (
-    [Privacy and data governance],
-    [Privacy and trust feedback was favorable but still appeared as a distinct theme in 6 responses.],
-    [Keep the aggregate-only export design and explain clearly that raw captions and screenshots are not saved.],
+Deployment should include clear consent and privacy explanations before enabling monitoring. Users should be told what the Accessibility Service reads, when transient screenshots may be used for no-text cases, what data are stored, what data are exported, and how they can stop monitoring or delete local data.
 
-    [Participant onboarding],
-    [Permission and onboarding clarity appeared in 12 feedback rows.],
-    [Add clearer setup screens, permission rationale, and a post-setup checklist.],
+Deployment teams should prepare device-compatibility checks before field use. Android version differences, manufacturer background-process policies, and screenshot availability can affect monitoring stability. A short compatibility checklist should be completed before participants begin the baseline week.
 
-    [Monitoring and support],
-    [Every session had service-start, foreground, background, and finalization events; 345 HIGH_OOV events were recorded.],
-    [Monitor reliability-event counts during deployment and contact participants when service or extraction issues recur.],
+Future deployments should include support materials for participants. A concise setup guide, troubleshooting guide, privacy FAQ, and export guide would reduce researcher support burden and help participants complete the study procedure consistently.
 
-    [Institutional or classroom deployment],
-    [User acceptance means were favorable, but SME acceptability is still pending.],
-    [Avoid classroom-scale rollout until SME ratings and ethics-facing deployment safeguards are completed.],
-
-    [Maintenance and platform updates],
-    [Platform extraction success differed across target apps.],
-    [Schedule platform-maintenance checks before and during field deployment to catch app UI changes early.],
-  ),
-)
-
-The system may be responsibly improved as a privacy-preserving prototype. Broader deployment should wait until SME review is complete and until prompt timing, onboarding clarity, dashboard explanation, and survey reliability concerns are addressed.
+Finally, future implementation should keep evaluation claims proportional to the evidence collected. The current results support operational feasibility, favorable user evaluation, expert plausibility appraisal, and observed short-term differences under pilot conditions. Broader claims about long-term behavior change, diagnostic accuracy, or generalized effectiveness should be reserved for larger and longer studies with stronger validation designs.
 
 #pagebreak()

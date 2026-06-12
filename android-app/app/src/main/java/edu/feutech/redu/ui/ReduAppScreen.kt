@@ -75,6 +75,7 @@ import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.StudyGroup
 import edu.feutech.redu.export.CsvExporter
 import edu.feutech.redu.risk.RiskPersonalization
+import edu.feutech.redu.risk.hasAnyPersonalizedBounds
 import edu.feutech.redu.vlm.ModelDownloadManager
 import edu.feutech.redu.vlm.ModelState
 import androidx.lifecycle.Lifecycle
@@ -101,7 +102,7 @@ fun ReduAppScreen(
     var studyCode by rememberSaveable { mutableStateOf("") }
     var debugOverlayEnabled by rememberSaveable { mutableStateOf(false) }
     var exportStatus by rememberSaveable { mutableStateOf<String?>(null) }
-    var isExporting by rememberSaveable { mutableStateOf(false) }
+    var isExporting by remember { mutableStateOf(false) }
     val appContext = remember(context) { context.applicationContext }
     val modelDownloadManager = remember(appContext) {
         (appContext as edu.feutech.redu.ReduApp).modelDownloadManager
@@ -110,11 +111,12 @@ fun ReduAppScreen(
     var selectedDestination by rememberSaveable { mutableStateOf<ReduDestination?>(null) }
     var accessibilityEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled()) }
     val hasParticipantCode = settings?.studyCode?.isNotBlank() == true && settings?.studyCode != "UNSET"
-    val setupComplete = hasParticipantCode && accessibilityEnabled
-    val availableDestinations = availableDestinationsFor(setupComplete)
     val trackTikTokEnabled = settings?.trackTikTokEnabled == true
     val trackInstagramEnabled = settings?.trackInstagramEnabled == true
     val trackFacebookEnabled = settings?.trackFacebookEnabled == true
+    val anyPlatformEnabled = trackTikTokEnabled || trackInstagramEnabled || trackFacebookEnabled
+    val setupComplete = hasParticipantCode && accessibilityEnabled && anyPlatformEnabled
+    val availableDestinations = availableDestinationsFor(setupComplete, hasSessions = sessions.isNotEmpty())
 
     fun savePlatformTracking(platform: Platform, enabled: Boolean) {
         scope.launch {
@@ -140,12 +142,14 @@ fun ReduAppScreen(
         }
     }
 
-    LaunchedEffect(setupComplete) {
+    LaunchedEffect(setupComplete, availableDestinations) {
         selectedDestination = if (setupComplete) {
             when (selectedDestination) {
                 null, ReduDestination.SETUP -> ReduDestination.DASHBOARD
                 else -> selectedDestination
             }
+        } else if (selectedDestination in availableDestinations) {
+            selectedDestination
         } else {
             ReduDestination.SETUP
         }
@@ -302,6 +306,30 @@ fun ReduAppScreen(
                             )
                         }
                     },
+                    onStudyPeriodSave = { week1StartMillis, week1EndMillis, week2StartMillis, week2EndMillis ->
+                        scope.launch {
+                            val current = database.settingsDao().get()
+                            database.settingsDao().save(
+                                current?.copy(
+                                    week1StartMillis = week1StartMillis,
+                                    week1EndMillis = week1EndMillis,
+                                    week2StartMillis = week2StartMillis,
+                                    week2EndMillis = week2EndMillis,
+                                    updatedAtMillis = System.currentTimeMillis(),
+                                ) ?: AppSettingsEntity(
+                                    studyCode = studyCode.ifBlank { "UNSET" },
+                                    studyGroup = studyGroupForParticipantCode(studyCode),
+                                    promptsEnabled = false,
+                                    debugOverlayEnabled = debugOverlayEnabled,
+                                    week1StartMillis = week1StartMillis,
+                                    week1EndMillis = week1EndMillis,
+                                    week2StartMillis = week2StartMillis,
+                                    week2EndMillis = week2EndMillis,
+                                    updatedAtMillis = System.currentTimeMillis(),
+                                ),
+                            )
+                        }
+                    },
                     onResetStudyData = {
                         scope.launch {
                             context.sendClearActiveCaptureStateBroadcast()
@@ -381,22 +409,28 @@ internal enum class ReduDestination(
     SETTINGS("Settings", Icons.Filled.Settings),
 }
 
-internal fun availableDestinationsFor(setupComplete: Boolean): List<ReduDestination> =
-    if (setupComplete) {
-        listOf(
+internal fun availableDestinationsFor(setupComplete: Boolean, hasSessions: Boolean): List<ReduDestination> =
+    when {
+        setupComplete -> listOf(
             ReduDestination.DASHBOARD,
             ReduDestination.HISTORY,
             ReduDestination.EXPORT,
             ReduDestination.SETTINGS,
         )
-    } else {
-        listOf(ReduDestination.SETUP)
+        hasSessions -> listOf(
+            ReduDestination.SETUP,
+            ReduDestination.HISTORY,
+            ReduDestination.EXPORT,
+            ReduDestination.SETTINGS,
+        )
+        else -> listOf(ReduDestination.SETUP)
     }
 
 internal fun exportIncludedFiles(): List<String> =
     listOf(
         "sessions.csv",
         "daily_summaries.csv",
+        "study_periods.csv",
         "prompt_events.csv",
         "reliability_events.csv",
         "risk_personalization.csv",
@@ -436,7 +470,7 @@ private fun DashboardScreen(
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             MetricCard("Activity pattern score", summary.latestRiskScore?.formatOne() ?: "No data", Modifier.weight(1f))
-            MetricCard("Current pattern level", latest?.riskLevel?.displayName() ?: "No data", Modifier.weight(1f))
+            MetricCard("Today's peak pattern", summary.peakRiskLevel?.displayName() ?: "No data", Modifier.weight(1f))
         }
 
         Card(modifier = Modifier.fillMaxWidth()) {
@@ -525,7 +559,7 @@ private fun SetupScreen(
                         StatusChip("Saved", positive = true)
                     }
                     InfoRow("Assigned group", derivedGroup.name)
-                    SecondaryText("Participant code is saved. Enable monitoring to complete setup.")
+                    SecondaryText("Participant code is saved. Select at least one platform and enable monitoring to complete setup.")
                 } else {
                     OutlinedTextField(
                         value = studyCode,
@@ -843,6 +877,7 @@ private fun SettingsScreen(
     onDeleteModel: () -> Unit,
     onPlatformTrackingChange: (Platform, Boolean) -> Unit,
     onStudyCodeSave: (String) -> Unit,
+    onStudyPeriodSave: (Long?, Long?, Long?, Long?) -> Unit,
     onResetStudyData: () -> Unit,
     onPromptsEnabledChange: (Boolean) -> Unit,
     onDebugOverlayChange: (Boolean) -> Unit,
@@ -852,10 +887,28 @@ private fun SettingsScreen(
     var editCodeDialogOpen by rememberSaveable { mutableStateOf(false) }
     var resetStudyDataDialogOpen by rememberSaveable { mutableStateOf(false) }
     var editedStudyCode by rememberSaveable { mutableStateOf(settings?.studyCode?.takeIf { it != "UNSET" }.orEmpty()) }
+    var week1StartInput by rememberSaveable { mutableStateOf(settings?.week1StartMillis.formatStudyDate()) }
+    var week1EndInput by rememberSaveable { mutableStateOf(settings?.week1EndMillis.formatStudyDate()) }
+    var week2StartInput by rememberSaveable { mutableStateOf(settings?.week2StartMillis.formatStudyDate()) }
+    var week2EndInput by rememberSaveable { mutableStateOf(settings?.week2EndMillis.formatStudyDate()) }
+    var studyPeriodStatus by rememberSaveable { mutableStateOf<String?>(null) }
     var debugToolsExpanded by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(settings?.studyCode) {
         editedStudyCode = settings?.studyCode?.takeIf { it != "UNSET" }.orEmpty()
+    }
+
+    LaunchedEffect(
+        settings?.week1StartMillis,
+        settings?.week1EndMillis,
+        settings?.week2StartMillis,
+        settings?.week2EndMillis,
+    ) {
+        week1StartInput = settings?.week1StartMillis.formatStudyDate()
+        week1EndInput = settings?.week1EndMillis.formatStudyDate()
+        week2StartInput = settings?.week2StartMillis.formatStudyDate()
+        week2EndInput = settings?.week2EndMillis.formatStudyDate()
+        studyPeriodStatus = null
     }
 
     ScreenColumn(
@@ -895,6 +948,95 @@ private fun SettingsScreen(
                     SecondaryText(personalizationStatus(settings, personalization))
                 } else {
                     SecondaryText("Control mode is logging-only, so prompts remain suppressed.")
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Study period", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                InfoRow("Timezone", CsvExporter.STUDY_ZONE.id)
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = week1StartInput,
+                        onValueChange = {
+                            week1StartInput = it.trim()
+                            studyPeriodStatus = null
+                        },
+                        label = { Text("Week 1 start") },
+                        placeholder = { Text("yyyy-MM-dd") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    OutlinedTextField(
+                        value = week1EndInput,
+                        onValueChange = {
+                            week1EndInput = it.trim()
+                            studyPeriodStatus = null
+                        },
+                        label = { Text("Week 1 end") },
+                        placeholder = { Text("yyyy-MM-dd") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = week2StartInput,
+                        onValueChange = {
+                            week2StartInput = it.trim()
+                            studyPeriodStatus = null
+                        },
+                        label = { Text("Week 2 start") },
+                        placeholder = { Text("yyyy-MM-dd") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                    OutlinedTextField(
+                        value = week2EndInput,
+                        onValueChange = {
+                            week2EndInput = it.trim()
+                            studyPeriodStatus = null
+                        },
+                        label = { Text("Week 2 end") },
+                        placeholder = { Text("yyyy-MM-dd") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+                Button(
+                    onClick = {
+                        when (val parsed = parseStudyPeriodInputs(
+                            week1StartInput = week1StartInput,
+                            week1EndInput = week1EndInput,
+                            week2StartInput = week2StartInput,
+                            week2EndInput = week2EndInput,
+                        )) {
+                            is StudyPeriodParseResult.Valid -> {
+                                onStudyPeriodSave(
+                                    parsed.week1StartMillis,
+                                    parsed.week1EndMillis,
+                                    parsed.week2StartMillis,
+                                    parsed.week2EndMillis,
+                                )
+                                studyPeriodStatus = "Study period saved"
+                            }
+                            is StudyPeriodParseResult.Invalid -> {
+                                studyPeriodStatus = parsed.message
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Save study period")
+                }
+                studyPeriodStatus?.let {
+                    val isError = it != "Study period saved"
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
@@ -1160,9 +1302,6 @@ private fun Context.sendClearActiveCaptureStateBroadcast() {
         },
     )
 }
-
-private fun RiskPersonalizationEntity.hasAnyPersonalizedBounds(): Boolean =
-    durationQ25Minutes != null || nsdQ25Percent != null
 
 @Composable
 private fun StatusChip(label: String, positive: Boolean) {
@@ -1431,6 +1570,80 @@ internal fun studyGroupForParticipantCode(code: String): StudyGroup =
         'Y' -> StudyGroup.CONTROL
         else -> StudyGroup.INTERVENTION
     }
+
+internal sealed interface StudyPeriodParseResult {
+    data class Valid(
+        val week1StartMillis: Long?,
+        val week1EndMillis: Long?,
+        val week2StartMillis: Long?,
+        val week2EndMillis: Long?,
+    ) : StudyPeriodParseResult
+
+    data class Invalid(val message: String) : StudyPeriodParseResult
+}
+
+internal fun parseStudyPeriodInputs(
+    week1StartInput: String,
+    week1EndInput: String,
+    week2StartInput: String,
+    week2EndInput: String,
+): StudyPeriodParseResult {
+    val values = listOf(
+        week1StartInput.trim(),
+        week1EndInput.trim(),
+        week2StartInput.trim(),
+        week2EndInput.trim(),
+    )
+    if (values.all { it.isBlank() }) {
+        return StudyPeriodParseResult.Valid(
+            week1StartMillis = null,
+            week1EndMillis = null,
+            week2StartMillis = null,
+            week2EndMillis = null,
+        )
+    }
+    if (values.any { it.isBlank() }) {
+        return StudyPeriodParseResult.Invalid("Enter all four study period dates or clear all four.")
+    }
+
+    val dates = values.map { value ->
+        runCatching { LocalDate.parse(value, DateTimeFormatter.ISO_LOCAL_DATE) }.getOrElse {
+            return StudyPeriodParseResult.Invalid("Use yyyy-MM-dd dates for all study period fields.")
+        }
+    }
+    val week1Start = dates[0]
+    val week1End = dates[1]
+    val week2Start = dates[2]
+    val week2End = dates[3]
+
+    if (week1End.isBefore(week1Start) || week2End.isBefore(week2Start)) {
+        return StudyPeriodParseResult.Invalid("Each week end date must be on or after its start date.")
+    }
+    if (!week1End.isBefore(week2Start)) {
+        return StudyPeriodParseResult.Invalid("Week 1 must end before Week 2 starts.")
+    }
+
+    return StudyPeriodParseResult.Valid(
+        week1StartMillis = week1Start.studyDayStartMillis(),
+        week1EndMillis = week1End.studyDayEndMillis(),
+        week2StartMillis = week2Start.studyDayStartMillis(),
+        week2EndMillis = week2End.studyDayEndMillis(),
+    )
+}
+
+private fun Long?.formatStudyDate(): String =
+    this?.let {
+        Instant.ofEpochMilli(it)
+            .atZone(CsvExporter.STUDY_ZONE)
+            .toLocalDate()
+            .format(DateTimeFormatter.ISO_LOCAL_DATE)
+    }.orEmpty()
+
+private fun LocalDate.studyDayStartMillis(): Long =
+    atStartOfDay(CsvExporter.STUDY_ZONE).toInstant().toEpochMilli()
+
+private fun LocalDate.studyDayEndMillis(): Long =
+    plusDays(1).atStartOfDay(CsvExporter.STUDY_ZONE).toInstant().toEpochMilli() - 1L
 
 private fun Long.formatDuration(): String {
     val totalSeconds = coerceAtLeast(0L) / 1000L

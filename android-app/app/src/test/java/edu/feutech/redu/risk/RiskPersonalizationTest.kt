@@ -6,6 +6,7 @@ import edu.feutech.redu.data.SentimentReliability
 import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.StudyGroup
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -74,6 +75,40 @@ class RiskPersonalizationTest {
         assertEquals(10.0, lock.durationQ50Minutes)
         assertNull(lock.nsdQ25Percent)
         assertEquals(RiskMembershipConfig.DEFAULT_NSD, config.nsd)
+    }
+
+    @Test
+    fun defaultPriorLockCanBeRecomputedWhenBaselineBecomesAvailable() {
+        val earlyLock = RiskPersonalization.buildLock(
+            studyCode = "P-01X",
+            studyGroup = StudyGroup.INTERVENTION,
+            lockedAtMillis = 1_000L,
+            baselineSessions = emptyList(),
+        )
+        val recomputedLock = RiskPersonalization.buildLock(
+            studyCode = "P-01X",
+            studyGroup = StudyGroup.INTERVENTION,
+            lockedAtMillis = 2_000L,
+            baselineSessions = (1..20).map { session(index = it) },
+        )
+
+        assertFalse(earlyLock.hasAnyPersonalizedBounds())
+        assertFalse(RiskPersonalization.shouldReuseExistingLock(earlyLock))
+        assertTrue(recomputedLock.hasAnyPersonalizedBounds())
+        assertEquals(20, recomputedLock.reliableBaselineSessionCount)
+    }
+
+    @Test
+    fun personalizedLockIsReusedOnceBoundsExist() {
+        val lock = RiskPersonalization.buildLock(
+            studyCode = "P-01X",
+            studyGroup = StudyGroup.INTERVENTION,
+            lockedAtMillis = 1_000L,
+            baselineSessions = (1..20).map { session(index = it) },
+        )
+
+        assertTrue(lock.hasAnyPersonalizedBounds())
+        assertTrue(RiskPersonalization.shouldReuseExistingLock(lock))
     }
 
     private fun session(index: Int, nsdPercent: Double = index * 5.0): SessionEntity =

@@ -42,6 +42,12 @@ enum class PromptAction {
     VIEW_DASHBOARD,
 }
 
+enum class PromptTrigger {
+    NONE,
+    DURATION_DWELL,
+    NEGATIVE_CONTENT,
+}
+
 enum class ReliabilityEventType {
     SERVICE_STARTED,
     SERVICE_STOPPED,
@@ -67,6 +73,10 @@ data class AppSettingsEntity(
     val trackInstagramEnabled: Boolean = false,
     @ColumnInfo(defaultValue = "0")
     val trackFacebookEnabled: Boolean = false,
+    val week1StartMillis: Long? = null,
+    val week1EndMillis: Long? = null,
+    val week2StartMillis: Long? = null,
+    val week2EndMillis: Long? = null,
     val createdAtMillis: Long = System.currentTimeMillis(),
     val updatedAtMillis: Long = System.currentTimeMillis(),
 )
@@ -111,6 +121,8 @@ data class PromptEventEntity(
     val promptLevel: PromptLevel,
     val action: PromptAction,
     val cooldownActive: Boolean,
+    @ColumnInfo(name = "triggerReason", defaultValue = "NONE")
+    val trigger: PromptTrigger = PromptTrigger.NONE,
 )
 
 @Entity(tableName = "reliability_events")
@@ -147,6 +159,8 @@ data class DailySummary(
     val studyCode: String,
     val date: String,
     val platform: Platform,
+    val studyWeek: Int?,
+    val studyDay: Int?,
     val sessionCount: Int,
     val meanDurationMillis: Long,
     val meanDwellMillis: Long,

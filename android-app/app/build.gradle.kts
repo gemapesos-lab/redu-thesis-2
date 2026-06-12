@@ -18,6 +18,11 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
+            // Field-study devices are ARM64 phones and the vendored llama.cpp
+            // build is only validated for arm64-v8a. This intentionally drops
+            // x86/x86_64 emulator and ChromeOS support (lint ChromeOsAbiSupport);
+            // instrumented testing must run on a physical ARM64 device or an
+            // ARM64 emulator image.
             abiFilters += listOf("arm64-v8a")
         }
         

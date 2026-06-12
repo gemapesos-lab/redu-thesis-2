@@ -10,6 +10,7 @@ enum class VisualSentimentLabel {
 }
 
 interface VisualSentimentResolver {
+    suspend fun warmUp(): Boolean = true
     suspend fun resolveNoTextItem(frames: List<ByteArray>): VisualSentimentLabel
     suspend fun close() = Unit
 }

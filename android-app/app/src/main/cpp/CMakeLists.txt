@@ -13,6 +13,11 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "build shared libs" FORCE)
 
 add_subdirectory(llama.cpp)
 find_package(Threads REQUIRED)
+# tools/mtmd reads LLAMA_INSTALL_VERSION, but llama.cpp only defines it inside
+# its own subdirectory scope. Without a value here the vendored
+# set_target_properties(mtmd PROPERTIES VERSION ...) call receives an odd
+# argument list and the release native configure fails.
+set(LLAMA_INSTALL_VERSION 0.0.0)
 add_subdirectory(llama.cpp/tools/mtmd)
 
 add_library(redu_llama_jni SHARED redu_llama_jni.cpp)
