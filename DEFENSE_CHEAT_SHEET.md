@@ -38,7 +38,7 @@ Do not say:
 | Target users | Filipino Android users aged 18+ who use at least one target platform. |
 | Design | Design-and-development study with a two-group baseline-intervention pilot field evaluation. |
 | Allocation | 1:1 concealed permuted-block allocation: 25 intervention, 25 logging-only control. |
-| Timeline | Week 1 baseline logging with prompts off; Week 2 intervention prompts on only for intervention group. |
+| Timeline | Week 1 baseline logging (May 25-31, 2026) with prompts off; Week 2 (Jun 1-7, 2026) intervention prompts on only for intervention group. |
 | Sample | N = 50; age 18-29, mean 22.12; 39 male, 11 female. |
 | Logged sessions | 10,134 total; 8,817 sentiment-reliable; 1,317 sentiment-unreliable. |
 | Reliable coverage | 87.0% sentiment-reliable. |
@@ -56,28 +56,50 @@ Do not say:
 | RQ4 | How did users evaluate the system? | ISO/IEC 25010, SUS, TAM, Cronbach alpha, open-ended feedback. | All targets met; usability and acceptance favorable; UX refinements still needed. |
 | RQ5 | How did SMEs evaluate it? | Two SME rubrics and narrative comments. | Favorable expert plausibility appraisal; limited by two experts and no dedicated fuzzy/data-science reviewer. |
 
-## 5. Timeline To Memorize
+## 5. SOP And Objectives Alignment
 
-Development timeline:
+Defense alignment line: Each SOP question has a mirrored specific objective, a Chapter 3 method, a Chapter 4 evidence table, and a Chapter 5 conclusion. The claims are bounded to feasibility, acceptability, convergent plausibility, SME appraisal, and short-term observed differences. There is no orphan objective and no result that answers a different question.
 
-| Stage | What happened |
+| SOP / RQ | Matching objective | Method / evidence | Chapter 4 table(s) | What can be claimed | What not to overclaim |
+|---|---|---|---|---|---|
+| RQ1 architecture and estimation framework | SO1: design/develop risk estimation using behavioral indicators, sentiment indicators when reliable, and 2-input fallback. | Chapter 3 architecture, Accessibility Service monitoring, VADER + MVL, no-text VLM fallback, fuzzy inference, Room/SQLite export. | Data Quality and Session Reliability; Prompt-Response Summary; Time Complexity Summary; Summary by RQ. | REDU is technically feasible as a bounded privacy-preserving Android prototype. | Do not claim clinical detection, full content understanding, platform-proof extraction, or validated thresholds. |
+| RQ2 Week 1-to-Week 2 changes | SO2: determine short-term changes in logged metrics and self-report between intervention/control and within intervention. | Two-week field deployment; change-score tests; Holm correction for four primary outcomes; within-intervention paired tests as secondary evidence. | RQ2 Primary Behavioral Comparisons; RQ2 Supplementary and Within-Intervention Comparisons. | Intervention condition showed favorable short-term observed differences in this pilot. | Do not claim long-term efficacy, causality beyond pilot conditions, habit formation, or treatment effect. |
+| RQ3 baseline DSI association | SO3: determine baseline convergent association between fixed-prior Week 1 DSI and self-report among eligible participants. | Week 1 DSI and Doomscrolling Scale; N = 48; Spearman rho primary, Pearson reported for completeness. | RQ3 Baseline Convergent Association with Week 1 Doomscrolling Scale. | DSI has strong baseline convergent plausibility with self-report. | Do not claim diagnostic validity, superiority over duration, or calibrated population cutoff. |
+| RQ4 user evaluation | SO4: evaluate user perspective using ISO/IEC 25010 and TAM. | Post-usage survey; ISO/IEC 25010 selected characteristics; SUS; TAM PU/PEOU; Cronbach alpha; open-ended themes. | ISO/IEC 25010, SUS, TAM, and Reliability Summary; Participant Open-Ended Feedback Theme Summary. | Users rated quality, usability, usefulness, and ease of use favorably against study targets. | Do not claim universal UX validation, externally validated researcher-made ISO items, or no usability issues. |
+| RQ5 SME evaluation | SO5: obtain SME evaluation of technical design, privacy safeguards, heuristic logic, and intervention structure. | Two expert rubrics: mobile/software and digital well-being/behavioral psychology; descriptive reporting against favorable target. | Subject Matter Expert Rubric Results; Summary by RQ. | SMEs supported the design as plausible and appropriate for a non-clinical prototype. | Do not claim formal calibration, content-validity index, or full expert consensus across all domains. |
+
+Fast oral script:
+
+| If panel asks... | Answer |
 |---|---|
-| Sprint 1 | Requirements, planning, target platforms, privacy framing, data model. |
-| Sprint 2 | Accessibility extraction, platform adapters, local logging, session/dwell tracking. |
-| Sprint 3 | VADER + MVL, no-text VLM fallback, fuzzy risk engine, prompt policy. |
-| Sprint 4 | Testing, bug fixes, export, deployment preparation, documentation. |
+| "Are the SOP and objectives aligned?" | "Yes. The five SOP questions are mirrored by five specific objectives. RQ1/SO1 covers design and implementation, RQ2/SO2 covers short-term field changes, RQ3/SO3 covers DSI convergence, RQ4/SO4 covers user evaluation, and RQ5/SO5 covers expert evaluation." |
+| "Where is the general objective answered?" | "Across all five RQs: the system was designed and developed in Chapter 3, then evaluated in Chapter 4 through operational logs, short-term comparisons, convergent association, user evaluation, and SME review." |
+| "What is the strongest alignment defense?" | "The study never shifts into clinical diagnosis. Every objective stays within the software-engineering pilot frame: feasibility, acceptability, estimator plausibility, expert appraisal, and short-term observed differences." |
 
-Field evaluation timeline:
+## 6. Timeline To Memorize
 
-| Phase | What happened |
-|---|---|
-| Phase 1 | Recruitment, screening, consent, compatibility check, 1:1 allocation. |
-| Phase 2 | Baseline profile and app setup; participant enabled Accessibility Service. |
-| Phase 3 | Week 1 baseline logging; prompts disabled for both groups. |
-| Phase 4 | Week 2 deployment; intervention prompts enabled only for intervention group; control remained logging-only. |
-| Phase 5 | Post-usage survey, SME review, aggregate log export, data analysis. |
+Development timeline (four one-week Agile Scrum sprints, completed before the May 25, 2026 field start; the manuscript states sprint order, not calendar dates):
 
-## 6. System Data Flow
+| Stage | Approx. window | What happened |
+|---|---|---|
+| Sprint 1 | late Apr 2026 | Requirements, planning, target platforms, privacy framing, data model. |
+| Sprint 2 | early May 2026 | Accessibility extraction, platform adapters, local logging, session/dwell tracking. |
+| Sprint 3 | early-mid May 2026 | VADER + MVL, no-text VLM fallback, fuzzy risk engine, prompt policy. |
+| Sprint 4 | mid-late May 2026 | Testing, bug fixes, export, deployment preparation, documentation. |
+
+Field evaluation timeline (dates verified from `study_periods.csv`; all participants share the same nominal week boundaries, Asia/Manila time):
+
+| Phase | Dates (2026) | What happened |
+|---|---|---|
+| Phase 1 | mid-May, before May 25 | Recruitment, screening, consent, compatibility check, 1:1 allocation. |
+| Phase 2 | final week before May 25 | Baseline profile and app setup; participant enabled Accessibility Service. |
+| Phase 3 (Week 1) | Mon May 25 - Sun May 31 | Baseline logging; prompts disabled for both groups; Doomscrolling Scale at week end. |
+| Phase 4 (Week 2) | Mon Jun 1 - Sun Jun 7 | Deployment; prompts enabled only for intervention group; control remained logging-only; Doomscrolling Scale at week end. |
+| Phase 5 | Jun 7 onward | Post-usage survey, SME review, aggregate log export, data analysis (analysis package finalized Jun 13). |
+
+If asked for exact field dates: first logged session Mon May 25, 2026 08:00; last logged session Sun Jun 7, 2026 15:45 (Asia/Manila).
+
+## 7. System Data Flow
 
 1. Android Accessibility Service observes target app foreground state, accessibility events, visible UI text, scroll/touch/click events, and no-text item situations.
 2. Platform adapter confirms target short-form surface: TikTok, Facebook Reels, or Instagram Reels.
@@ -90,10 +112,42 @@ Field evaluation timeline:
 9. Room/SQLite stores aggregate session/prompt/reliability/settings data.
 10. Export produces study-code-linked CSV/ZIP outputs without raw captions or screenshots.
 
-## 7. Core Terms
+## 8. Abbreviations And Core Terms
+
+Abbreviation expansions (say the full form once before using the abbreviation in an answer):
+
+| Abbreviation | Full form | One-line meaning |
+|---|---|---|
+| REDU | Project/app name (not an acronym) | The Android app; the manuscript calls the system the Heuristic Risk-State Estimation System. |
+| API | Application Programming Interface | The interface one program exposes to another; here, Android's Accessibility API. |
+| CI | Confidence Interval | The range that likely contains the true effect; 95% CI means the procedure captures the true value 95% of the time. |
+| CoG | Center of Gravity | The defuzzification method that turns fired fuzzy rules into one 0-100 score. |
+| DSI | Doomscroll Severity Index | Weekly mean RiskScore over sentiment-reliable sessions. |
+| ISO/IEC 25010 | International Organization for Standardization / International Electrotechnical Commission standard 25010 | The software product quality model used for the user evaluation. |
+| JITAI | Just-in-Time Adaptive Intervention | Intervention delivered at the right moment with adaptive rules; the literature basis for the prompt design. |
+| MVL | Minimum Viable Lexicon | The small Filipino/Taglish word list added to VADER. |
+| NSD | Negative Sentiment Density | Percent of resolvable session content classified negative. |
+| OOV | Out-of-Vocabulary | Tokens the sentiment lexicon does not recognize. |
+| PU / PEOU | Perceived Usefulness / Perceived Ease of Use | The two TAM acceptance constructs. |
+| RQ | Research Question | The five thesis questions. |
+| SD | Standard Deviation | Spread of scores around the mean. |
+| SFV | Short-Form Video | TikTok/Reels-style feed content. |
+| SME | Subject Matter Expert | The two expert reviewers (mobile/software; behavioral psychology). |
+| SUS | System Usability Scale | Standard 10-item usability instrument, scored 0-100. |
+| TAM | Technology Acceptance Model | User-acceptance framework (PU + PEOU). |
+| UI | User Interface | The visible screens/elements of an app. |
+| VADER | Valence Aware Dictionary and sEntiment Reasoner | Lexicon- and rule-based sentiment analyzer for social-media text. |
+| VLM | Vision-Language Model | A model that takes an image and answers in text; here Moondream 0.5B. |
+| VQA | Visual Question Answering | Asking a VLM a constrained question about an image. |
+
+Core terms:
 
 | Term | Meaning in defense |
 |---|---|
+| Accessibility Service | Android mechanism that lets an app, with explicit user activation, read on-screen content and UI events of other apps; REDU's data source, no rooting needed. |
+| Moondream 0.5B | A small open vision-language model (about 0.5 billion parameters) that runs fully on the phone; labels no-text items. |
+| Room / SQLite | Android's local database layer; stores only aggregate metrics on-device. |
+| Edge computing / on-device processing | All inference happens on the user's phone; no raw content leaves the device. |
 | Doomscrolling | Compulsive and continuous consumption of negative/distressing content; anchored on Sharma et al. and the Doomscrolling Scale. |
 | Heuristic risk estimation | Proxy-based computational estimate, not diagnosis or ground-truth detection. |
 | Session duration | Continuous active target-platform use; session ends on >30-second target exit, screen off, or service stop. |
@@ -104,7 +158,7 @@ Field evaluation timeline:
 | Sentiment-reliable session | Session whose negativity can be resolved by text or no-text VLM path. |
 | Sentiment-unreliable session | High-OOV or unresolved no-text/extraction case; excluded from NSD/DSI analyses where reliability is required. |
 | VADER | Lexicon/rule-based social-media sentiment analyzer; negative if compound score < -0.05. |
-| MVL | Minimum Viable Lexicon: Filipino/Taglish extension; 57 runtime entries, single-expert concordance. |
+| MVL | Minimum Viable Lexicon: Filipino/Taglish extension; 57 runtime entries = 56 affective + 1 neutral (`buhay`, 0.0). Built from 53 instrument terms rated by one Filipino-language expert (53/53 exact concordance) plus 4 common/formal `naka-` spelling counterparts. |
 | OOV ratio | Unrecognized tokens divided by valid tokens; >=50% triggers sentiment-unreliable handling. |
 | VLM fallback | On-device Moondream 0.5B route for no-text items; constrained five-label classification. |
 | Fuzzy logic | Interpretable graded rule system using Low/Medium/High memberships and rules instead of hard binary classification. |
@@ -115,7 +169,7 @@ Field evaluation timeline:
 | SUS | System Usability Scale; study target >=70. |
 | SME | Subject Matter Expert; one mobile/software expert and one digital well-being/behavioral psychology expert. |
 
-## 8. Formulas And Thresholds
+## 9. Formulas And Thresholds
 
 Negative Sentiment Density:
 
@@ -220,7 +274,7 @@ Core timing thresholds:
 | >=3 reliable Week 1 sessions | Inclusion floor for RQ3 Week 1 DSI association. |
 | >=10 reliable Week 1 sessions | Live prompt personalization threshold. |
 
-## 9. Rule Bases To Memorize
+## 10. Rule Bases To Memorize
 
 Full fuzzy engine:
 
@@ -272,7 +326,7 @@ Fallback 9 rules:
 | 8 | High | Medium | Critical |
 | 9 | High | High | Critical |
 
-## 10. Results To Memorize
+## 11. Results To Memorize
 
 Participant profile:
 
@@ -396,7 +450,29 @@ RQ5 SME evaluation:
 | SME-MOB-01 | Software/mobile application development | 5.00 | Fully favorable technical appraisal. |
 | SME-PSY-01 | Digital well-being / behavioral psychology | 4.33 | Favorable non-clinical and intervention appraisal, with wording/configuration recommendations. |
 
-## 11. Statistical Logic
+## 12. Statistical Logic
+
+Plain-language test guide (what each test is, and why this study used it):
+
+| Term | Plain meaning | Why used here |
+|---|---|---|
+| p-value | Probability of seeing a difference this large if there were truly no difference. Small p = unlikely to be chance. | Decision aid at alpha = .05; never reported alone. |
+| Change score | Week 2 value minus Week 1 value per participant. | Adjusts for individual baselines and chance baseline imbalance. |
+| Welch's t-test | Compares two group means without assuming equal variances. | Session duration: change scores normal but variances unequal. |
+| Mann-Whitney U | Compares two groups by ranks instead of raw values; no normality assumption. | Dwell, NSD, Doomscrolling Scale: change scores non-normal. |
+| Paired t-test | Compares the same people at two time points (mean of differences). | Within-intervention Week 1 vs Week 2, when differences normal. |
+| Wilcoxon signed-rank | Rank-based version of the paired t-test. | Within-intervention comparisons with non-normal differences. |
+| Shapiro-Wilk | Checks whether data look normally distributed. | Gatekeeper that decided t-test vs rank test. |
+| Levene's test | Checks whether two groups have equal variances. | Gatekeeper that decided Student vs Welch t-test. |
+| Holm-Bonferroni | Correction that keeps the overall false-positive rate at 5% across multiple tests. | Applied across the four primary RQ2 outcomes. |
+| Cohen's d / dz | Effect size: difference in standard-deviation units (d between groups, dz within subjects). Rough guide: 0.2 small, 0.5 medium, 0.8 large. | All primary effects exceeded 1.0 = large, but pilot-sized sample. |
+| 95% CI | Range of plausible true effect sizes given the data. | Reported with every primary effect so size, not just p, drives interpretation. |
+| Spearman's rho | Correlation of ranks; robust to non-normality and outliers. | Primary RQ3 statistic (assumptions not met for Pearson). |
+| Pearson's r | Correlation of raw values; assumes linearity/normality. | Reported alongside rho for completeness. |
+| Cronbach's alpha | Internal consistency: do items in a scale move together (0-1; >=0.70 acceptable). | Reliability check for each survey subscale. |
+| Permuted-block allocation | Randomization in small shuffled blocks (sizes 2 and 4) so groups stay balanced and the next assignment is hard to predict. | How the 25/25 split was assigned, concealed until eligibility confirmed. |
+| Purposive-convenience sampling | Recruiting reachable people who meet criteria, not a random population sample. | Honest scope limit; no prevalence claims. |
+| Hawthorne effect | People change behavior because they know they are observed. | Acknowledged limitation for both arms. |
 
 RQ2:
 
@@ -429,7 +505,7 @@ RQ5:
 - SME favorable target = >=4.00 out of 5.
 - Two SMEs means descriptive reporting, not inferential expert-panel statistics.
 
-## 12. Algorithmic Complexity
+## 13. Algorithmic Complexity
 
 | Component | Time complexity | What drives cost |
 |---|---|---|
@@ -444,175 +520,240 @@ RQ5:
 
 Defense line: the app is efficient because most scoring is linear or constant-time; the expensive operation is VLM inference, which is only used for no-text items instead of every item.
 
-## 13. Citation Map
+## 14. Tables From Chapters 4, 5, And 6
 
-Use the citation keys exactly as they appear in the manuscript. The defense should explain what each source contributes, not just name-drop it.
+Use this section when a panelist points to a table and asks, "What does this mean?" Chapter 4 contains the formal tables. Chapters 5 and 6 are prose chapters in the current manuscript, so they do not contain formal `#thesis_table` blocks; their key findings and recommendations are summarized after the Chapter 4 table guide.
+
+### Chapter 4 Formal Tables
+
+| Table | What it contains | What it says | Defense line |
+|---|---|---|---|
+| Data Sources and Analysis Mapping | Maps each research area to workbook/source files and analysis type. | The chapter is traceable to specific sources: baseline profile, sessions/data quality, RQ2 tests, RQ3 correlations, survey analysis, and SME files. | "This table shows that each result comes from a named analysis source, not from unsupported interpretation." |
+| Sample Disposition and Effective Sample Sizes | Participants retained, RQ3 eligibility, complete outcomes, and NSD/DSI effective n. | All 50 completed both weeks; sentiment-dependent analyses used 48 because two intervention participants lacked enough reliable Week 1 sessions. | "The study had full participant retention, but it reports reduced effective n where sentiment reliability required it." |
+| Respondent Baseline Profile Summary | Age, sex, platform exposure, and estimated daily SFV use. | Participants were adult Filipino Android users, mostly young adults; all used Facebook/Instagram Reels and almost all used TikTok. | "This supports sample suitability for a short-form-video pilot, but not population generalizability." |
+| Data Quality and Session Reliability Summary | Reliable/unreliable session counts and reliability-event causes. | 10,134 sessions were logged; 8,817 were sentiment-reliable and 1,317 were sentiment-unreliable; high OOV was the main reliability driver. | "The system was transparent about unusable sentiment cases instead of hiding them." |
+| Prompt-Response Summary During Week 2 Intervention | Logged prompt actions in the intervention arm. | TAKE_BREAK was the most frequent logged prompt response; prompt events are descriptive because there was no Week 1 prompt baseline. | "This describes how users interacted with prompts; it is not treated as a separate outcome." |
+| RQ2 Primary Behavioral Comparisons Between Groups | Four primary Week 1-to-Week 2 between-group change-score tests. | Session duration, dwell, NSD, and Doomscrolling Scale all favored intervention with p < .001 and large effects after Holm correction. | "This is the strongest short-term outcome table, but it supports pilot differences, not long-term efficacy." |
+| RQ2 Supplementary and Within-Intervention Comparisons | Sessions/day, DSI, and within-intervention paired comparisons. | Supplementary outcomes moved in the same direction; intervention participants improved from Week 1 to Week 2. | "This strengthens the pattern, but the supplementary rows are exploratory." |
+| RQ3 Baseline Convergent Association with Week 1 Doomscrolling Scale | Spearman/Pearson associations between self-report and duration, dwell, NSD, DSI. | DSI correlated strongly with self-report (rho = 0.76), but duration had the highest rho (0.92). | "DSI has convergent plausibility, but the study does not claim DSI superiority over duration." |
+| ISO/IEC 25010, SUS, TAM, and Reliability Summary | User evaluation means, SDs, item counts, Cronbach alpha, and targets. | All targets were met; SUS was 80.95 and alpha ranged from .717 to .957. | "Users rated the system favorably, and the survey scales showed acceptable internal consistency in this sample." |
+| Participant Open-Ended Feedback Theme Summary | Coded feedback themes, counts, percentages, and implications. | Main issues were prompt timing, onboarding, score clarity, platform monitoring, and dashboard/breathing/export/privacy feedback. | "Users did not reject the concept; they asked for clearer setup, score explanations, and prompt controls." |
+| Subject Matter Expert Rubric Results | Two SME ratings across technical soundness, ranges, rules, privacy, intervention, ISO quality. | Mobile expert overall = 5.00; behavioral psychology expert overall = 4.33; both met the favorable target. | "SMEs supported the design as plausible, but this is expert appraisal, not formal calibration." |
+| Time Complexity Summary of Core Runtime Algorithms | Big-O for VADER, routing, VLM fallback, fuzzy inference, NSD, DSI, personalization. | Most components are linear or constant-time; VLM fallback is the dominant fixed-cost operation. | "The app is computationally bounded; the expensive path is used only for no-text items." |
+| Summary of Findings by Research Question | RQ evidence, main finding, interpretation, and limitation. | RQ1-RQ5 were answered within pilot scope; every finding is paired with its limitation. | "This table is the defense map: evidence supports feasibility, acceptability, plausibility, and short-term differences only." |
+
+### Chapter 5 Conclusion Guide
+
+Chapter 5 has no formal tables in the current manuscript. It summarizes and interprets Chapter 4 in prose. Use this guide as the "what Chapter 5 says" table.
+
+| Chapter 5 part | What it says | Defense line |
+|---|---|---|
+| Summary of findings for RQ1 | The Android system supported local risk estimation with 10,134 sessions, 87.0% reliable coverage, MVL concordance, VADER/MVL, VLM fallback, fuzzy inference, and fallback handling. | "The architecture worked as a bounded privacy-preserving prototype." |
+| Summary of findings for RQ2 | The intervention group had larger Week 1-to-Week 2 reductions than control across duration, dwell, NSD, and Doomscrolling Scale; supplementary DSI/sessions-day followed the same direction. | "The intervention condition showed favorable short-term differences." |
+| Summary of findings for RQ3 | Week 1 DSI had rho = 0.76 with self-report, but duration had rho = 0.92. | "Convergent plausibility, not superiority and not diagnostic validation." |
+| Summary of findings for RQ4 | All software/user evaluation targets were met; SUS = 80.95; alpha values met >=0.70. | "Users evaluated the system favorably, but UX improvements remain." |
+| Summary of findings for RQ5 | SMEs rated the system favorably: 5.00 and 4.33, with recommendations for clearer fallback/privacy wording and configurable prompts. | "Expert appraisal supports plausibility, but the panel was small." |
+| Overall conclusion | REDU is a defensible pilot prototype integrating local logging, text-first sentiment, no-text fallback, fuzzy risk estimation, and prompts. | "The main contribution is integration in one privacy-preserving Android artifact." |
+| Overall limitation | Evidence remains exploratory because of the two-week window, purposive-convenience sample, unreliable-session exclusions, and two-SME panel. | "The conclusion is deliberately proportional to the evidence." |
+
+### Chapter 6 Recommendation Guide
+
+Chapter 6 has no formal tables in the current manuscript. It is organized into recommendation sections. Use this guide to explain what the recommendations say and why they follow from the findings.
+
+| Chapter 6 area | What it recommends | Why it matters in defense |
+|---|---|---|
+| System improvement - onboarding | Add guided Accessibility Service and permission setup. | Responds to onboarding/setup feedback and improves deployment consistency. |
+| System improvement - score clarity | Explain RiskScore/activity score through simple component breakdowns. | Responds to score-clarity feedback and makes fuzzy output more transparent. |
+| System improvement - prompt timing | Add snooze, quiet hours, adjustable sensitivity, and cooldown feedback. | Responds to the most frequent user feedback theme. |
+| System improvement - breathing break | Shorten or make pause-and-reset duration configurable. | Responds to participant and psychology-expert feedback. |
+| System improvement - dashboard/platform status | Show monitoring status for TikTok, Facebook Reels, and Instagram Reels. | Addresses platform-monitoring transparency and extraction reliability concerns. |
+| System improvement - export preview | Show exported file names and confirm raw text/screenshots are not included. | Strengthens privacy trust and export transparency. |
+| Future development - extraction reliability | Use reliability events to diagnose high-OOV, unresolved VLM, and extraction failures by platform. | Directly targets the 13.0% sentiment-unreliable coverage issue. |
+| Future development - VLM fallback | Test prompt wording, model mapping, screenshot timing, and fallback thresholds. | Improves no-text coverage while preserving local processing. |
+| Future development - softer terminology | Replace alarming UI labels with terms like "Activity Pattern Score" while preserving analytic mapping. | Reduces clinical-sounding language and aligns with SME advice. |
+| Future development - privacy architecture | Keep local processing and aggregate storage unless a new ethics process justifies otherwise. | Protects the strongest design contribution. |
+| Future researchers - larger/longer study | Use a larger, more diverse sample and longer deployment. | Needed before long-term efficacy or population-level claims. |
+| Future researchers - more SME coverage | Add a data science, machine learning, or fuzzy-logic expert. | Strengthens review of membership functions, rules, fallback, and defuzzification. |
+| Future researchers - DSI validation | Compare DSI against full instruments, EMA, external logs, or other validated measures. | Needed because DSI converged but did not outperform duration. |
+| Future researchers - incremental validity | Test whether DSI adds value beyond duration alone. | Directly answers the strongest possible panel critique of the composite. |
+| Future researchers - transparent coverage | Keep reporting effective n, excluded sessions, and platform-specific reliability. | Preserves methodological honesty. |
+| Future implementation - non-clinical use | Deploy as a digital well-being support tool, not diagnosis or therapy. | Keeps claims within evidence and ethics. |
+| Future implementation - consent/privacy | Explain Accessibility access, transient screenshots, stored data, export data, and deletion/withdrawal. | Addresses the biggest privacy concern. |
+| Future implementation - compatibility checks | Check Android version, manufacturer background policy, and screenshot availability before deployment. | Reduces field failure risk. |
+| Future implementation - support materials | Provide setup guide, troubleshooting guide, privacy FAQ, and export guide. | Reduces participant confusion and researcher support burden. |
+| Future implementation - proportional claims | Keep claims to feasibility, user evaluation, expert appraisal, and short-term pilot differences. | Prevents overclaiming during defense and future publication. |
+
+## 15. Citation Map
+
+Use the citation keys exactly as they appear in the manuscript. The defense should explain three things: whether the source is *Local* or *Foreign/International*, the key takeaway, and exactly how it supports REDU.
+
+Local = Philippine/Filipino context, Philippine datasets, Filipino participants, Philippine institutions, or Philippine public/policy sources. Foreign/International = non-Philippine empirical studies, reviews, standards, official platform documentation, or general technical sources.
 
 ### Doomscrolling, Self-Report, And Theory
 
-| Key | What it does |
-|---|---|
-| sharma-2022 | Core doomscrolling construct and Doomscrolling Scale; anchors feedback-loop model. |
-| satici-2023 | Supports short-form Doomscrolling Scale use and psychometric link to distress/personality/social media use. |
-| rodrigues-2022 | Frames doomscrolling as compulsive information seeking and mental well-being concern. |
-| taskin-2024 | Links doomscrolling with mindfulness, secondary traumatic stress, and mental well-being. |
-| hawwa-2025 | Links social media addiction, anxiety, and doomscrolling among young adults. |
-| buchanan-2021 | Supports content-quality framing: negative scrolling differs from neutral/kindness scrolling, not just time. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| sharma-2022 | Foreign/International | Doomscrolling is a measurable construct involving persistent negative feed consumption. | Main construct source; justifies the Doomscrolling Feedback Loop framing and self-report anchor. |
+| satici-2023 | Foreign/International | Doomscrolling Scale scores relate to distress, social media use, and well-being, and support shorter scale use. | Justifies the 4-item short-form weekly self-report as a convergent anchor, not ground truth. |
+| rodrigues-2022 | Foreign/International | Doomscrolling can be framed as compulsive information seeking with mental well-being implications. | Use to explain why doomscrolling is more than ordinary scrolling. |
+| taskin-2024 | Foreign/International | Doomscrolling is linked with reduced mindfulness and secondary traumatic stress in well-being pathways. | Supports non-clinical digital mindfulness and pause-and-reset framing. |
+| hawwa-2025 | Foreign/International | Doomscrolling can mediate links between social media addiction and anxiety among young adults. | Supports relevance to young adult users while avoiding diagnostic claims. |
+| buchanan-2021 | Foreign/International | Negative scrolling produces different emotional consequences than positive/kindness scrolling. | Supports adding content valence/NSD instead of relying only on screen time. |
 
 ### Short-Form Video, Platform Engagement, And Attention
 
-| Key | What it does |
-|---|---|
-| qin-2022 | TikTok information/system quality, flow, and addictive-use framing. |
-| zhang-tiktok-2023 | TikTok integration into routines, entertainment, information, and social reference. |
-| zenone-2021 | TikTok public-health research agenda and harmful exposure/addictive-pattern concerns. |
-| zannettou-2024 | Trace/data-donation study of engagement with TikTok recommendations. |
-| chen-2024 | Engagement-prolonging designs on very large online platforms. |
-| rajeswari-2024 | Heavy social-media scrolling and sustained-attention concerns. |
-| gagalang-2021 | Filipino learners' social-media use and reading/attention-related outcomes. |
-| cardoso-2024 | Internet use and declining attention span among students. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| qin-2022 | Foreign/International | TikTok design and information/system quality can intensify flow and addictive use. | Supports short-form-video focus and sustained engagement variables. |
+| zhang-tiktok-2023 | Foreign/International | TikTok is embedded in entertainment, information, and social routines. | Explains why short-form feeds can sustain repeated engagement. |
+| zenone-2021 | Foreign/International | TikTok deserves public-health attention because recommendation systems can amplify exposure and use patterns. | Supports treating short-form feeds as a relevant well-being setting. |
+| zannettou-2024 | Foreign/International | Donated traces can be used to analyze engagement with TikTok recommendation streams. | Supports the trace/logging approach as a methodological analogy. |
+| chen-2024 | Foreign/International | VLOPs expose users to engagement-prolonging design patterns. | Supports why app/platform design can sustain scrolling beyond user choice alone. |
+| rajeswari-2024 | Foreign/International | Heavy social-media scrolling is associated with sustained-attention concerns. | Supports attention to prolonged engagement and cadence. |
+| gagalang-2021 | Local | Filipino learners' social media use can affect reading attitudes and competence. | Local attention-related support; do not treat as adult doomscrolling prevalence. |
+| cardoso-2024 | Local | Internet use is discussed as contributing to declining attention span among Filipino students. | Local attention-risk support; keep as student-context evidence. |
 
 ### Existing Tools And Gap
 
-| Key | What it does |
-|---|---|
-| apple-screen-time-2025 | Official Screen Time feature context: summaries/timers. |
-| google-digital-wellbeing-2024 | Official Android Digital Wellbeing feature context. |
-| tiktok-wellbeing-2024 | Official TikTok well-being/break feature context. |
-| mosseri-2021 | Instagram platform protection/well-being feature context. |
-| rahmillah-2023 | Review of apps designed to reduce mobile-phone use; supports tool-gap comparison. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| apple-screen-time-2025 | Foreign/International | Mainstream tools emphasize summaries, limits, and screen-time controls. | Helps show the gap: existing tools are mostly time-based. |
+| google-digital-wellbeing-2024 | Foreign/International | Android Digital Wellbeing provides time summaries and app controls. | Shows REDU differs by adding session-level local risk estimation. |
+| tiktok-wellbeing-2024 | Foreign/International | TikTok provides well-being and break-related features. | Shows platform tools exist but are platform-controlled and not cross-platform/local composite estimators. |
+| mosseri-2021 | Foreign/International | Instagram discusses safety and support features. | Supports the comparison with platform-native well-being tools. |
+| rahmillah-2023 | Foreign/International | Apps to reduce maladaptive phone use often vary in design and evidence strength. | Supports the gap for an integrated, privacy-preserving, content-sensitive artifact. |
 
 ### JITAI, Digital Mindfulness, And Prompts
 
-| Key | What it does |
-|---|---|
-| aggarwal-2024 | Digital mindfulness concept for thoughtful technology use. |
-| mitsea-2023 | Digitally assisted mindfulness and self-regulation support. |
-| antezana-2022 | Well-being app engagement; supports low-burden, relevant interventions. |
-| roffarello-2021 | Real-time smartphone habit monitoring and just-in-time reminders. |
-| teepe-2021 | JITAI mechanisms in mobile apps; supports timing/receptivity concerns. |
-| ismail-2022 | JITAI to reduce sedentary behavior; supports prompt timing and behavior-change analogy. |
-| mair-2022 | Smartphone-delivered JITAI feasibility and personalization context. |
-| yang-2023 | JITAI feasibility/acceptability in smoking cessation; supports adaptive prompt framing. |
-| wang-2023 | Prompt dosing in mobile JITAI; supports burden-aware intervention dose. |
-| fiedler-2024 | JITAI review; supports empirically grounded decision points. |
-| hsu-2025 | Personalized JITAI review; supports adaptive decision rules and personalization. |
-| van-genugten-2025 | JITAI in mental health; supports caution around underdeveloped decision rules. |
-| terzimehic-2022 | Regretful smartphone use and session-length timing; supports 10-20+ min intervention reasoning. |
-| rixen-2023 | Infinite scrolling behavior; supports 10+ minute long-session framing. |
-| meinhardt-2025 | Infinite-scroll intervention after 15 minutes; supports live prompt gate analogy. |
-| ikegaya-2025 | Personalized intervention criteria from baseline; supports Week 1-derived prompt personalization. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| aggarwal-2024 | Foreign/International | Digital mindfulness means more intentional, self-aware technology use. | Supports wording prompts as reflection/self-monitoring, not therapy. |
+| mitsea-2023 | Foreign/International | Digitally assisted mindfulness can support self-regulation skills. | Supports short breathing/pause prompt as wellness support only. |
+| antezana-2022 | Foreign/International | Well-being app engagement improves when interventions are relevant and low-burden. | Supports brief, non-intrusive prompts and avoiding constant interruption. |
+| roffarello-2021 | Foreign/International | Habitual smartphone use can be monitored and mitigated through real-time reminders. | Supports feasibility of local monitoring plus just-in-time reminders. |
+| teepe-2021 | Foreign/International | JITAI mechanisms require attention to timing and receptivity. | Supports cooldowns and burden-aware prompt timing. |
+| ismail-2022 | Foreign/International | JITAI can be designed for behavior interruption in another health-adjacent domain. | Analogy for adaptive, timely prompts; not direct doomscrolling proof. |
+| mair-2022 | Foreign/International | Smartphone JITAI can be feasible and personalized in field contexts. | Supports mobile delivery and personalization as feasible. |
+| yang-2023 | Foreign/International | JITAI can be feasible/acceptable for behavior-change support. | Supports acceptability of adaptive prompt logic. |
+| wang-2023 | Foreign/International | Prompt dose matters; too many prompts can create burden. | Supports cooldown and suppressed prompt logic. |
+| fiedler-2024 | Foreign/International | JITAI decision points should be empirically grounded and context-sensitive. | Supports cautious wording around study-defined timing thresholds. |
+| hsu-2025 | Foreign/International | Personalization is a major JITAI direction, but decision rules need stronger evidence. | Supports Week 1 personalization while admitting it is exploratory. |
+| van-genugten-2025 | Foreign/International | Mental-health JITAIs still need stronger evidence on timing and decision rules. | Supports conservative, non-clinical prompt framing. |
+| terzimehic-2022 | Foreign/International | Regretful smartphone use becomes more salient in longer use sessions. | Supports sub-10-minute vs 10-20+ minute timing logic. |
+| rixen-2023 | Foreign/International | Infinite scrolling can form loops, and users have reasons to break them. | Supports reflective interruption design. |
+| meinhardt-2025 | Foreign/International | Infinite-scroll intervention timing can use a 15-minute trigger in related work. | Supports REDU's 15-minute gate as literature-bounded, not clinical. |
+| ikegaya-2025 | Foreign/International | Personalized intervention criteria based on prior behavior can improve prompt relevance. | Supports Week 1-derived prompt personalization. |
 
 ### Timing, Measurement, And Repeated Observations
 
-| Key | What it does |
-|---|---|
-| cho-2021 | Feature-level smartphone use and regret; supports short-duration distinctions and 30-sec-like handling. |
-| tian-2021 | Mobile app engagement duration distribution; supports sub-10-minute baseline region. |
-| muise-2024 | Smartphone content exposure often occurs in short bursts; supports dwell/session boundary caution. |
-| ahmed-2023 | Smartphone stream/session reconstruction analogy; supports gap handling. |
-| chen-2023 | Sensor/screenshot-based time-killing detection; supports local smartphone inference analogy. |
-| yao-2021 | Repeated digital measures; supports minimum observations for aggregate estimates. |
-| meyer-2022 | How much data is enough for wearable/digital measures; supports week-level reliability caution. |
-| ratitch-2023 | Statistical methods for digital-measure validation; supports cautious validation language. |
-| buekers-2025 | Digital assessment hours/days needed; supports repeated-observation sufficiency framing. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| cho-2021 | Foreign/International | Feature-level smartphone logs distinguish very brief, intentional, and regretful use patterns. | Supports using session/dwell timing rather than total screen time only. |
+| tian-2021 | Foreign/International | Many mobile app sessions are short; sustained sessions need separate treatment. | Supports sub-10-minute low-duration region and sustained-use thresholds. |
+| muise-2024 | Foreign/International | Smartphone content exposure is easy to mismeasure and often happens in bursts. | Supports cautious dwell/session inference wording. |
+| ahmed-2023 | Foreign/International | Smartphone streams can be reconstructed for behavioral inference using explainable features. | Supports session reconstruction and gap-handling analogy. |
+| chen-2023 | Foreign/International | Smartphone sensors/screenshots can infer time-killing contexts. | Supports local sensing plus screenshot-based inference as an analogy. |
+| yao-2021 | Foreign/International | Repeated digital measures need enough observations for stable aggregation. | Supports minimum-session rules for week-level DSI. |
+| meyer-2022 | Foreign/International | Data sufficiency is a practical problem in digital/wearable measurement. | Supports caution about sparse reliable sessions. |
+| ratitch-2023 | Foreign/International | Digital measures require reliability/validation methods before strong claims. | Supports "convergent plausibility, not validation." |
+| buekers-2025 | Foreign/International | Digital assessment needs enough hours/days to stabilize estimates. | Supports week-level aggregation and future longer validation. |
 
 ### Fuzzy Logic, Memberships, And Sensitivity
 
-| Key | What it does |
-|---|---|
-| vashishtha-2023 | Fuzzy logic for sentiment analysis; supports interpretable graded inference. |
-| pickering-2025 | Interpretability of fuzzy rule-based models; supports transparent rules over black-box classifier. |
-| porebski-2022 | Membership functions for explainable/reliable fuzzy classifiers. |
-| khairuddin-2021 | Structured review of triangular/trapezoidal fuzzy membership functions. |
-| azam-2021 | Generating triangular/trapezoidal membership functions; supports simple partitions. |
-| casalino-2022 | Strong fuzzy partitions; supports partitioned Low/Medium/High setup. |
-| dogan-2021 | Fuzzy AHP sensitivity-analysis analogy. |
-| vinogradova-zinkevic-2023 | Sensitivity analysis of fuzzy methods. |
-| shahari-2024 | Fuzzy similarity sensitivity analysis. |
-| shukla-2025 | Membership-function sensitivity analysis. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| vashishtha-2023 | Foreign/International | Fuzzy logic can support sentiment-related reasoning where boundaries are gradual. | Justifies graded Low/Medium/High risk estimation. |
+| pickering-2025 | Foreign/International | Fuzzy rule-based models are interpretable compared with many black-box models. | Main defense for fuzzy logic over supervised opaque models. |
+| porebski-2022 | Foreign/International | Membership-function choice affects explainability and reliability. | Supports explicitly documenting membership functions. |
+| khairuddin-2021 | Foreign/International | Triangular/trapezoidal fuzzy memberships are common structured choices. | Supports simple triangular membership sets. |
+| azam-2021 | Foreign/International | Generated triangular/trapezoidal memberships can be useful classification structures. | Supports using structured Low/Medium/High partitions. |
+| casalino-2022 | Foreign/International | Strong fuzzy partitions support interpretable classifier behavior. | Supports overlap between adjacent fuzzy sets. |
+| dogan-2021 | Foreign/International | Sensitivity analysis is used to test stability in fuzzy decision methods. | Supports the documented boundary-sensitivity protocol. |
+| vinogradova-zinkevic-2023 | Foreign/International | Fuzzy methods can be compared through sensitivity analysis. | Supports future audit of membership parameters. |
+| shahari-2024 | Foreign/International | Fuzzy similarity measures require sensitivity checks. | Supports reporting possible output instability. |
+| shukla-2025 | Foreign/International | Membership functions can affect model outputs and should be tested. | Supports sensitivity analysis as future/replication work. |
 
 ### Sentiment, Code-Mixed Text, MVL, And Annotation
 
-| Key | What it does |
-|---|---|
-| hutto-2014 | VADER method and -0.05 negative threshold. |
-| tho-2021 | Lexicon vs transformer sentiment for code-mixed low-resource language; supports lightweight choice. |
-| hussain-2025 | Resource-constrained MobileBERT/DistilBERT edge sentiment context; supports compute tradeoff discussion. |
-| mohammed-2023 | Lexicon-based sentiment for low-resource languages; supports MVL strategy. |
-| nazir-2026 | Code-mixed low-resource sentiment review; supports challenges/future work. |
-| wijayanti-2021 | Sentiment lexicon curation with valence tuning; supports targeted lexicon values. |
-| perera-2024 | Code-mixed sentiment review; supports OOV and language-variation limitations. |
-| hashmi-2024 | Code-mixed tweets with multilingual transformers; supports alternative methods and tradeoffs. |
-| khan-2025 | Textual variation challenges in social-media text processing. |
-| pacol-2021 | English-Filipino sentiment lexicon approach; supports Filipino sentiment feasibility. |
-| co-2022 | Bilingual Filipino/English sentiment and emotion classification; supports local text-processing feasibility. |
-| cruz-2022 | VADER application in local/public concern analysis; supports local VADER use. |
-| krusic-2024 | Sentiment annotation challenges; supports caution with single-expert MVL. |
-| ayravainen-2025 | Annotator agreement/instructions in sentiment annotation; supports no inter-rater-claim limitation. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| hutto-2014 | Foreign/International | VADER is a parsimonious rule-based model designed for social-media sentiment. | Main source for VADER and the compound < -0.05 negative threshold. |
+| tho-2021 | Foreign/International | Lexicon methods remain relevant beside transformers in low-resource/code-mixed settings. | Supports lightweight VADER + MVL instead of heavy transformer deployment. |
+| hussain-2025 | Foreign/International | Efficient transformer approaches exist for edge devices but still involve compute tradeoffs. | Use when asked why not transformers: future alternative, not necessary for pilot. |
+| mohammed-2023 | Foreign/International | Lexicon-based sentiment can be built for low-resource languages. | Supports the MVL strategy for Taglish/Filipino gaps. |
+| nazir-2026 | Foreign/International | Code-mixed low-resource sentiment remains challenging and underdeveloped. | Supports high-OOV screen and conservative reliability exclusions. |
+| wijayanti-2021 | Foreign/International | Social-media sentiment lexicons need domain-specific valence tuning. | Supports expert-reviewed MVL values. |
+| perera-2024 | Foreign/International | Code-mixed text has variation, OOV, and ambiguity problems. | Supports limitations around slang, spelling, and dialects. |
+| hashmi-2024 | Foreign/International | Multilingual transformers can improve code-mixed sentiment but require heavier modeling. | Use as future work / alternative method. |
+| khan-2025 | Foreign/International | Textual variation in social media complicates NLP systems. | Supports why unmatched variants are marked OOV instead of guessed. |
+| pacol-2021 | Local | English-Filipino sentiment can be approached with a bilingual lexicon. | Local support that Filipino-facing lexicon sentiment is feasible. |
+| co-2022 | Local | Filipino/English social-media text can be classified for sentiment/emotion in local contexts. | Local support for bilingual sentiment processing, not direct doomscrolling validation. |
+| cruz-2022 | Local | VADER has been applied to Philippine public-concern sentiment analysis. | Local support for VADER-style analysis in Philippine text settings. |
+| krusic-2024 | Foreign/International | Sentiment annotation is difficult and shaped by annotator experience. | Supports caution: MVL review is concordance, not full validation. |
+| ayravainen-2025 | Foreign/International | Instructions and annotator experience affect sentiment agreement. | Supports why no inter-rater reliability is claimed with one expert. |
 
 ### VLM, Multimodal, Visual, And Edge AI
 
-| Key | What it does |
-|---|---|
-| das-2023 | Multimodal sentiment analysis survey; supports visual channel relevance when text is absent. |
-| cortinas-lorenzo-2024 | Explainable affective computing review; supports caution around visual affect inference. |
-| johnson-2025 | Audio/visual affective computing XAI review; supports interpretability/limits. |
-| wei-2021 | User-generated video emotion recognition with key frames; supports sparse visual inference analogy. |
-| zhang-xu-2023 | Frame-level video emotion recognition; supports per-frame visual evidence. |
-| sharma-2023 | Sparse multimodal emotional-health detection; supports limited sampling analogy. |
-| augusma-2023 | Privacy-compliant group emotion recognition using limited visual features. |
-| qu-2025 | VLM long-video sampling dilemma; supports sparse sampling under constraints. |
-| sharshar-2025 | VLMs for edge networks; supports on-device/edge feasibility. |
-| lee-2024 | Mobile/edge vision transformers; supports compact model choice. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| das-2023 | Foreign/International | Multimodal sentiment can use visual information when text is absent. | Supports the no-text VLM fallback concept. |
+| cortinas-lorenzo-2024 | Foreign/International | Affective computing needs explainability and careful interpretation. | Supports conservative visual-label wording. |
+| johnson-2025 | Foreign/International | Audio/visual affective computing still faces explainability limits. | Supports not claiming the VLM truly understands user emotion. |
+| wei-2021 | Foreign/International | Key frames can support user-generated video emotion recognition. | Supports sparse one-frame inference analogy. |
+| zhang-xu-2023 | Foreign/International | Frame-level adaptation can support video emotion recognition. | Supports using a frame-level cue for no-text items. |
+| sharma-2023 | Foreign/International | Sparse multimodal fusion can be used in emotional-health detection settings. | Supports limited sampling, while keeping it as analogy only. |
+| augusma-2023 | Foreign/International | Privacy-compliant visual features can support emotion recognition without full video retention. | Supports RAM-only, no persistent screenshot storage. |
+| qu-2025 | Foreign/International | VLMs face sampling tradeoffs in long videos. | Supports not doing continuous video analysis. |
+| sharshar-2025 | Foreign/International | VLMs can be studied for edge-network deployment. | Supports feasibility of on-device/edge VLM route. |
+| lee-2024 | Foreign/International | Mobile/edge vision models require compact and efficient design. | Supports choosing Moondream 0.5B as a deployment-fit model. |
 
 ### Privacy, Accessibility, Edge, And Architecture
 
-| Key | What it does |
-|---|---|
-| lee-2022 | Android API/accessibility data availability and privacy sensitivity. |
-| swathi-2025 | Edge-centric monitoring for responsiveness/privacy; supports local processing. |
-| tewari-2023 | Privacy-by-design in mHealth; supports raw-content non-export stance. |
-| laudon-2022 | IPO model and information-system architecture framing. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| lee-2022 | Foreign/International | Android APIs can expose rich smartphone analytics but create privacy sensitivity. | Supports explicit consent, local processing, and aggregate export. |
+| swathi-2025 | Foreign/International | Edge-centric monitoring supports responsiveness and privacy. | Supports on-device processing rather than cloud inference. |
+| tewari-2023 | Foreign/International | mHealth systems should build privacy protections into the design. | Supports privacy-by-design and no raw-content export. |
+| laudon-2022 | Foreign/International | Information systems can be represented through input-process-output structure. | Supports the IPO architecture explanation. |
 
 ### Evaluation, Research Design, Standards
 
-| Key | What it does |
-|---|---|
-| creswell-2022 | Research design basis for design-and-development / pilot field evaluation. |
-| iso-25010-2023 | Official product-quality model for Functional Suitability, Performance Efficiency, Usability, Reliability. |
-| adnan-2025 | TAM acceptability in mHealth apps; supports PU/PEOU evaluation. |
-| hyzy-2022 | SUS benchmark for digital health apps; supports SUS target. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| creswell-2022 | Foreign/International | Mixed/quantitative research designs can combine structured measures and supplementary qualitative feedback. | Supports design-and-development plus pilot field evaluation structure. |
+| iso-25010-2023 | Foreign/International | ISO/IEC 25010 defines software product quality characteristics. | Supports Functional Suitability, Performance Efficiency, Usability, and Reliability evaluation. |
+| adnan-2025 | Foreign/International | TAM remains useful for assessing mHealth app acceptability. | Supports measuring PU and PEOU. |
+| hyzy-2022 | Foreign/International | SUS has benchmark evidence for digital health apps. | Supports the SUS target of >=70 and interpretation of 80.95. |
 
 ### Philippine / Local Relevance
 
-| Key | What it does |
-|---|---|
-| panaligan-2021 | Philippine public discourse on doomscrolling. |
-| lanuza-2021 | Understudied digital platforms in the Philippines; supports local digital-platform context. |
-| punzalan-2024 | Closest local doomscrolling study, student lived experiences. |
-| bautista-2024 | Boredom proneness and social media among college students. |
-| canila-2023 | TikTok consumption and attention span among Filipino students. |
-| ababat-2024 | Excessive internet use among selected senior high school students. |
-| cleofas-2022 | Problematic vs reflective social-media use and mental health among Filipino undergraduates. |
-| zamora-2021 | Daily social-media exposure and anxiety/depression among Filipino seafarers; adult context. |
-| castillo-2022 | Filipino older adults, social media, and social connectedness during COVID-19; adult context. |
-| lim-2025 | Two-week digital detox among Filipino adolescents; supports plausibility of short observation window but not adult proof. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| panaligan-2021 | Local | Doomscrolling had entered Philippine public discourse. | Establishes local relevance, not empirical prevalence. |
+| lanuza-2021 | Local | Some digital platforms and online behaviors in the Philippines remain understudied. | Supports the local research gap. |
+| punzalan-2024 | Local | Filipino students describe lived experiences of being lost in feeds/doomscrolling. | Closest local doomscrolling support; student-centered, so keep adult claims cautious. |
+| bautista-2024 | Local | Boredom proneness and social media use are linked among Filipino college students. | Supports local self-regulation/scrolling concern. |
+| canila-2023 | Local | Filipino student TikTok consumption is perceived to affect attention span. | Supports TikTok/attention relevance locally; not direct adult field evidence. |
+| ababat-2024 | Local | Excessive internet use is reported among Filipino senior high school students. | Local excessive-use context; not adult doomscrolling proof. |
+| cleofas-2022 | Local | Problematic social-media use relates to mental health among Filipino undergraduates. | Stronger local empirical support for problematic-use concern. |
+| zamora-2021 | Local | Social-media exposure relates to anxiety/depression among Filipino seafarers. | Provides adult Filipino context, but not short-form doomscrolling specifically. |
+| castillo-2022 | Local | Filipino older adults used social media for connection during COVID-19. | Shows social media has adult Filipino well-being context, including beneficial use. |
+| lim-2025 | Local | A two-week digital detox showed cognitive/social effects among Filipino adolescents. | Supports plausibility of a two-week window; not adult REDU efficacy proof. |
 
 ### Contextual Or Orphan/Peripheral Bibliography Entries
 
 These keys appear in the bibliography or were flagged as not central in the current chapters. Do not lean on them unless a panel asks about broader context.
 
-| Key | What it does / status |
-|---|---|
-| eva-2025 | Public/policy context on TikTok and children; peripheral. |
-| icamina-2025 | Public context on TikTok and youth brains; peripheral. |
-| mangaluz-2025 | Public/policy context on social-media restrictions for minors; peripheral. |
-| quijano-2026 | Digital detox public-context source; peripheral. |
-| sutrisno-2025 | Campaign/public-context source about social media and well-being; peripheral. |
-| lokeshkumar-2021 | Social-media data and mental-state prediction analogy; methodological background, not direct REDU validation. |
+| Key | Local/Foreign | Key takeaway | Use in defense |
+|---|---|---|---|
+| eva-2025 | Local | Philippine public/policy discussion around TikTok and children's digital habits. | Peripheral background only; REDU does not study minors. |
+| icamina-2025 | Local | Philippine public article on TikTok and youth brain concerns. | Peripheral background only; avoid using as primary evidence. |
+| mangaluz-2025 | Local | Philippine policy discussion on social-media restriction for minors. | Peripheral public-policy context; REDU targets adults. |
+| quijano-2026 | Local | Philippine public article on digital detox. | Peripheral public-discourse context. |
+| sutrisno-2025 | Foreign/International | Campaign/industry discussion on rethinking social media for well-being. | Peripheral context only; not empirical support. |
+| lokeshkumar-2021 | Foreign/International | Social-media data can be used for mental-state prediction with machine learning. | Methodological analogy only; not REDU validation. |
 
-## 14. Weaknesses And Defense Answers
+## 16. Weaknesses And Defense Answers
 
 | Weakness | Honest defense |
 |---|---|
@@ -633,7 +774,7 @@ These keys appear in the bibliography or were flagged as not central in the curr
 | Ethics and privacy concerns | Consent, local processing, study-code export, no raw content retention, withdrawal/delete option. Avoid saying anonymous; say study-code-linked. |
 | Title/word "detection" | Define detection as computational risk-state estimation from observable proxies, not clinical diagnosis. |
 
-## 15. Likely Panel Questions
+## 17. Likely Panel Questions
 
 | Question | Short answer |
 |---|---|
@@ -656,11 +797,14 @@ These keys appear in the bibliography or were flagged as not central in the curr
 | Is REDU spying? | No. User installs it, enables Accessibility explicitly, processing is local, export is aggregate/study-code-linked, and raw captions/screenshots are not exported. |
 | Why adult Filipino Android users only? | Android Accessibility and local Filipino/Taglish context are the target scope; no claims for minors, iOS, or other populations. |
 | Why no AUROC/F1? | No ground-truth class labels for sessions; those metrics would imply a supervised validation the study did not collect. |
+| Did you measure actual CPU, RAM, or battery use? | No objective device profiling was collected. Performance Efficiency was evaluated through user survey responses and SME review, supported by the algorithmic complexity analysis. Objective profiling is future work. |
+| What does REDU stand for? | It is the app's project name, not an acronym. The manuscript refers to the system as the Heuristic Risk-State Estimation System. |
+| When exactly did the field study run? | Week 1 baseline: May 25-31, 2026. Week 2 deployment: June 1-7, 2026. Post-usage survey and export followed from June 7. |
 | What is the biggest limitation? | Pilot evidence: two weeks, N = 50, purposive-convenience sample, 13% sentiment-unreliable sessions, and limited expert panel. |
 | What is the strongest result? | All primary RQ2 outcomes favored intervention, all RQ4 user-evaluation targets were met, and system logging achieved 87.0% reliable coverage. |
 | What is the strongest technical feature? | Privacy-preserving local integration of behavioral proxies, sentiment proxy, no-text fallback, fuzzy inference, and adaptive prompting. |
 
-## 16. Peer Comparison / Manuscript Quality
+## 18. Peer Comparison / Manuscript Quality
 
 Based on the local peer-manuscript critique in `/Users/geanm/Documents/Codex/2026-05-16/papers of other groups`, the common high-risk gaps among peers were missing Cronbach alpha, missing algorithm complexity, incomplete Chapter 5 recommendations, weak RQ alignment, and limited discussion of limitations.
 
@@ -677,7 +821,7 @@ REDU is strong against peers because:
 
 REDU is most comparable to the stronger peer manuscripts, such as those with clear results interpretation and limitation discussion, but it is ahead of most reviewed peers on reliability analysis and complexity analysis. The main defense risk is not manuscript completeness; it is wording discipline. If the researchers overclaim "detection accuracy," "clinical validation," or "prevention," the panel can attack. If the researchers keep the pilot/non-clinical framing, the manuscript is defense-ready and above-average in methodological transparency.
 
-## 17. Remaining Technical Notes From App Review
+## 19. Remaining Technical Notes From App Review
 
 Fixed items to know if asked:
 
@@ -702,11 +846,11 @@ Be honest about what still needed live confirmation:
 - VLM warm-up timing confirmation on device.
 - Social-app extraction behavior can drift as TikTok/Facebook/Instagram update their UI.
 
-## 18. One-Minute Closing Answer
+## 20. One-Minute Closing Answer
 
 The thesis should be defended as a software-engineering and pilot field-evaluation contribution. The evidence supports that REDU can run locally, collect analyzable short-form-video usage logs, estimate risk through transparent behavioral and sentiment-related proxies, degrade conservatively when sentiment is unreliable, and receive favorable user and SME evaluation. The Week 1-to-Week 2 results are promising, but they are short-term pilot findings, not proof of long-term efficacy or clinical validity. The next step is larger, longer, more diverse validation with stronger sentiment annotation, platform-specific reliability reporting, additional SMEs, and incremental-validity testing of DSI beyond duration alone.
 
-## 19. Last-Minute Memorization List
+## 21. Last-Minute Memorization List
 
 - N = 50, 25 intervention, 25 control.
 - Two weeks: Week 1 prompts off, Week 2 prompts on only for intervention.
