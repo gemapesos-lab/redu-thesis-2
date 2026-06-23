@@ -131,36 +131,12 @@
 #show heading.where(level: 2): it => render_level2_heading(it)
 #show heading.where(level: 3): it => render_level3_heading(it)
 
-// Chapters 1-3 use a house style where only the first prose paragraph after
-// each heading gets a first-line indent. Later paragraphs stay flush-left.
+// Configure body paragraph indentation for chapters (Chapters 1 to 6)
 #{
-  let first-par-indent-ready = state("chapter-first-par-indent-ready", false)
-
-  show heading.where(level: 1): it => {
-    render_level1_heading(it)
-    first-par-indent-ready.update(true)
-  }
-
-  show heading.where(level: 2): it => {
-    render_level2_heading(it)
-    first-par-indent-ready.update(true)
-  }
-
-  show heading.where(level: 3): it => {
-    render_level3_heading(it)
-    first-par-indent-ready.update(true)
-  }
-
-  show par: it => context {
-    if first-par-indent-ready.get() {
-      first-par-indent-ready.update(false)
-      // Pad the paragraph and use a negative hanging indent so only the first
-      // line shifts right while later lines return to the normal left edge.
-      block(width: 100%)[#h(0.5in)#it.body]
-    } else {
-      it
-    }
-  }
+  set par(first-line-indent: 0.5in)
+  show list: set par(first-line-indent: 0pt)
+  show enum: set par(first-line-indent: 0pt)
+  show figure: set par(first-line-indent: 0pt)
 
   include "chapters/05_chapter1.typ"
   include "chapters/06_chapter2.typ"
@@ -174,4 +150,13 @@
 #heading(level: 1, numbering: none)[REFERENCES]
 #v(1em)
 #bibliography("chapters/08_references.bib", style: "apa", title: none)
-#include "chapters/09_appendices.typ"
+
+// Configure body paragraph indentation for appendices
+#{
+  set par(first-line-indent: 0.5in)
+  show list: set par(first-line-indent: 0pt)
+  show enum: set par(first-line-indent: 0pt)
+  show figure: set par(first-line-indent: 0pt)
+
+  include "chapters/09_appendices.typ"
+}

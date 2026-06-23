@@ -32,9 +32,7 @@ This study addresses the gap left by time-based or platform-controlled digital w
 
 == Significance of the Study
 
-#block(width: 100%)[
-  *Contribution to the Body of Knowledge:* This study contributes a mobile-systems design and pilot-scale field evaluation of one app that integrates behavioral monitoring, a text-first sentiment proxy, a no-text VLM fallback, adaptive prompting, and on-device privacy. Its contribution is an engineering evaluation framework for feasibility, acceptability, and estimator plausibility. The *Minimum Viable Lexicon (MVL)* workflow supports low-resource, code-mixed text handling within the system.
-]
+*Contribution to the Body of Knowledge:* This study contributes a mobile-systems design and pilot-scale field evaluation of one app that integrates behavioral monitoring, a text-first sentiment proxy, a no-text VLM fallback, adaptive prompting, and on-device privacy. Its contribution is an engineering evaluation framework for feasibility, acceptability, and estimator plausibility. The *Minimum Viable Lexicon (MVL)* workflow supports low-resource, code-mixed text handling within the system.
 
 Beyond its academic contribution, the study may offer value to the following stakeholders:
 
@@ -48,13 +46,11 @@ Beyond its academic contribution, the study may offer value to the following sta
 
 == Objectives of the Study
 
-#block(width: 100%)[*General Objective:*]
+*General Objective:*
 
-#block(width: 100%)[
-  To design, develop, and evaluate the proposed system as a privacy-preserving, on-device Android application for doomscrolling-related risk estimation on short-form video platforms.
-]
+To design, develop, and evaluate the proposed system as a privacy-preserving, on-device Android application for doomscrolling-related risk estimation on short-form video platforms.
 
-#block(width: 100%)[*Specific Objectives:*]
+*Specific Objectives:*
 
 1. To design and develop the system to estimate doomscrolling-related risk using behavioral indicators and sentiment-related indicators when reliably resolvable, with 2-input behavioral fallback for sentiment-unreliable sessions.
 2. To determine the short-term Week 1-to-Week 2 changes in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period.
