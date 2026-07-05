@@ -8,11 +8,36 @@
 
 This chapter presents the completed field-study, survey, expert-review, and workbook-based analysis results for the Heuristic Risk-State Estimation System. The final analysis dataset contains 50 participants, divided evenly between the intervention group and the logging-only control group. Both groups completed the Week 1 baseline phase and the Week 2 deployment phase. The analysis is interpreted as a pilot-scale software-engineering evaluation, not as a clinical trial or long-term behavioral-efficacy study. To keep results traceable to Chapter 1, this chapter is organized around the five Statements of the Problem (SOPs): each top-level section reports the evidence, findings, and interpretation for one SOP.
 
-The detailed workbook sheets in `REINVENT ANALYSIS.xlsx` were used as the primary source for the tables in this chapter. The final reporting values for SOP 2 were taken from the workbook sheet `RQ2_FINAL_TESTS_PDF_ALIGNED` because it applies the methodology-selected tests after assumption checking. The formula audit sheets were used only as supporting calculation references.
-
 == Presentation of Results
 
-This section presents the preliminary context needed to interpret the SOP-level results that follow: the data sources used across the study, the effective sample sizes after data-quality screening, and the respondent baseline profile. To keep the discussion aligned with Chapter 3, results are organized by SOP and interpreted with attention to effective sample sizes, pilot-study scope, and known data limitations.
+This section presents the preliminary context needed to interpret the SOP-level results that follow: the analysis workbook that consolidates the reported statistics, the data sources it draws from, the effective sample sizes after data-quality screening, and the respondent baseline profile. To keep the discussion aligned with Chapter 3, results are organized by SOP and interpreted with attention to effective sample sizes, pilot-study scope, and known data limitations.
+
+=== The REINVENT Analysis Workbook
+
+The detailed workbook sheets in `REINVENT ANALYSIS.xlsx` were used as the primary source for the tables in this chapter. The workbook is the consolidated analysis artifact for the study: it ingests the raw exported CSV logs from the deployed Android application (session, prompt, reliability, and survey files) and derives every reported statistic through documented cell formulas, so that any reader can trace a Chapter 4 number back to the sheet, column, and formula that produced it. The workbook is organized into four sheet families: (1) documentation and audit sheets that record the analysis intent, the statistician sign-off, and the mapping between reported values and the reviewed manuscript; (2) derived analysis sheets grouped by SOP; (3) supporting derivation and formula-audit sheets; and (4) the raw exported CSVs kept as embedded reference tabs so that the workbook remains self-contained.
+
+The final reporting values for SOP 2 were taken from the sheet `RQ2_FINAL_TESTS_PDF_ALIGNED` because it applies the methodology-selected tests after assumption checking; earlier `RQ2_CHANGE_TESTS` and `RQ2_PAIRED_INTERVENTION` sheets are retained only as intermediate calculation references. The `STATISTICIAN_SIGNOFF` and `PDF_ALIGNMENT_NOTES` sheets record the review of the numbers against the manuscript, and the `FORMULA_NOTES` sheet documents the derivations used in the derived sheets. The formula audit sheets were used only as supporting calculation references.
+
+#thesis_table(
+  caption: [Sheet Families in `REINVENT ANALYSIS.xlsx`],
+  columns: (1.05fr, 1.5fr, 1.6fr),
+  cell_align: table_align((left, left, left)),
+  header: (
+    [*Family*],
+    [*Representative Sheets*],
+    [*Purpose*],
+  ),
+  body: (
+    [Documentation and audit], [`README`; `GUIDE`; `QUESTIONS`; `STATISTICIAN_SIGNOFF`; `PDF_ALIGNMENT_NOTES`; `EXECUTIVE_SUMMARY`; `FORMULA_NOTES`], [Describe workbook usage, record analysis decisions, and align workbook values to the reported manuscript],
+    [SOP 1 - architecture and data quality], [`DATA_QUALITY_SUMMARY`; `PROMPT_SUMMARY`; `mvl_concordance`], [Summarize session reliability, prompt-response counts, and Filipino MVL concordance],
+    [SOP 2 - behavioral change], [`WEEK_METRICS`; `CHANGE_SCORES`; `RQ2_CHANGE_TESTS`; `RQ2_PAIRED_INTERVENTION`; `RQ2_FINAL_TESTS_PDF_ALIGNED`; `WEEK_DAILY`; `RQ2_GROUP_DATA`], [Derive Week 1 and Week 2 aggregates, change scores, and the assumption-selected final tests reported for SOP 2],
+    [SOP 3 - baseline correlation], [`RQ3_CORRELATION`; `RQ3_DATA`], [Compute Spearman's rho and Pearson's r between Week 1 DSI components and the Doomscrolling Scale],
+    [SOP 4 - user evaluation], [`SURVEY_ANALYSIS`; `ISOIEC 25010`; `Usability(SUS)`; `TAM(PUPEOU)`; `SURVEY_SCORES`], [Derive per-construct means, standard deviations, thresholds, and Cronbach's alpha for ISO/IEC 25010, SUS, and TAM],
+    [Raw exported CSVs], [`sessions.csv`; `daily_summaries.csv`; `study_periods.csv`; `prompt_events.csv`; `reliability_events.csv`; `risk_personalization.csv`; `doomscrolling_scale.csv`; `survey_iso25010.csv`; `sus_responses.csv`; `tam_responses.csv`; `open_ended_feedback.csv`; `sme_evaluation.csv`; `sme_open_ended_feedback.csv`; `baseline_profile.csv`], [Preserve the source data exported by the Android application and the survey/SME instruments; every derived sheet references these tabs so the workbook is self-contained],
+  ),
+)
+
+The Data Sources and Analysis Mapping table below identifies the specific workbook sheet or exported CSV used to report each SOP.
 
 #thesis_table(
   caption: [Data Sources and Analysis Mapping],
