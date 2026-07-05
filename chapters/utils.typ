@@ -1,6 +1,6 @@
 // Utility functions for the thesis
 
-#import "@preview/cetz:0.3.2" as cetz
+#import "@preview/cetz:0.4.2" as cetz
 
 // ==========================================
 // CHART HELPERS (cetz-based)
@@ -241,8 +241,9 @@
     }
     if y_label != none {
       content(
-        (-0.9, chart_height / 2),
-        rotate(90deg, reflow: true, text(size: 7.5pt, style: "italic")[#y_label]),
+        (-0.1, chart_height + 0.28),
+        anchor: "south-west",
+        text(size: 7.5pt, style: "italic")[#y_label],
       )
     }
     // bars
