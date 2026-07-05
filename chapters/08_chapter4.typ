@@ -2,7 +2,7 @@
 // CHAPTER 4: PRESENTATION, ANALYSIS AND INTERPRETATION OF DATA
 // ==========================================
 
-#import "utils.typ": continued_thesis_table, table_align, thesis_table
+#import "utils.typ": bar_chart_grouped_h, bar_chart_h, bar_chart_v_threshold, continued_thesis_table, forest_plot, table_align, thesis_table
 
 = PRESENTATION, ANALYSIS AND INTERPRETATION OF DATA
 
@@ -147,6 +147,25 @@ The deployment also logged 1,329 reliability events: 1,317 content-related event
   ),
 )
 
+#figure(
+  kind: image,
+  bar_chart_h(
+    (
+      ([High-OOV], 924, "69.5%"),
+      ([VLM-unresolved], 241, "18.1%"),
+      ([Extraction-failure], 152, "11.4%"),
+      ([Service lifecycle], 12, "0.9%"),
+    ),
+    chart_width: 4.6,
+    max_value: 1000,
+    x_ticks: 5,
+    x_label: [Reliability event count (n = 1,329)],
+  ),
+  caption: [Distribution of Reliability Events by Category],
+)
+
+The bar chart makes visible what the reliability table only implies: high-OOV text was the dominant driver of sentiment-unreliability, accounting for roughly seven out of every ten reliability events. Screenshot-plus-VLM handling and platform-side extraction failures shared the remaining content-related events, and service-lifecycle notices contributed less than one percent.
+
 Prompt logs were available for the Week 2 intervention arm. The largest prompt-related action was `TAKE_BREAK`, with 191 logged events or 51.6% of prompt events. `SHOWN` accounted for 68 events, `SUPPRESSED` for 49, `CONTINUE` for 45, `DISMISSED` for 17, and `VIEW_DASHBOARD` for 0. These logs are descriptive evidence of intervention interaction. They are not interpreted as a separate behavioral outcome because there is no Week 1 prompt baseline.
 
 #thesis_table(
@@ -240,6 +259,26 @@ Statement of the Problem 2 asked what short-term Week 1-to-Week 2 changes are ob
   ),
 )
 
+#figure(
+  kind: image,
+  forest_plot(
+    (
+      ([Session duration], -1.18, -1.78, -0.58),
+      ([Video dwell time], -1.33, -1.94, -0.72),
+      ([NSD], -1.82, -2.50, -1.15),
+      ([Doomscrolling Scale], -1.50, -2.13, -0.87),
+    ),
+    chart_width: 4.6,
+    x_min: -3.0,
+    x_max: 0.5,
+    x_ticks: 7,
+    x_label: [Cohen's $d$ (95% CI); dashed line marks no effect],
+  ),
+  caption: [Forest Plot of Between-Group Effect Sizes for the Four SOP 2 Primary Outcomes],
+)
+
+Every 95% confidence interval sits fully to the left of the zero-effect reference line, corresponding to reductions in the intervention arm for each outcome. NSD shows the largest magnitude and the interval farthest from zero, while session duration has the smallest magnitude of the four; the intervals overlap enough that none of the four outcomes can be singled out as decisively larger than the others.
+
 All four primary outcomes favored the intervention group after Holm-Bonferroni correction. The negative effect sizes indicate larger reductions in the intervention group compared with the logging-only control group. Session duration, dwell time, NSD, and self-reported Doomscrolling Scale scores all showed short-term reductions under the intervention condition. Because the study is pilot-sized and lasted two weeks, these results are interpreted as observed short-term differences under study conditions, not as proof of long-term intervention efficacy.
 
 #thesis_table(
@@ -291,6 +330,26 @@ Statement of the Problem 3 asked what baseline convergent association exists bet
   ),
 )
 
+#figure(
+  kind: image,
+  bar_chart_grouped_h(
+    (
+      ([Mean daily duration], 0.92, 0.82),
+      ([Mean dwell time], 0.75, 0.82),
+      ([Mean NSD], 0.76, 0.83),
+      ([Week 1 DSI], 0.76, 0.82),
+    ),
+    series_labels: ([Spearman's $rho$], [Pearson's $r$]),
+    chart_width: 4.6,
+    max_value: 1.0,
+    x_ticks: 5,
+    x_label: [Correlation with Week 1 Doomscrolling Scale ($n = 48$)],
+  ),
+  caption: [Baseline Convergent Associations Between Week 1 Behavioral Indicators and the Doomscrolling Scale],
+)
+
+Every predictor achieved a correlation of at least 0.75 on both statistics, supporting convergent plausibility. Mean daily session duration produced the highest rank association ($rho = 0.92$), while mean dwell time, mean NSD, and the composite DSI cluster together at $rho approx 0.75$-$0.76$. Pearson's $r$ values are tightly grouped around $r = 0.82$-$0.83$, showing that the rank ordering, not just the linear relationship, drives the duration advantage.
+
 The Week 1 DSI had a strong positive association with the Week 1 Doomscrolling Scale. This supports baseline convergent plausibility for the composite risk estimate. However, mean daily session duration had the highest rank correlation with self-report, so the data support convergence of the composite with self-reported doomscrolling rather than superiority over session duration alone.
 
 == SOP 4: User Evaluation Using the ISO/IEC 25010 Software Quality Model and the Technology Acceptance Model
@@ -319,6 +378,32 @@ Statement of the Problem 4 asked how users evaluated the system using the ISO/IE
     [TAM Perceived Ease of Use], [50], [6], [4.09], [0.53], [0.855], [Met],
   ),
 )
+
+To place the six constructs on a shared axis, each score is expressed as a percentage of its instrument maximum (5-point Likert for ISO/IEC 25010 and TAM subscales; 0-100 for SUS). The 70% reference line represents the shared favorable threshold (3.50 out of 5 for Likert constructs, 70 out of 100 for SUS).
+
+#figure(
+  kind: image,
+  bar_chart_v_threshold(
+    (
+      ([Func. Suit.], 78.6, 70),
+      ([Perf. Eff.], 81.8, 70),
+      ([Reliability], 81.0, 70),
+      ([SUS], 81.0, 70),
+      ([TAM PU], 82.4, 70),
+      ([TAM PEOU], 81.8, 70),
+    ),
+    chart_width: 5.4,
+    chart_height: 3.4,
+    max_value: 100,
+    y_ticks: 5,
+    y_label: [Score (% of instrument maximum)],
+    target_label: [Dashed line: favorable threshold (70%)],
+    value_formatter: v => str(calc.round(v, digits: 0)) + "%",
+  ),
+  caption: [User Evaluation Construct Scores Against the Favorable Threshold],
+)
+
+All six construct means cluster within a narrow band from 78.6% (Functional Suitability) to 82.4% (TAM Perceived Usefulness), and every bar sits comfortably above the 70% favorable line. The tight clustering suggests a uniformly positive user assessment across quality, usability, and acceptance dimensions rather than a strong preference for any single subscale.
 
 The Cronbach's alpha values ranged from 0.717 to 0.957, meeting the study's descriptive benchmark of $alpha >= 0.70$ for every multi-item scale. These coefficients support internal consistency of the survey constructs in this sample, while still requiring caution because some subscales were researcher-developed or adapted to the specific system context.
 
