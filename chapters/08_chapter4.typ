@@ -6,13 +6,13 @@
 
 = PRESENTATION, ANALYSIS AND INTERPRETATION OF DATA
 
-This chapter presents the completed field-study, survey, expert-review, and workbook-based analysis results for the Heuristic Risk-State Estimation System. The final analysis dataset contains 50 participants, divided evenly between the intervention group and the logging-only control group. Both groups completed the Week 1 baseline phase and the Week 2 deployment phase. The analysis is interpreted as a pilot-scale software-engineering evaluation, not as a clinical trial or long-term behavioral-efficacy study.
+This chapter presents the completed field-study, survey, expert-review, and workbook-based analysis results for the Heuristic Risk-State Estimation System. The final analysis dataset contains 50 participants, divided evenly between the intervention group and the logging-only control group. Both groups completed the Week 1 baseline phase and the Week 2 deployment phase. The analysis is interpreted as a pilot-scale software-engineering evaluation, not as a clinical trial or long-term behavioral-efficacy study. To keep results traceable to Chapter 1, this chapter is organized around the five Statements of the Problem (SOPs): each top-level section reports the evidence, findings, and interpretation for one SOP.
 
-The detailed workbook sheets in `REINVENT ANALYSIS.xlsx` were used as the primary source for the tables in this chapter. The final reporting values for Research Question 2 were taken from the workbook sheet `RQ2_FINAL_TESTS_PDF_ALIGNED` because it applies the methodology-selected tests after assumption checking. The formula audit sheets were used only as supporting calculation references.
+The detailed workbook sheets in `REINVENT ANALYSIS.xlsx` were used as the primary source for the tables in this chapter. The final reporting values for SOP 2 were taken from the workbook sheet `RQ2_FINAL_TESTS_PDF_ALIGNED` because it applies the methodology-selected tests after assumption checking. The formula audit sheets were used only as supporting calculation references.
 
 == Presentation of Results
 
-This section presents the data sources, respondent profile, session coverage, research-question results, instrument reliability, algorithm complexity, and summary of findings. To keep the discussion aligned with Chapter 3, results are organized by research question and interpreted with attention to effective sample sizes, pilot-study scope, and known data limitations.
+This section presents the preliminary context needed to interpret the SOP-level results that follow: the data sources used across the study, the effective sample sizes after data-quality screening, and the respondent baseline profile. To keep the discussion aligned with Chapter 3, results are organized by SOP and interpreted with attention to effective sample sizes, pilot-study scope, and known data limitations.
 
 #thesis_table(
   caption: [Data Sources and Analysis Mapping],
@@ -27,10 +27,10 @@ This section presents the data sources, respondent profile, session coverage, re
   body: (
     [Respondent profile], [`baseline_profile.csv`], [Counts and descriptive summaries], [Describe participant context],
     [Session coverage], [`sessions.csv`; `DATA_QUALITY_SUMMARY`], [Reliable and sentiment-unreliable session counts], [Report analyzable coverage and exclusions],
-    [RQ2 behavioral comparison], [`RQ2_FINAL_TESTS_PDF_ALIGNED`], [Assumption-selected between-group and paired tests], [Report Week 1-to-Week 2 differences],
-    [RQ3 association], [`RQ3_CORRELATION`], [Spearman's rho and Pearson's r], [Assess baseline convergent plausibility],
-    [RQ4 user evaluation], [`SURVEY_ANALYSIS`], [Means, SDs, thresholds, Cronbach's alpha], [Evaluate ISO/IEC 25010, SUS, and TAM],
-    [RQ5 expert evaluation], [`sme_evaluation.csv`; `sme_open_ended_feedback.csv`], [Per-expert rubric ratings and narrative comments], [Report expert plausibility appraisal],
+    [SOP 2 behavioral comparison], [`RQ2_FINAL_TESTS_PDF_ALIGNED`], [Assumption-selected between-group and paired tests], [Report Week 1-to-Week 2 differences],
+    [SOP 3 association], [`RQ3_CORRELATION`], [Spearman's rho and Pearson's r], [Assess baseline convergent plausibility],
+    [SOP 4 user evaluation], [`SURVEY_ANALYSIS`], [Means, SDs, thresholds, Cronbach's alpha], [Evaluate ISO/IEC 25010, SUS, and TAM],
+    [SOP 5 expert evaluation], [`sme_evaluation.csv`; `sme_open_ended_feedback.csv`], [Per-expert rubric ratings and narrative comments], [Report expert plausibility appraisal],
   ),
 )
 
@@ -53,7 +53,7 @@ All 50 allocated participants completed both study weeks. The intervention and c
     [Allocated participants], [25], [25], [50], [Balanced two-arm pilot sample],
     [Completed Week 1], [25], [25], [50], [All participants retained],
     [Completed Week 2], [25], [25], [50], [All participants retained],
-    [RQ3 eligible participants], [23], [25], [48], [Two intervention participants lacked sufficient reliable Week 1 sessions],
+    [SOP 3 eligible participants], [23], [25], [48], [Two intervention participants lacked sufficient reliable Week 1 sessions],
     [Primary duration, dwell, and self-report outcomes], [25], [25], [50], [Complete outcome pairs available],
     [NSD and DSI outcomes], [23], [25], [48], [Effective n reflects sentiment-reliability coverage],
   ),
@@ -87,9 +87,13 @@ The respondent profile provides descriptive context for the behavioral analyses.
 
 In terms of general platform-use habits, 25 participants were categorized as having multiple sessions daily, 15 as having many sessions through the day, and 10 as having a few sessions daily. Dominant-platform descriptors were distributed across Facebook Reels, Instagram Reels, and TikTok. These profile results support the suitability of the sample for a pilot evaluation of a short-form-video monitoring application, while the purposive-convenience sampling still limits generalizability.
 
-=== Research Question 1: Privacy-Preserving Mobile Architecture and Estimation Framework
+== SOP 1: Privacy-Preserving Mobile Architecture and Estimation Framework with 2-Input Behavioral Fallback for Sentiment-Unreliable Sessions
 
-Research Question 1 asked what privacy-preserving mobile architecture and heuristic estimation framework can support doomscrolling-related risk estimation, including a fallback mode for sentiment-unreliable sessions. The completed system implements the architecture described in Chapter 3: Android Accessibility Service monitoring, local session tracking, text-first VADER-compatible sentiment scoring, Filipino/Taglish MVL extension, no-text visual fallback through transient on-device screenshot processing, fuzzy inference, adaptive prompting, local Room storage, and CSV export using participant study codes.
+Statement of the Problem 1 asked what privacy-preserving mobile architecture and estimation framework can support doomscrolling-related risk estimation on the target short-form video platforms using behavioral indicators and sentiment-related indicators when reliably resolvable, with 2-input behavioral fallback for sentiment-unreliable sessions. This section reports the implemented architecture, its operational data-quality evidence, and the analytic time complexity of the runtime pipeline.
+
+=== System Implementation and Data-Quality Evidence
+
+The completed system implements the architecture described in Chapter 3: Android Accessibility Service monitoring, local session tracking, text-first VADER-compatible sentiment scoring, Filipino/Taglish MVL extension, no-text visual fallback through transient on-device screenshot processing, fuzzy inference, adaptive prompting, local Room storage, and CSV export using participant study codes.
 
 The implementation evidence supports the intended privacy boundary. Raw text and no-text screen frames are processed locally and are not retained as research outputs. The exported study data contain aggregate behavioral and sentiment-related metrics rather than raw captions, comments, or images.
 
@@ -140,14 +144,58 @@ Prompt logs were available for the Week 2 intervention arm. The largest prompt-r
   ),
 )
 
-These findings answer RQ1 by showing that the implemented system can collect privacy-bounded local logs, estimate session-level risk from observable proxies, degrade to conservative fallback handling when sentiment is unreliable, and record intervention events for descriptive analysis.
+These findings answer SOP 1 by showing that the implemented system can collect privacy-bounded local logs, estimate session-level risk from observable proxies, degrade to conservative fallback handling when sentiment is unreliable, and record intervention events for descriptive analysis.
 
-=== Research Question 2: Logged Usage Metrics and Self-Reported Doomscrolling Scores
+=== Algorithm Complexity
 
-Research Question 2 asked what short-term Week 1-to-Week 2 changes occurred in logged usage metrics and self-reported doomscrolling scores between the intervention and control groups and within the intervention group. The final reporting table uses assumption-selected tests: Welch's t-test for session duration where normality held with unequal variance, Mann-Whitney U tests for non-normal between-group change scores, paired t-tests for normally distributed within-intervention differences, and Wilcoxon signed-rank tests for non-normal paired differences.
+This subsection presents the time complexity of the core runtime algorithms described in Chapter 3, closing out SOP 1 by characterizing the computational cost of the implemented architecture. The analysis is analytic and data-independent: it characterizes the computational cost of the implemented pipeline as a function of its input sizes and does not depend on field-study data. The following variables are used:
+
+- $n$ - number of tokens in the text payload extracted from a single viewed item
+- $I$ - number of items viewed in a session
+- $V$ - number of fuzzy input variables ($V = 3$; $V = 2$ in the degraded fallback mode)
+- $L$ - number of linguistic terms per variable ($L = 3$)
+- $R$ - number of rules in the fuzzy inference base ($R = L^V = 27$; $R = 9$ in fallback mode)
+- $S$ - number of recorded sessions in a study week
+- $C_("VLM")$ - the bounded per-invocation cost of one Moondream 0.5B inference
+
+*VADER Sentiment Scoring.* Tokenization visits each token once. Lexicon membership is resolved through hash-based dictionary lookup with constant average cost per token, and the Filipino MVL extension only enlarges the dictionary without changing the lookup mechanism. The booster and negation heuristics inspect a fixed lookback window of at most three preceding tokens per scored token, which is a bounded constant amount of work. Per-item text scoring is therefore $O(n)$ time, and the compound-score normalization $C = x\/sqrt(x^2 + alpha)$ is $O(1)$.
+
+*Per-Item Routing Heuristic.* Deciding whether a viewed item carries usable text is a constant-time check, so routing contributes $O(1)$ per item.
+
+*No-Text VLM Fallback (Moondream 0.5B).* Each no-text item triggers at most one screenshot capture and one constrained VQA inference. Because the model size, the input resolution, and the constrained five-label output are all fixed, every invocation has a bounded constant cost $C_("VLM")$ that does not grow with session length. $C_("VLM")$ is the dominant constant in the pipeline, which is why the routing heuristic reserves it for items with no usable text instead of applying it universally.
+
+*Fuzzy Inference Engine.* One session-level inference consists of: (1) fuzzification, which evaluates $V dot L = 9$ triangular membership functions at $O(1)$ each; (2) rule evaluation, which computes a MIN over $V$ antecedent memberships for each of the $R$ rules, i.e., $O(R dot V)$; and (3) CoG defuzzification, a weighted average over at most $R$ activation weights, i.e., $O(R)$. Since $V$, $L$, and $R$ are fixed at runtime, a complete inference runs in constant time, $O(R dot V) = O(1)$, in both modes.
+
+*Session Aggregation and Week-Level DSI.* Negative Sentiment Density is a ratio over resolved items maintained incrementally in $O(I)$ per session. Week-level DSI computation aggregates session records in $O(S)$. Week 1 personalization derives the $Q_(25)\/Q_(50)\/Q_(75)\/Q_(95)$ duration and NSD quantiles from at least 10 sentiment-reliable baseline sessions, which is $O(S log S)$ due to sorting.
 
 #thesis_table(
-  caption: [RQ2 Primary Behavioral Comparisons Between Groups],
+  caption: [Time Complexity Summary of Core Runtime Algorithms],
+  columns: (1.4fr, 0.8fr, 1.3fr),
+  cell_align: table_align((left, center, left)),
+  header: (
+    [*Component*],
+    [*Time Complexity*],
+    [*Dominant Cost Driver*],
+  ),
+  body: (
+    [VADER scoring (per item)], [$O(n)$], [Token count of extracted text],
+    [Per-item routing heuristic], [$O(1)$], [Constant-time payload check],
+    [VLM fallback (per no-text item)], [$O(C_("VLM"))$], [Fixed-size Moondream 0.5B inference],
+    [Fuzzy inference (per session)], [$O(R dot V) = O(1)$], [Fixed 27-rule or 9-rule base],
+    [NSD aggregation (per session)], [$O(I)$], [Items viewed in the session],
+    [Week-level DSI], [$O(S)$], [Sessions recorded in the week],
+    [Week 1 quantile personalization], [$O(S log S)$], [Sorting baseline sessions],
+  ),
+)
+
+*Worst-Case Analysis.* For a single session, the total cost is $O(sum_(i=1)^I n_i)$ for text-path items plus $O(I dot C_("VLM"))$ for VLM-routed items, followed by one $O(1)$ fuzzy inference. No component is super-linear in the number of viewed items or tokens. The worst case occurs in a feed where every viewed item lacks usable text, so every item incurs the screenshot-plus-VLM cost, giving $O(I dot C_("VLM"))$ for the session. If screenshot capture or VLM inference fails, the safety lock degrades inference to the 2-input, 9-rule engine without adding asymptotic cost, and the session is marked Sentiment-Unreliable as described in Chapter 3.
+
+== SOP 2: Short-Term Week 1-to-Week 2 Changes in Logged Usage Metrics and Self-Reported Doomscrolling Scores
+
+Statement of the Problem 2 asked what short-term Week 1-to-Week 2 changes are observed in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period. The final reporting table uses assumption-selected tests: Welch's t-test for session duration where normality held with unequal variance, Mann-Whitney U tests for non-normal between-group change scores, paired t-tests for normally distributed within-intervention differences, and Wilcoxon signed-rank tests for non-normal paired differences.
+
+#thesis_table(
+  caption: [SOP 2 Primary Behavioral Comparisons Between Groups],
   columns: (1.2fr, 0.7fr, 1fr, 0.8fr, 0.75fr, 0.9fr, 1.05fr),
   cell_align: table_align((left, center, center, center, center, center, center)),
   header: (
@@ -170,7 +218,7 @@ Research Question 2 asked what short-term Week 1-to-Week 2 changes occurred in l
 All four primary outcomes favored the intervention group after Holm-Bonferroni correction. The negative effect sizes indicate larger reductions in the intervention group compared with the logging-only control group. Session duration, dwell time, NSD, and self-reported Doomscrolling Scale scores all showed short-term reductions under the intervention condition. Because the study is pilot-sized and lasted two weeks, these results are interpreted as observed short-term differences under study conditions, not as proof of long-term intervention efficacy.
 
 #thesis_table(
-  caption: [RQ2 Supplementary and Within-Intervention Comparisons],
+  caption: [SOP 2 Supplementary and Within-Intervention Comparisons],
   columns: (1.25fr, 0.65fr, 1.05fr, 0.8fr, 0.7fr, 0.9fr, 1.35fr),
   cell_align: table_align((left, center, center, center, center, center, left)),
   header: (
@@ -194,12 +242,12 @@ All four primary outcomes favored the intervention group after Holm-Bonferroni c
 
 The supplementary outcomes show the same direction as the primary outcomes. Mean sessions per day and DSI both favored the intervention group, although they were not part of the four-outcome Holm family. The within-intervention comparisons also showed reductions from Week 1 to Week 2. These secondary results strengthen the descriptive pattern but remain exploratory.
 
-=== Research Question 3: Baseline DSI and Doomscrolling Scale Association
+== SOP 3: Baseline Convergent Association Between Week 1 DSI and Self-Reported Doomscrolling Scores
 
-Research Question 3 asked what baseline convergent association existed between fixed-prior Week 1 DSI and self-reported Doomscrolling Scale scores among eligible participants. The effective sample size was 48 because two intervention participants lacked sufficient reliable Week 1 sessions for DSI inclusion. Spearman's rho was treated as the primary statistic because the methodology selected a rank-based correlation when normality assumptions were not met.
+Statement of the Problem 3 asked what baseline convergent association exists between the fixed-prior Week 1 Doomscroll Severity Index (DSI) and participants' self-reported doomscrolling scores among participants with at least three sentiment-reliable Week 1 sessions. The effective sample size was 48 because two intervention participants lacked sufficient reliable Week 1 sessions for DSI inclusion. Spearman's rho was treated as the primary statistic because the methodology selected a rank-based correlation when normality assumptions were not met.
 
 #thesis_table(
-  caption: [RQ3 Baseline Convergent Association with Week 1 Doomscrolling Scale],
+  caption: [SOP 3 Baseline Convergent Association with Week 1 Doomscrolling Scale],
   columns: (1.45fr, 0.65fr, 0.75fr, 0.85fr, 0.75fr, 1.15fr),
   cell_align: table_align((left, center, center, center, center, left)),
   header: (
@@ -220,9 +268,9 @@ Research Question 3 asked what baseline convergent association existed between f
 
 The Week 1 DSI had a strong positive association with the Week 1 Doomscrolling Scale. This supports baseline convergent plausibility for the composite risk estimate. However, mean daily session duration had the highest rank correlation with self-report, so the data support convergence of the composite with self-reported doomscrolling rather than superiority over session duration alone.
 
-=== Research Question 4: User Evaluation
+== SOP 4: User Evaluation Using the ISO/IEC 25010 Software Quality Model and the Technology Acceptance Model
 
-Research Question 4 asked how users evaluated the system using ISO/IEC 25010, SUS, and TAM. All six evaluated constructs met their pre-set favorable thresholds. The ISO/IEC 25010 Functional Suitability, Performance Efficiency, and Reliability subscales all exceeded the 3.50 favorable target. The SUS usability score exceeded the 70 target. TAM Perceived Usefulness and Perceived Ease of Use also exceeded 3.50.
+Statement of the Problem 4 asked how users evaluated the system using the ISO/IEC 25010 software quality model and the Technology Acceptance Model (TAM). All six evaluated constructs met their pre-set favorable thresholds. The ISO/IEC 25010 Functional Suitability, Performance Efficiency, and Reliability subscales all exceeded the 3.50 favorable target. The SUS usability score exceeded the 70 target. TAM Perceived Usefulness and Perceived Ease of Use also exceeded 3.50.
 
 #thesis_table(
   caption: [ISO/IEC 25010, SUS, TAM, and Reliability Summary],
@@ -277,9 +325,9 @@ Participant open-ended feedback provided practical context for the quantitative 
 
 These qualitative findings support the survey results while also identifying improvement priorities. The strongest user-facing issues were not rejection of the system concept, but setup complexity, prompt tuning, score interpretation, and transparency around platform monitoring and exported data.
 
-=== Research Question 5: Subject Matter Expert Evaluation
+== SOP 5: Subject Matter Expert Evaluation of Technical Design, Privacy Safeguards, Heuristic Logic, and Intervention Structure
 
-Research Question 5 asked how subject matter experts evaluated the system's technical design, privacy safeguards, heuristic logic, and intervention structure. Two SMEs completed the evaluation: one software engineering or mobile application development expert and one digital well-being or behavioral psychology expert. Given the two-member panel, ratings are reported per expert against the study-defined favorable target of 4.00 rather than as an inferential panel statistic. The six rubric ratings cover technical soundness, input-range plausibility, rule-base coherence, architecture and privacy quality, intervention appropriateness, and overall ISO/IEC 25010 quality; the Overall column is the mean of these six ratings.
+Statement of the Problem 5 asked how subject matter experts evaluated the system's technical design, privacy safeguards, heuristic logic, and intervention structure. Two SMEs completed the evaluation: one software engineering or mobile application development expert and one digital well-being or behavioral psychology expert. Given the two-member panel, ratings are reported per expert against the study-defined favorable target of 4.00 rather than as an inferential panel statistic. The six rubric ratings cover technical soundness, input-range plausibility, rule-base coherence, architecture and privacy quality, intervention appropriateness, and overall ISO/IEC 25010 quality; the Overall column is the mean of these six ratings.
 
 #thesis_table(
   caption: [Subject Matter Expert Rubric Results],
@@ -306,67 +354,23 @@ Both SME ratings met the favorable target. The mobile/software expert rated all 
 
 The SME results support expert plausibility appraisal, not formal empirical calibration. The absence of a dedicated data science, machine learning, or fuzzy-logic reviewer remains a limitation. The expert comments identify concrete refinements: clearer fallback criteria, stronger privacy wording, less alarming labels, and more user control over interventions.
 
-== Algorithm Complexity
-
-This section presents the time complexity of the core runtime algorithms described in Chapter 3. The analysis is analytic and data-independent: it characterizes the computational cost of the implemented pipeline as a function of its input sizes and does not depend on field-study data. The following variables are used:
-
-- $n$ - number of tokens in the text payload extracted from a single viewed item
-- $I$ - number of items viewed in a session
-- $V$ - number of fuzzy input variables ($V = 3$; $V = 2$ in the degraded fallback mode)
-- $L$ - number of linguistic terms per variable ($L = 3$)
-- $R$ - number of rules in the fuzzy inference base ($R = L^V = 27$; $R = 9$ in fallback mode)
-- $S$ - number of recorded sessions in a study week
-- $C_("VLM")$ - the bounded per-invocation cost of one Moondream 0.5B inference
-
-*VADER Sentiment Scoring.* Tokenization visits each token once. Lexicon membership is resolved through hash-based dictionary lookup with constant average cost per token, and the Filipino MVL extension only enlarges the dictionary without changing the lookup mechanism. The booster and negation heuristics inspect a fixed lookback window of at most three preceding tokens per scored token, which is a bounded constant amount of work. Per-item text scoring is therefore $O(n)$ time, and the compound-score normalization $C = x\/sqrt(x^2 + alpha)$ is $O(1)$.
-
-*Per-Item Routing Heuristic.* Deciding whether a viewed item carries usable text is a constant-time check, so routing contributes $O(1)$ per item.
-
-*No-Text VLM Fallback (Moondream 0.5B).* Each no-text item triggers at most one screenshot capture and one constrained VQA inference. Because the model size, the input resolution, and the constrained five-label output are all fixed, every invocation has a bounded constant cost $C_("VLM")$ that does not grow with session length. $C_("VLM")$ is the dominant constant in the pipeline, which is why the routing heuristic reserves it for items with no usable text instead of applying it universally.
-
-*Fuzzy Inference Engine.* One session-level inference consists of: (1) fuzzification, which evaluates $V dot L = 9$ triangular membership functions at $O(1)$ each; (2) rule evaluation, which computes a MIN over $V$ antecedent memberships for each of the $R$ rules, i.e., $O(R dot V)$; and (3) CoG defuzzification, a weighted average over at most $R$ activation weights, i.e., $O(R)$. Since $V$, $L$, and $R$ are fixed at runtime, a complete inference runs in constant time, $O(R dot V) = O(1)$, in both modes.
-
-*Session Aggregation and Week-Level DSI.* Negative Sentiment Density is a ratio over resolved items maintained incrementally in $O(I)$ per session. Week-level DSI computation aggregates session records in $O(S)$. Week 1 personalization derives the $Q_(25)\/Q_(50)\/Q_(75)\/Q_(95)$ duration and NSD quantiles from at least 10 sentiment-reliable baseline sessions, which is $O(S log S)$ due to sorting.
-
-#thesis_table(
-  caption: [Time Complexity Summary of Core Runtime Algorithms],
-  columns: (1.4fr, 0.8fr, 1.3fr),
-  cell_align: table_align((left, center, left)),
-  header: (
-    [*Component*],
-    [*Time Complexity*],
-    [*Dominant Cost Driver*],
-  ),
-  body: (
-    [VADER scoring (per item)], [$O(n)$], [Token count of extracted text],
-    [Per-item routing heuristic], [$O(1)$], [Constant-time payload check],
-    [VLM fallback (per no-text item)], [$O(C_("VLM"))$], [Fixed-size Moondream 0.5B inference],
-    [Fuzzy inference (per session)], [$O(R dot V) = O(1)$], [Fixed 27-rule or 9-rule base],
-    [NSD aggregation (per session)], [$O(I)$], [Items viewed in the session],
-    [Week-level DSI], [$O(S)$], [Sessions recorded in the week],
-    [Week 1 quantile personalization], [$O(S log S)$], [Sorting baseline sessions],
-  ),
-)
-
-*Worst-Case Analysis.* For a single session, the total cost is $O(sum_(i=1)^I n_i)$ for text-path items plus $O(I dot C_("VLM"))$ for VLM-routed items, followed by one $O(1)$ fuzzy inference. No component is super-linear in the number of viewed items or tokens. The worst case occurs in a feed where every viewed item lacks usable text, so every item incurs the screenshot-plus-VLM cost, giving $O(I dot C_("VLM"))$ for the session. If screenshot capture or VLM inference fails, the safety lock degrades inference to the 2-input, 9-rule engine without adding asymptotic cost, and the session is marked Sentiment-Unreliable as described in Chapter 3.
-
 == Analysis and Interpretation
 
 The completed data show that the system met the study's software-acceptability thresholds, produced analyzable usage and sentiment logs across the target platforms, and showed favorable short-term differences in the intervention arm compared with the logging-only control arm. The results also show important boundaries. The pilot sample, two-week deployment window, purposive-convenience sampling, two-member SME panel, and sentiment-unreliable exclusions prevent broader claims about long-term efficacy, diagnostic validity, or population-level calibration.
 
 #thesis_table(
-  caption: [Summary of Findings by Research Question],
+  caption: [Summary of Findings by Statement of the Problem],
   columns: (0.55fr, 1.25fr, 1.45fr, 1.45fr),
   cell_align: table_align((center, left, left, left)),
   header: (
-    [*RQ*],
+    [*SOP*],
     [*Evidence*],
     [*Main Finding*],
     [*Interpretation and Limitation*],
   ),
   body: (
-    [1], [Implementation, session logs, MVL concordance, data-quality summary, prompt logs], [The privacy-preserving local architecture operated across the two-week deployment and produced 10,134 logged sessions with 87.0% sentiment-reliable coverage.], [Supports operational feasibility and bounded local risk estimation.],
-    [2], [Final RQ2 tests on Week 2 minus Week 1 change scores], [All four primary outcomes favored intervention after Holm correction, with large effect sizes.], [Supports observed short-term differences under study conditions, not long-term efficacy.],
+    [1], [Implementation, session logs, MVL concordance, data-quality summary, prompt logs, algorithm complexity], [The privacy-preserving local architecture operated across the two-week deployment and produced 10,134 logged sessions with 87.0% sentiment-reliable coverage, with all core runtime components bounded to at most $O(n)$ per item and $O(1)$ per fuzzy inference.], [Supports operational feasibility and bounded local risk estimation.],
+    [2], [Final SOP 2 tests on Week 2 minus Week 1 change scores], [All four primary outcomes favored intervention after Holm correction, with large effect sizes.], [Supports observed short-term differences under study conditions, not long-term efficacy.],
     [3], [Week 1 DSI and Doomscrolling Scale correlation], [DSI showed strong baseline convergence with self-report ($rho = 0.76$), while duration had the highest rank association ($rho = 0.92$).], [Supports plausibility of DSI but not composite superiority or diagnostic validation.],
     [4], [ISO/IEC 25010, SUS, TAM, Cronbach alpha, user feedback], [All six software-acceptability targets were met; alpha values were all at least 0.70.], [Supports favorable user evaluation, with improvement needs in onboarding, prompt timing, score clarity, and monitoring transparency.],
     [5], [SME rubric and narrative feedback], [Both SMEs met the favorable target, with overall means of 5.00 and 4.33.], [Supports expert plausibility appraisal; limited by two experts and no dedicated fuzzy-systems reviewer.],
