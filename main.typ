@@ -31,18 +31,39 @@
   fill: white,
 )
 
+// ==========================================
+// APA 7 FIGURE AND TABLE CAPTION FORMATTING
+// Figure/Table number in bold on its own line, italic title below,
+// caption positioned above the figure/table body (flush left).
+// ==========================================
+
 #show figure.where(kind: table): set block(breakable: true, above: 0.9em, below: 1.15em)
-#show figure.where(kind: table): set figure.caption(position: top, separator: [. ])
+#show figure.where(kind: table): set figure.caption(position: top)
 #show figure.where(kind: table): set text(size: 9.5pt, hyphenate: false)
 #show figure.where(kind: table): set par(justify: false, first-line-indent: 0pt, leading: 0.96em)
-#show figure.caption.where(kind: table): set block(sticky: true, above: 0.2em, below: 0.45em)
-#show figure.caption.where(kind: table): it => align(center, text(size: 10pt)[#it])
+#show figure.caption.where(kind: table): set block(sticky: true, above: 0.2em, below: 0.55em)
+#show figure.caption.where(kind: table): it => block(width: 100%)[
+  #set align(left)
+  #set par(justify: false, first-line-indent: 0pt, leading: 1.08em)
+  #set text(size: 12pt)
+  #strong[Table #context it.counter.display(it.numbering)]
+  #linebreak()
+  #emph(it.body)
+]
 
 #show figure.where(kind: image): set block(above: 1.1em, below: 1.25em)
+#show figure.where(kind: image): set figure.caption(position: top)
 #show figure.where(kind: image): set text(size: 9pt, hyphenate: false)
 #show figure.where(kind: image): set par(justify: false, first-line-indent: 0pt, leading: 1.08em)
-#show figure.caption.where(kind: image): set block(above: 0.5em, below: 0.25em)
-#show figure.caption.where(kind: image): it => align(center, text(size: 10pt)[#it])
+#show figure.caption.where(kind: image): set block(sticky: true, above: 0.5em, below: 0.55em)
+#show figure.caption.where(kind: image): it => block(width: 100%)[
+  #set align(left)
+  #set par(justify: false, first-line-indent: 0pt, leading: 1.08em)
+  #set text(size: 12pt)
+  #strong[Figure #context it.counter.display(it.numbering)]
+  #linebreak()
+  #emph(it.body)
+]
 
 #show math.equation.where(block: true): set block(above: 0.55em, below: 0.65em)
 
