@@ -107,80 +107,125 @@ The following limitations describe constraints beyond the researchers' control t
 
 == Conceptual Framework
 
-The study uses the *Input-Process-Output (IPO) model* to illustrate the implemented runtime architecture and data flow for heuristic risk estimation #cite(<laudon-2022>).
+The study uses the *Input-Process-Output (IPO) model* to illustrate the implemented runtime architecture and data flow for heuristic risk estimation #cite(<laudon-2022>). The IPO model was selected because it provides a compact and transparent representation of how observable behavioral and content signals are transformed into a heuristic risk estimate and, in the intervention phase, into an adaptive prompt. The three stages of the model are used in this study to describe (a) the runtime signals that the mobile application collects on-device, (b) the reasoning pipeline that combines behavioral thresholds, sentiment analysis, and fuzzy logic inference to derive a graded risk state, and (c) the outputs that either inform local analytics only (Week 1 baseline) or additionally trigger an adaptive mindfulness prompt (Week 2 intervention). The addition of a *feedback loop* in Figure 1 makes explicit that the pipeline is not one-shot: outputs produced during an ongoing scrolling session are fed back into the next interval's Input, allowing the system to continuously re-estimate risk based on subsequent user behavior after a prompt has been shown or after further scrolling has occurred.
 
 #figure(
   kind: image,
   align(center)[
     #block(width: 100%)[
-      #grid(
-        columns: (1fr, 0.1fr, 1.8fr, 0.1fr, 1fr),
-        align: center + horizon,
-        gutter: 5pt,
-        figure_panel_items(
-          [Input],
-          (
-            [Interaction metrics],
-            [Captions and visible comments],
-            [App-state events],
+      #stack(
+        dir: ttb,
+        spacing: 0.4em,
+        grid(
+          columns: (1fr, 0.1fr, 1.8fr, 0.1fr, 1fr),
+          align: center + horizon,
+          gutter: 5pt,
+          figure_panel_items(
+            [Input],
+            (
+              [Interaction metrics],
+              [Captions and visible comments],
+              [App-state events],
+            ),
+            body_width: 96%,
+            item_align: left,
+            item_size: 8.4pt,
+            item_leading: 0.92em,
+            item_gap: 5pt,
           ),
-          body_width: 96%,
-          item_align: left,
-          item_size: 8.4pt,
-          item_leading: 0.92em,
-          item_gap: 5pt,
-        ),
-        text(size: 12pt, weight: "medium")[→],
-        figure_panel_items(
-          [Process],
-          (
-            [Threshold-based heuristics],
-            [VADER + limited Filipino/Taglish lexicon],
-            [On-device no-text VLM fallback],
-            [2-input fallback if sentiment unavailable],
-            [Fuzzy logic inference],
+          text(size: 12pt, weight: "medium")[→],
+          figure_panel_items(
+            [Process],
+            (
+              [Threshold-based heuristics],
+              [VADER + limited Filipino/Taglish lexicon],
+              [On-device no-text VLM fallback],
+              [2-input fallback if sentiment unavailable],
+              [Fuzzy logic inference],
+            ),
+            body_width: 96%,
+            item_align: left,
+            item_size: 8.4pt,
+            item_leading: 0.92em,
+            item_gap: 5pt,
           ),
-          body_width: 96%,
-          item_align: left,
-          item_size: 8.4pt,
-          item_leading: 0.92em,
-          item_gap: 5pt,
-        ),
-        text(size: 12pt, weight: "medium")[→],
-        figure_panel_items(
-          [Output],
-          (
-            [Risk-state estimate],
-            [Adaptive mindfulness prompts],
-            [Local usage analytics],
+          text(size: 12pt, weight: "medium")[→],
+          figure_panel_items(
+            [Output],
+            (
+              [Risk-state estimate],
+              [Adaptive mindfulness prompts],
+              [Local usage analytics],
+            ),
+            body_width: 96%,
+            item_align: left,
+            item_size: 8.4pt,
+            item_leading: 0.92em,
+            item_gap: 5pt,
           ),
-          body_width: 96%,
-          item_align: left,
-          item_size: 8.4pt,
-          item_leading: 0.92em,
-          item_gap: 5pt,
         ),
+        // Feedback loop annotation: return arrow from Output back to Input.
+        block(width: 100%, inset: (top: 0.3em))[
+          #align(center)[
+            #box(width: 92%)[
+              #grid(
+                columns: (auto, 1fr, auto),
+                align: (left + horizon, center + horizon, right + horizon),
+                gutter: 0pt,
+                text(size: 11pt, weight: "medium")[←],
+                line(length: 100%, stroke: (paint: black, thickness: 0.7pt, dash: "dashed")),
+                text(size: 11pt, weight: "medium")[┘],
+              )
+            ]
+          ]
+          #v(0.15em)
+          #align(center)[
+            #text(size: 8.5pt, style: "italic")[Feedback loop: prompt response and continued behavior feed the next interval's Input for re-estimation]
+          ]
+        ],
       )
     ]
   ],
-  caption: "Conceptual Framework of the Study using IPO Model",
+  caption: [Conceptual Framework of the Study Using the IPO Model with Feedback Loop],
 )
 
-The IPO model here refers to the runtime application pipeline rather than the full research workflow. During the Week 2 intervention phase, a *feedback loop* operates once the live duration gate is met and the live RiskScore enters the Warning or Critical bands: the app selects an intervention level (L1 awareness, L2 pause, or L3 pause-and-reset short breathing break), closes the current interval, and begins a new one only if the user returns to the target platform. When sufficient reliable baseline sessions exist, the live prompt engine may personalize Session Duration and NSD memberships from Week 1 quantiles while Video Dwell Time remains fixed. Usable caption or visible-comment text stays on the text path; no-text items are routed through `AccessibilityService.takeScreenshot` and the VLM fallback; unresolved cases degrade to 2-input behavioral inference with conservative L1/L2 prompts.
+The IPO model here refers to the runtime application pipeline rather than the full research workflow. The *Input* stage captures three families of signals directly on-device: (i) interaction metrics such as swipe or scroll transitions, video dwell time, and session-level engagement counters; (ii) captions and visible comments extracted from the target short-form video platforms; and (iii) app-state events that mark session start, foreground and background transitions, and prompt-response events. These signals are all collected locally through the Android Accessibility Service and never leave the device.
+
+The *Process* stage combines four reasoning layers. Threshold-based heuristics screen the interaction metrics and produce membership degrees for Session Duration and Video Dwell Time. VADER, extended with a limited Filipino/Taglish minimum viable lexicon, computes item-level sentiment on usable text units. When a viewed item has no usable caption or visible comments, an on-device Vision-Language Model fallback (Moondream 0.5B) is invoked to estimate whether the item contributes negative exposure. If neither text nor VLM paths can resolve an item reliably, the pipeline degrades gracefully to a two-input fallback that relies only on Session Duration and Video Dwell Time. All resolved signals are then combined by a fuzzy logic inference engine that yields a graded RiskScore across low, warning, and critical bands.
+
+The *Output* stage produces the RiskScore, the corresponding risk state, and — during Week 2 — an adaptive mindfulness prompt at level L1 (awareness), L2 (pause), or L3 (pause-and-reset short breathing break). Local usage analytics are also written to on-device storage for later export. The *feedback loop* shown in Figure 1 operates once the live duration gate is met and the live RiskScore enters the Warning or Critical bands: the app selects an intervention level, closes the current interval, and begins a new one only if the user returns to the target platform. The response to the prompt (dismissal, engagement, or platform exit) and the subsequent behavior become part of the next interval's Input, so the system continuously updates its risk estimate rather than relying on a single decision point. When sufficient reliable baseline sessions exist, the live prompt engine may personalize Session Duration and NSD memberships from Week 1 quantiles while Video Dwell Time remains fixed, further reinforcing the adaptive character of the loop.
 
 == Theoretical Framework
 
-The system is informed by the *Doomscrolling Feedback Loop Model* derived from #cite(<sharma-2022>, form: "prose"). The model is used as a design guide for content exposure, prolonged engagement, and interruption points.
+The theoretical framework of this study integrates four complementary theories that jointly justify each aspect of the system: the *Doomscrolling Feedback Loop Model* #cite(<sharma-2022>), which anchors the phenomenon being estimated and grounds the specific role of Negative Sentiment Density; *Uses and Gratifications Theory* #cite(<katz-1973>) #cite(<ruggiero-2000>), which explains why users initiate and prolong exposure to distressing short-form content; *Self-Determination Theory* #cite(<ryan-deci-2000>), which grounds the design of non-coercive, autonomy-supportive mindfulness prompts; and the *Dual-Systems / Habit Loop* perspective #cite(<kahneman-2011>) #cite(<wood-neal-2007>), which explains the automatic, cue-driven character of prolonged scrolling and the timing at which interruption is expected to be most effective. The evaluation of the resulting artifact is then guided by *ISO/IEC 25010* #cite(<iso-25010-2023>) and the *Technology Acceptance Model (TAM)* #cite(<adnan-2025>), while the baseline-to-intervention design supports short-term behavioral comparison.
 
-The model conceptualizes doomscrolling as a three-phase cycle:
+=== Doomscrolling Feedback Loop Model
 
-1. *Antecedents or triggers:* Users are drawn toward distressing or uncertainty-inducing content by factors such as anxiety, fear of missing out, or crisis-related information needs.
-2. *Behavior:* Users engage in persistent, repetitive scrolling through negative or emotionally charged content.
-3. *Outcome:* Exposure to such content contributes to distress or negative affect, which may in turn reinforce further scrolling.
+The system is primarily informed by the *Doomscrolling Feedback Loop Model* derived from #cite(<sharma-2022>, form: "prose"). The model conceptualizes doomscrolling as a self-reinforcing three-phase cycle:
 
-This framework informs the system's variable selection. The system estimates risk at the behavior and exposure level by observing video dwell time, session duration, and NSD as proxies for heightened maladaptive engagement. Swipe or scroll events are used only as transition signals that mark when one short-form item ends and the next begins, enabling video dwell-time computation. Its adaptive prompts are intended to interrupt potentially escalating patterns before exposure becomes more sustained.
+1. *Antecedents or triggers:* Users are drawn toward distressing or uncertainty-inducing content by factors such as anxiety, fear of missing out, perceived information needs during crises, or algorithmic amplification of emotionally charged material. The salient feature of this phase is not merely that negative content is available, but that it is *densely present* within the user's immediate feed, which increases the probability that any given item consumed carries negative valence.
+2. *Behavior:* Users engage in persistent, repetitive scrolling through negative or emotionally charged content. In the short-form video context this manifests as prolonged single-session engagement (long session duration) and reduced per-item dwell time as users rapidly sample many items, or, alternately, elevated per-item dwell time on distressing items.
+3. *Outcome:* Sustained exposure to such content contributes to distress, negative affect, and heightened vigilance, which may in turn reinforce the antecedent phase (elevated anxiety) and the behavior phase (further compensatory scrolling), closing the loop.
 
-The framework thus justifies using observable proxies and non-clinical prompts. The evaluation is guided by ISO/IEC 25010 and TAM, while the baseline-to-intervention design supports short-term behavioral comparison.
+The distinctive contribution of Sharma et al.'s model over generic screen-time or problematic-use accounts is precisely the loop structure: negative exposure is not treated as an incidental side-effect but as an active driver of the next iteration. This study operationalizes each phase with observable proxies. The behavior phase is estimated by *Video Dwell Time* and *Session Duration*, which are extracted from swipe/scroll transition signals and app-state events. The antecedent phase — the density of negative content in the user's immediate exposure — is estimated by *Negative Sentiment Density (NSD)*, which serves as the model's operational bridge into content-level measurement.
+
+*Role of Negative Sentiment Density (NSD) in the model.* NSD is defined in this study as the proportion of resolvable content units within a session that are classified as negative, computed from analyzable caption and visible-comment text units that pass the text-side reliability screen, together with no-text items resolved through the on-device VLM fallback. NSD occupies the *antecedents/triggers* branch of the Doomscrolling Feedback Loop Model: it estimates how negatively-loaded the user's immediate content environment is, and therefore how strongly the environment is likely to trigger continued scrolling in the next interval. In the loop's forward direction, a rising NSD combined with elevated Session Duration and altered Video Dwell Time signals that the user is transitioning from ordinary engagement into a pattern more consistent with doomscrolling; the system responds with an adaptive prompt intended to interrupt the loop before the outcome phase is further reinforced. In the loop's return direction (Figure 1), the user's response to the prompt and the sentiment composition of items viewed after the prompt feed the next interval's NSD, so that NSD itself is continuously updated across the session rather than being computed once. NSD is therefore the theoretical framework's direct point of contact with the sentiment analysis subsystem: without an operational density measure at the antecedents phase, the loop model could only be observed at the behavior phase, and the interruption logic would collapse into a pure duration timer.
+
+=== Uses and Gratifications Theory
+
+*Uses and Gratifications Theory (U&G)* #cite(<katz-1973>) #cite(<ruggiero-2000>) posits that media users actively select and continue engaging with content that satisfies specific psychological and social needs — information-seeking, mood management, surveillance, and social integration — rather than being passive recipients. In the context of short-form video platforms and doomscrolling, U&G explains *why* users initiate and prolong exposure to negative or distressing content: distressing content can paradoxically gratify surveillance and uncertainty-reduction needs during crises, and rapid item turnover on short-form platforms gratifies mood-repair and stimulation-seeking needs even when individual items are aversive. U&G therefore justifies treating scrolling behavior as goal-directed and non-random, which supports the study's use of behavioral proxies (Session Duration, Video Dwell Time) as meaningful indicators of engagement intensity rather than as noise. It also justifies designing prompts that offer an alternative gratification pathway — reflective interruption and self-monitoring — rather than merely blocking access, which would leave the underlying need unaddressed.
+
+=== Self-Determination Theory
+
+*Self-Determination Theory (SDT)* #cite(<ryan-deci-2000>) distinguishes between autonomous and controlled forms of motivation and identifies autonomy, competence, and relatedness as the three basic psychological needs whose support facilitates self-regulation and well-being. SDT grounds the design of the mindfulness prompts along two dimensions. First, the prompts are *non-coercive*: they present awareness, pause, or short breathing-break invitations at graded levels (L1, L2, L3) rather than forcing app closure, preserving user autonomy in deciding whether to continue. Second, the prompts are *informational rather than controlling*: they surface behavioral signals (elapsed session duration, current risk band) so that users can exercise competence in interpreting and acting on their own usage, which is consistent with SDT's finding that autonomy-supportive interventions are more likely to be internalized and sustained than externally imposed restrictions. SDT thereby justifies the study's choice of adaptive mindfulness prompts over hard blocks or punitive time limits.
+
+=== Dual-Systems Reasoning and the Habit Loop
+
+The *Dual-Systems* perspective #cite(<kahneman-2011>) distinguishes between System 1 — fast, automatic, cue-driven processing — and System 2 — slow, effortful, reflective processing. The *Habit Loop* view of habitual behavior #cite(<wood-neal-2007>) complements this by describing habits as cue-routine-reward sequences in which contextual cues automatically activate learned motor and attentional routines with minimal deliberative control. Prolonged scrolling on short-form video platforms exemplifies System-1, cue-driven behavior: opening the app functions as the cue, the swipe-and-consume sequence is the routine, and brief affective spikes from novel content function as intermittent reward. This perspective grounds two design decisions in the present study. First, it justifies *timing* interruption around the behavioral signals themselves (a duration gate combined with the fuzzy risk band) rather than at fixed clock times, because a well-timed cue must arrive while the automatic routine is active in order to shift processing toward System 2. Second, it explains *why brief reflective prompts are expected to be effective at all*: by inserting a small deliberative moment into the loop, the prompt aims to convert an otherwise System-1 continuation decision into a System-2 evaluation, which is precisely the mechanism the mindfulness literature invokes for attentional reset.
+
+=== Integration and Evaluation
+
+Taken together, the four theories map onto the framework as follows: the Doomscrolling Feedback Loop Model defines *what* the system estimates and how NSD, Session Duration, and Video Dwell Time correspond to its phases; Uses and Gratifications explains *why* users engage with the behavior in the first place and why behavioral proxies are meaningful; Self-Determination Theory grounds the *form* of the intervention as autonomy-supportive rather than restrictive; and the Dual-Systems/Habit-Loop perspective grounds the *timing and mechanism* by which a brief prompt is expected to interrupt automatic scrolling. The framework thus justifies using observable proxies and non-clinical prompts. The evaluation of the resulting artifact is then guided by ISO/IEC 25010 #cite(<iso-25010-2023>) and TAM #cite(<adnan-2025>), while the baseline-to-intervention design supports short-term behavioral comparison.
 
 #figure(
   kind: image,
