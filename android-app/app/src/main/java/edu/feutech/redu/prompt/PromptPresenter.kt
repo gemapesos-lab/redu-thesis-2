@@ -312,31 +312,47 @@ object PromptPresenter {
             onEvent(PromptPresentationEvent.Closed(action))
         }
 
-        val root = LinearLayout(service).apply {
+        val root = FrameLayout(service).apply {
+            setBackgroundColor(background)
+            isFocusable = true
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        }
+        val content = LinearLayout(service).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
-            setBackgroundColor(background)
             setPadding(
                 service.reduDp(24),
                 systemBarInset(service, "status_bar_height") + service.reduDp(24),
                 service.reduDp(24),
                 systemBarInset(service, "navigation_bar_height") + service.reduDp(18),
             )
-            isFocusable = true
-            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
         }
-        root.addView(TextView(service).apply {
+        val scroll = ScrollView(service).apply {
+            isFillViewport = true
+            clipToPadding = false
+            setBackgroundColor(Color.TRANSPARENT)
+            addView(
+                content,
+                ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
+            )
+        }
+        root.addView(
+            scroll,
+            FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT),
+        )
+
+        content.addView(TextView(service).apply {
             text = "REDU / RESET"
             applyReduTextStyle(sizeSp = 11f, color = accent, weight = 700)
             gravity = Gravity.CENTER
         })
-        root.addView(TextView(service).apply {
+        content.addView(TextView(service).apply {
             text = "Take a breathing break"
             applyReduTextStyle(sizeSp = 28f, color = textPrimary, weight = 700)
             gravity = Gravity.CENTER
             setPadding(0, service.reduDp(10), 0, service.reduDp(6))
         })
-        root.addView(TextView(service).apply {
+        content.addView(TextView(service).apply {
             text = "Follow the pace for 45 seconds. Stay comfortable and breathe normally."
             applyReduTextStyle(sizeSp = 15f, color = textSecondary)
             gravity = Gravity.CENTER
@@ -359,31 +375,29 @@ object PromptPresenter {
         val phaseGroup = LinearLayout(service).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            setPadding(service.reduDp(28), service.reduDp(12), service.reduDp(28), service.reduDp(12))
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+            setPadding(service.reduDp(28), service.reduDp(8), service.reduDp(28), service.reduDp(12))
             addView(phaseLabel, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
             addView(phaseInstruction, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
         }
         breathingView.setOnPhaseChanged { phase ->
             phaseLabel.text = phase.label
             phaseInstruction.text = phase.instruction
+            val announcement = "${phase.label}. ${phase.instruction}"
+            phaseGroup.contentDescription = announcement
+            if (phaseGroup.isAttachedToWindow) phaseGroup.announceForAccessibility(announcement)
         }
-        val breathingFrame = FrameLayout(service).apply {
-            minimumHeight = service.reduDp(180)
-            addView(
-                breathingView,
-                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT),
-            )
-            addView(
-                phaseGroup,
-                FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER),
-            )
-        }
-        root.addView(
-            breathingFrame,
-            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f).apply {
+        val geometryHeightDp = if (service.resources.configuration.fontScale >= 1.5f) 120 else 176
+        content.addView(
+            breathingView,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, service.reduDp(geometryHeightDp)).apply {
                 topMargin = service.reduDp(4)
-                bottomMargin = service.reduDp(4)
             },
+        )
+        content.addView(
+            phaseGroup,
+            LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT),
         )
 
         val totalSeconds = (BREATHING_PROMPT_MILLIS / 1_000L).toInt()
@@ -394,9 +408,9 @@ object PromptPresenter {
             contentDescription = "$totalSeconds seconds remaining"
             setPadding(0, service.reduDp(4), 0, service.reduDp(12))
         }
-        root.addView(countdown, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
+        content.addView(countdown, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))
 
-        root.addView(TextView(service).apply {
+        content.addView(TextView(service).apply {
             text = "This is a digital wellness pause, not a clinical exercise."
             applyReduTextStyle(sizeSp = 12f, color = textSecondary)
             gravity = Gravity.CENTER
@@ -406,7 +420,7 @@ object PromptPresenter {
             bottomMargin = service.reduDp(14)
         })
 
-        root.addView(
+        content.addView(
             promptButton(service, "Take a break", filled = false) {
                 close(PromptAction.TAKE_BREAK)
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
@@ -415,7 +429,7 @@ object PromptPresenter {
                 bottomMargin = service.reduDp(4)
             },
         )
-        root.addView(
+        content.addView(
             textAction(service, "Skip", textSecondary) { close(PromptAction.DISMISSED) },
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, service.reduDp(48)),
         )

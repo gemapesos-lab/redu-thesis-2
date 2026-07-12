@@ -6,12 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -283,16 +285,26 @@ private fun MonitoringRow(item: PlatformMonitoringUiState, date: LocalDate) {
         PlatformMonitoringState.OFF -> "Off" to StatusTone.NEUTRAL
         PlatformMonitoringState.PAUSED -> "Permission needed" to StatusTone.ATTENTION
     }
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    val largeText = LocalDensity.current.fontScale >= 1.5f
+    val modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)
+    if (largeText) {
+        Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(item.platform.displayName(), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
             ReduCaption(item.latestSession.monitoringRecency(date))
+            ReduStatusLabel(label, tone)
         }
-        ReduStatusLabel(label, tone)
+    } else {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(item.platform.displayName(), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                ReduCaption(item.latestSession.monitoringRecency(date))
+            }
+            ReduStatusLabel(label, tone)
+        }
     }
 }
 
@@ -363,24 +375,43 @@ internal fun HistoryScreen(
         },
     ) {
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                CompactFilterMenu(
-                    selectedLabel = platformFilter.displayName(),
-                    options = PlatformFilter.entries.toList(),
-                    optionLabel = { it.displayName() },
-                    onOptionSelected = { platformFilter = it },
-                    modifier = Modifier.weight(1f),
-                )
-                CompactFilterMenu(
-                    selectedLabel = riskFilter.displayName(),
-                    options = RiskFilter.entries.toList(),
-                    optionLabel = { it.displayName() },
-                    onOptionSelected = { riskFilter = it },
-                    modifier = Modifier.weight(1f),
-                )
+            BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+                val stackFilters = maxWidth < 360.dp || LocalDensity.current.fontScale >= 1.5f
+                if (stackFilters) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        CompactFilterMenu(
+                            selectedLabel = platformFilter.displayName(),
+                            options = PlatformFilter.entries.toList(),
+                            optionLabel = { it.displayName() },
+                            onOptionSelected = { platformFilter = it },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        CompactFilterMenu(
+                            selectedLabel = riskFilter.displayName(),
+                            options = RiskFilter.entries.toList(),
+                            optionLabel = { it.displayName() },
+                            onOptionSelected = { riskFilter = it },
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
+                } else {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        CompactFilterMenu(
+                            selectedLabel = platformFilter.displayName(),
+                            options = PlatformFilter.entries.toList(),
+                            optionLabel = { it.displayName() },
+                            onOptionSelected = { platformFilter = it },
+                            modifier = Modifier.weight(1f),
+                        )
+                        CompactFilterMenu(
+                            selectedLabel = riskFilter.displayName(),
+                            options = RiskFilter.entries.toList(),
+                            optionLabel = { it.displayName() },
+                            onOptionSelected = { riskFilter = it },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
             }
             ReduDivider()
         }
@@ -454,7 +485,7 @@ private fun <T> CompactFilterMenu(
     Box(modifier = modifier) {
         OutlinedButton(
             onClick = { expanded = true },
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
             shape = MaterialTheme.shapes.small,
             contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
         ) {
@@ -879,7 +910,10 @@ internal fun ExportScreen(
                     when (state) {
                         ExportUiState.Idle -> Unit
                         ExportUiState.Preparing -> ReduCaption("Packaging the saved datasets. Keep REDU open for a moment.")
-                        is ExportUiState.Ready -> ReduStatusLabel("Export ready", StatusTone.SUCCESS)
+                        is ExportUiState.Ready -> {
+                            ReduStatusLabel("Export ready", StatusTone.SUCCESS)
+                            ReduCaption("Created ${state.fileName}")
+                        }
                         is ExportUiState.Error -> Text(state.message, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
                     }
                 }

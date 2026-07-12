@@ -91,6 +91,40 @@ class ReduScreenInstrumentedTest {
     }
 
     @Test
+    fun exportPreparingDisablesTheShareAction() {
+        composeRule.setContent {
+            ReduTheme {
+                ExportScreen(
+                    padding = PaddingValues(),
+                    state = ExportUiState.Preparing,
+                    onExport = {},
+                    onBack = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Preparing export").assertIsNotEnabled()
+        composeRule.onNodeWithText("Packaging the saved datasets. Keep REDU open for a moment.").assertIsDisplayed()
+    }
+
+    @Test
+    fun exportReadyShowsTheGeneratedZipName() {
+        composeRule.setContent {
+            ReduTheme {
+                ExportScreen(
+                    padding = PaddingValues(),
+                    state = ExportUiState.Ready("redu-export-P01X-20260713.zip"),
+                    onExport = {},
+                    onBack = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithText("Export ready").assertIsDisplayed()
+        composeRule.onNodeWithText("Created redu-export-P01X-20260713.zip").assertIsDisplayed()
+    }
+
+    @Test
     fun settingsKeepsResearchControlsSecondary() {
         composeRule.setContent {
             ReduTheme {
