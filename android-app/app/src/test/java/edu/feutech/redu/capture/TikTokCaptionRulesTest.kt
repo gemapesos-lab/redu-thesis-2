@@ -162,6 +162,14 @@ class TikTokCaptionRulesTest {
     }
 
     @Test
+    fun postDescriptionTruncatedEllipsisSpaceMoreSuffixIsRemoved() {
+        assertEquals(
+            "This caption is truncated",
+            TikTokCaptionRules.normalizeCaptionText("This caption is truncated… more"),
+        )
+    }
+
+    @Test
     fun tiktokActionButtonsAreNotCaptionCandidates() {
         val match = TikTokCaptionRules.classify(
             resourceId = "com.ss.android.ugc.trill:id/e8n",

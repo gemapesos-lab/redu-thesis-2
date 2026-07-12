@@ -70,6 +70,31 @@ class SessionTrackerTest {
     }
 
     @Test
+    fun sameSentimentTextOnDifferentItemsCountsOncePerItem() {
+        var now = 1_000L
+        val tracker = SessionTracker(clock = { now })
+        tracker.onTargetForeground()
+
+        tracker.onContentObserved(
+            transitionFingerprint = "creator-one same caption",
+            sentiment = reliableNegativeSentiment(),
+            sentimentFingerprint = "same caption",
+        )
+        now += 3_000L
+        tracker.onContentObserved(
+            transitionFingerprint = "creator-two same caption",
+            sentiment = reliableNegativeSentiment(),
+            sentimentFingerprint = "same caption",
+        )
+
+        val snapshot = tracker.snapshot()
+
+        assertEquals(1, snapshot?.swipeCount)
+        assertEquals(2, snapshot?.resolvableUnits)
+        assertEquals(2, snapshot?.negativeUnits)
+    }
+
+    @Test
     fun shortAppSwitchGapIsExcludedAndSessionContinues() {
         var now = 1_000L
         val tracker = SessionTracker(clock = { now })
@@ -110,6 +135,23 @@ class SessionTrackerTest {
     }
 
     @Test
+    fun platformSwitchAfterBackgroundEndsPreviousSessionAtBackgroundStart() {
+        var now = 1_000L
+        val tracker = SessionTracker(clock = { now })
+        tracker.onTargetForeground(Platform.TIKTOK)
+        tracker.onContentObserved("caption-one", reliableNegativeSentiment())
+
+        now += 12_000L
+        tracker.onTargetBackground()
+        now += 8_000L
+        val finalized = tracker.onTargetForeground(Platform.INSTAGRAM)
+
+        assertEquals(12_000L, finalized?.snapshot?.durationMillis)
+        assertEquals(13_000L, finalized?.endedAtMillis)
+        assertEquals(Platform.INSTAGRAM, tracker.snapshot()?.platform)
+    }
+
+    @Test
     fun targetBackgroundLongerThanBridgeFinalizesAtBackgroundStart() {
         var now = 1_000L
         val tracker = SessionTracker(clock = { now })
@@ -141,6 +183,22 @@ class SessionTrackerTest {
         assertEquals(9_000L, finalized?.snapshot?.durationMillis)
         assertEquals(9_000L, finalized?.snapshot?.promptExcludedDurationMillis)
         assertEquals(9_000L, finalized?.snapshot?.currentDwellMillis)
+        assertEquals(10_000L, finalized?.endedAtMillis)
+    }
+
+    @Test
+    fun forceFinalizeAfterBackgroundEndsAtBackgroundStart() {
+        var now = 1_000L
+        val tracker = SessionTracker(clock = { now })
+        tracker.onTargetForeground()
+        tracker.onContentObserved("caption-one", reliableNegativeSentiment())
+
+        now += 9_000L
+        tracker.onTargetBackground()
+        now += 5_000L
+        val finalized = tracker.forceFinalize()
+
+        assertEquals(9_000L, finalized?.snapshot?.durationMillis)
         assertEquals(10_000L, finalized?.endedAtMillis)
     }
 
@@ -264,6 +322,22 @@ class SessionTrackerTest {
         assertEquals(42_000L, snapshot?.durationMillis)
         assertEquals(27_000L, snapshot?.promptExcludedDurationMillis)
         assertEquals(7_000L, snapshot?.currentDwellMillis)
+    }
+
+    @Test
+    fun promptClosedWithoutBlockingPromptDoesNotPauseTracking() {
+        var now = 1_000L
+        val tracker = SessionTracker(clock = { now })
+        tracker.onTargetForeground()
+        tracker.onContentObserved("caption-one", reliableNegativeSentiment())
+
+        now += 10_000L
+        tracker.onPromptClosed()
+        now += 5_000L
+        val snapshot = tracker.snapshot()
+
+        assertEquals(15_000L, snapshot?.promptExcludedDurationMillis)
+        assertEquals(15_000L, snapshot?.currentDwellMillis)
     }
 
     @Test

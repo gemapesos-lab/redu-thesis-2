@@ -82,12 +82,7 @@ class NativeVisualSentimentResolver(
             parseVisualSentimentLabel(response)
         }
 
-        // Majority vote
-        val validVotes = votes.filter { it != VisualSentimentLabel.UNRESOLVED }
-        if (validVotes.isEmpty()) return VisualSentimentLabel.UNRESOLVED
-
-        return validVotes.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key
-            ?: VisualSentimentLabel.UNRESOLVED
+        return majorityVisualSentimentLabel(votes)
     }
 
     private suspend fun ensureModelsReady(): Boolean {
@@ -145,11 +140,21 @@ class NativeVisualSentimentResolver(
 
 internal fun parseVisualSentimentLabel(response: String): VisualSentimentLabel {
     val normalized = response.uppercase()
-    return VisualSentimentLabel.entries
+    val matches = VisualSentimentLabel.entries
         .filterNot { it == VisualSentimentLabel.UNRESOLVED }
-        .firstOrNull { label ->
+        .filter { label ->
             Regex("""(^|[^A-Z0-9_])${Regex.escape(label.name)}([^A-Z0-9_]|$)""")
                 .containsMatchIn(normalized)
         }
+    return matches.singleOrNull() ?: VisualSentimentLabel.UNRESOLVED
+}
+
+internal fun majorityVisualSentimentLabel(votes: List<VisualSentimentLabel>): VisualSentimentLabel {
+    val validVotes = votes.filterNot { it == VisualSentimentLabel.UNRESOLVED }
+    if (validVotes.isEmpty()) return VisualSentimentLabel.UNRESOLVED
+
+    val winner = validVotes.groupingBy { it }.eachCount().maxByOrNull { it.value }
+        ?: return VisualSentimentLabel.UNRESOLVED
+    return winner.key.takeIf { winner.value > validVotes.size / 2 }
         ?: VisualSentimentLabel.UNRESOLVED
 }

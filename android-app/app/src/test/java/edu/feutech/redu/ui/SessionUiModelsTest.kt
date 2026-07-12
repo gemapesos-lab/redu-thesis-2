@@ -96,58 +96,68 @@ class SessionUiModelsTest {
     }
 
     @Test
-    fun dashboardUiStateMapsPlatformMonitoringAndLatestSessions() {
+    fun dashboardUiStateBuildsSevenDayActivitySeries() {
         val zone = ZoneId.of("UTC")
         val now = Instant.parse("2026-07-11T12:00:00Z").toEpochMilli()
         val sessions = listOf(
             session(
                 platform = Platform.TIKTOK,
                 startedAtMillis = Instant.parse("2026-07-11T09:00:00Z").toEpochMilli(),
+                rawDurationMillis = 60_000L,
             ),
             session(
                 platform = Platform.TIKTOK,
                 startedAtMillis = Instant.parse("2026-07-11T10:00:00Z").toEpochMilli(),
+                rawDurationMillis = 120_000L,
             ),
             session(
                 platform = Platform.FACEBOOK,
                 startedAtMillis = Instant.parse("2026-07-10T08:00:00Z").toEpochMilli(),
+                rawDurationMillis = 30_000L,
             ),
+            session(startedAtMillis = Instant.parse("2026-07-04T08:00:00Z").toEpochMilli()),
         )
 
         val state = dashboardUiState(
             sessions = sessions,
             setupComplete = true,
-            accessibilityEnabled = true,
-            trackTikTokEnabled = true,
-            trackInstagramEnabled = false,
-            trackFacebookEnabled = true,
             nowMillis = now,
             zoneId = zone,
         )
 
         assertEquals("2026-07-11", state.date.toString())
-        assertEquals(PlatformMonitoringState.ON, state.platforms[0].state)
-        assertEquals(PlatformMonitoringState.OFF, state.platforms[1].state)
-        assertEquals(PlatformMonitoringState.ON, state.platforms[2].state)
-        assertEquals(
-            Instant.parse("2026-07-11T10:00:00Z").toEpochMilli(),
-            state.platforms[0].latestSession?.startedAtMillis,
-        )
-        assertNull(state.platforms[1].latestSession)
+        assertEquals(7, state.weeklyActivity.size)
+        assertEquals("2026-07-05", state.weeklyActivity.first().date.toString())
+        assertEquals(30_000L, state.weeklyActivity[5].activeMillis)
+        assertEquals(1, state.weeklyActivity[5].sessionCount)
+        assertEquals(180_000L, state.weeklyActivity.last().activeMillis)
+        assertEquals(2, state.weeklyActivity.last().sessionCount)
     }
 
     @Test
-    fun dashboardUiStateMarksEveryPlatformPausedWhenServiceIsOff() {
+    fun dashboardUiStateIncludesEmptyDaysInActivitySeries() {
         val state = dashboardUiState(
             sessions = emptyList(),
             setupComplete = false,
-            accessibilityEnabled = false,
-            trackTikTokEnabled = true,
-            trackInstagramEnabled = false,
-            trackFacebookEnabled = true,
         )
 
-        assertTrue(state.platforms.all { it.state == PlatformMonitoringState.PAUSED })
+        assertEquals(7, state.weeklyActivity.size)
+        assertTrue(state.weeklyActivity.all { it.activeMillis == 0L && it.sessionCount == 0 })
+    }
+
+    @Test
+    fun dashboardDefaultsToTheFixedStudyTimezone() {
+        val now = Instant.parse("2026-07-12T17:00:00Z").toEpochMilli()
+        val state = dashboardUiState(
+            sessions = listOf(session(startedAtMillis = now)),
+            setupComplete = true,
+            nowMillis = now,
+        )
+
+        assertEquals("2026-07-13", state.date.toString())
+        assertEquals(1, state.summary.todaySessionCount)
+        assertEquals("1:00 AM", now.formatTimeOfDay())
+        assertEquals("2026-07-13", groupedSessionsByDate(state.summary.latestSession?.let(::listOf).orEmpty()).single().date.toString())
     }
 
     @Test
@@ -186,6 +196,9 @@ class SessionUiModelsTest {
 
     @Test
     fun participantCodeSuffixControlsStudyGroup() {
+        assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("PX01"))
+        assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("PY02"))
+        assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("PY"))
         assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("P-01X"))
         assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("p-01x"))
         assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("P-02Y"))

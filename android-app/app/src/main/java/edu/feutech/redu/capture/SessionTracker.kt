@@ -45,7 +45,11 @@ class SessionTracker(
         }
         if (session.platform != platform) {
             session.pauseForeground(now)
-            val finalized = FinalizedSession(session.toSnapshot(now), endedAtMillis = now)
+            val endedAtMillis = session.backgroundStartedAtMillis ?: now
+            val finalized = FinalizedSession(
+                snapshot = session.toSnapshot(endedAtMillis),
+                endedAtMillis = endedAtMillis,
+            )
             active = newSession(platform, now)
             return finalized
         }
@@ -84,6 +88,7 @@ class SessionTracker(
 
     fun onPromptClosed() {
         val session = active ?: return
+        if (!session.promptActive) return
         val now = clock()
         val activeNow = session.activeMillisAt(now)
         session.promptActive = false
@@ -113,6 +118,9 @@ class SessionTracker(
                 session.lastInteractionAtActiveMillis = activeNow
             }
 
+            if (previousFingerprint != transitionFingerprint) {
+                session.lastSentimentFingerprint = null
+            }
             session.lastFingerprint = transitionFingerprint
         }
         session.lastEventMillis = now
@@ -163,8 +171,12 @@ class SessionTracker(
         val session = active ?: return null
         val now = clock()
         session.pauseForeground(now)
+        val endedAtMillis = session.backgroundStartedAtMillis ?: now
         active = null
-        return FinalizedSession(session.toSnapshot(now), endedAtMillis = now)
+        return FinalizedSession(
+            snapshot = session.toSnapshot(endedAtMillis),
+            endedAtMillis = endedAtMillis,
+        )
     }
 
     fun discardActive() {

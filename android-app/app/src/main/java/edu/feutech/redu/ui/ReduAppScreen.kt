@@ -83,6 +83,7 @@ fun ReduAppScreen(
     val trackFacebookEnabled = settings?.trackFacebookEnabled == true
     val anyPlatformEnabled = trackTikTokEnabled || trackInstagramEnabled || trackFacebookEnabled
     val setupComplete = hasParticipantCode && accessibilityEnabled && anyPlatformEnabled
+    val participantCodeLocked = isParticipantCodeLocked(hasSessions = sessions.isNotEmpty())
     val showMainShell = canShowMainShell(setupComplete, sessions.isNotEmpty())
     val availableDestinations = availableDestinationsFor(setupComplete, sessions.isNotEmpty())
     var previouslyShowedMainShell by rememberSaveable { mutableStateOf(showMainShell) }
@@ -144,6 +145,7 @@ fun ReduAppScreen(
     }
 
     fun saveParticipantCode(updatedCode: String) {
+        if (participantCodeLocked) return
         val normalizedCode = updatedCode.trim().ifBlank { "UNSET" }
         val derivedStudyGroup = studyGroupForParticipantCode(normalizedCode)
         studyCode = updatedCode.trim()
@@ -171,21 +173,10 @@ fun ReduAppScreen(
         closeSecondary()
     }
 
-    val dashboardState = remember(
-        sessions,
-        setupComplete,
-        accessibilityEnabled,
-        trackTikTokEnabled,
-        trackInstagramEnabled,
-        trackFacebookEnabled,
-    ) {
+    val dashboardState = remember(sessions, setupComplete) {
         dashboardUiState(
             sessions = sessions,
             setupComplete = setupComplete,
-            accessibilityEnabled = accessibilityEnabled,
-            trackTikTokEnabled = trackTikTokEnabled,
-            trackInstagramEnabled = trackInstagramEnabled,
-            trackFacebookEnabled = trackFacebookEnabled,
         )
     }
 
@@ -200,7 +191,6 @@ fun ReduAppScreen(
                 padding = padding,
                 state = dashboardState,
                 onOpenSetup = { openSecondary(ReduDestination.SETUP) },
-                onOpenHistory = { selectPrimary(ReduDestination.HISTORY) },
             )
 
             ReduDestination.HISTORY -> HistoryScreen(
@@ -306,7 +296,6 @@ fun ReduAppScreen(
                     }
                 },
                 onOpenAccessibilitySettings = onOpenAccessibilitySettings,
-                onOpenSetup = { openSecondary(ReduDestination.SETUP) },
                 onOpenExport = { openSecondary(ReduDestination.EXPORT) },
                 onDemoIntervention = { level ->
                     if (level != PromptLevel.NONE) {
@@ -324,6 +313,7 @@ fun ReduAppScreen(
                 padding = padding,
                 studyCode = studyCode,
                 hasSavedParticipantCode = hasParticipantCode,
+                participantCodeLocked = participantCodeLocked,
                 accessibilityEnabled = accessibilityEnabled,
                 trackTikTokEnabled = trackTikTokEnabled,
                 trackInstagramEnabled = trackInstagramEnabled,
@@ -391,6 +381,10 @@ internal fun primaryDestinations(): List<ReduDestination> = listOf(
     ReduDestination.HISTORY,
     ReduDestination.SETTINGS,
 )
+
+internal fun isParticipantCodeLocked(
+    hasSessions: Boolean,
+): Boolean = hasSessions
 
 internal fun availableDestinationsFor(
     setupComplete: Boolean,

@@ -3,9 +3,9 @@ package edu.feutech.redu.ui
 import edu.feutech.redu.data.Platform
 import edu.feutech.redu.data.SentimentReliability
 import edu.feutech.redu.data.SessionEntity
+import edu.feutech.redu.export.CsvExporter
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -23,7 +23,7 @@ internal fun Double.formatPercentValue(): String = String.format(Locale.US, "%.1
 
 internal fun Long.formatTimeOfDay(): String =
     Instant.ofEpochMilli(this)
-        .atZone(ZoneId.systemDefault())
+        .atZone(CsvExporter.STUDY_ZONE)
         .format(DateTimeFormatter.ofPattern("h:mm a", Locale.US))
 
 internal fun LocalDate.formatDashboardDate(): String =
@@ -62,7 +62,7 @@ internal fun RiskFilter.displayName(): String = when (this) {
 
 internal fun SessionEntity?.monitoringRecency(today: LocalDate): String {
     this ?: return "No sessions yet"
-    val sessionDate = Instant.ofEpochMilli(startedAtMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+    val sessionDate = Instant.ofEpochMilli(startedAtMillis).atZone(CsvExporter.STUDY_ZONE).toLocalDate()
     return if (sessionDate == today) {
         "Last session today at ${startedAtMillis.formatTimeOfDay()}"
     } else {

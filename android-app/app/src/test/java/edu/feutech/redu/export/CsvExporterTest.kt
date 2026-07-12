@@ -229,9 +229,17 @@ class CsvExporterTest {
     fun exportZipNameCarriesStudyCodeAndTimestampAndSanitizesUnsafeCharacters() {
         val timestamp = Instant.parse("2026-06-10T07:10:00Z").toEpochMilli()
         // 07:10 UTC is 15:10 in the fixed study timezone (Asia/Manila, UTC+8).
-        assertEquals("redu-export-P001-20260610-1510.zip", CsvExporter.exportZipName("P001", timestamp))
-        assertEquals("redu-export-P01-20260610-1510.zip", CsvExporter.exportZipName("P,/01", timestamp))
-        assertEquals("redu-export-UNSET-20260610-1510.zip", CsvExporter.exportZipName("..", timestamp))
+        assertEquals("redu-export-P001-20260610-151000-000.zip", CsvExporter.exportZipName("P001", timestamp))
+        assertEquals("redu-export-P01-20260610-151000-000.zip", CsvExporter.exportZipName("P,/01", timestamp))
+        assertEquals("redu-export-UNSET-20260610-151000-000.zip", CsvExporter.exportZipName("..", timestamp))
+    }
+
+    @Test
+    fun exportZipNamesDoNotCollideWithinTheSameMinute() {
+        val first = Instant.parse("2026-06-10T07:10:00.001Z").toEpochMilli()
+        val second = Instant.parse("2026-06-10T07:10:00.002Z").toEpochMilli()
+
+        assertTrue(CsvExporter.exportZipName("P001", first) != CsvExporter.exportZipName("P001", second))
     }
 
     @Test

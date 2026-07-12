@@ -79,7 +79,6 @@ internal fun SettingsScreen(
     onPromptsEnabledChange: (Boolean) -> Unit,
     onDebugOverlayChange: (Boolean) -> Unit,
     onOpenAccessibilitySettings: () -> Unit,
-    onOpenSetup: () -> Unit,
     onOpenExport: () -> Unit,
     onDemoIntervention: (PromptLevel) -> Unit = {},
 ) {
@@ -134,29 +133,23 @@ internal fun SettingsScreen(
                 ReduDivider(Modifier.padding(horizontal = 16.dp))
                 Column(Modifier.padding(horizontal = 16.dp, vertical = 6.dp)) {
                     PlatformToggleRow(
-                        label = "TikTok",
+                        platform = Platform.TIKTOK,
                         checked = settings?.trackTikTokEnabled == true,
                         onCheckedChange = { onPlatformTrackingChange(Platform.TIKTOK, it) },
                     )
                     ReduDivider()
                     PlatformToggleRow(
-                        label = "Instagram",
+                        platform = Platform.INSTAGRAM,
                         checked = settings?.trackInstagramEnabled == true,
                         onCheckedChange = { onPlatformTrackingChange(Platform.INSTAGRAM, it) },
                     )
                     ReduDivider()
                     PlatformToggleRow(
-                        label = "Facebook",
+                        platform = Platform.FACEBOOK,
                         checked = settings?.trackFacebookEnabled == true,
                         onCheckedChange = { onPlatformTrackingChange(Platform.FACEBOOK, it) },
                     )
                 }
-                ReduDivider(Modifier.padding(horizontal = 16.dp))
-                ReduSettingRow(
-                    title = "Review setup",
-                    subtitle = "Participant code, platforms, and permission",
-                    onClick = onOpenSetup,
-                )
             }
         }
 
