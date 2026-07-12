@@ -13,13 +13,14 @@ class ReduAppScreenTest {
     }
 
     @Test
-    fun availableDestinationsBeforeSetupKeepsExportReachableWhenSessionsExist() {
+    fun availableDestinationsWithSavedSessionsKeepsMainShellAndSecondaryRoutesReachable() {
         assertEquals(
             listOf(
-                ReduDestination.SETUP,
+                ReduDestination.DASHBOARD,
                 ReduDestination.HISTORY,
-                ReduDestination.EXPORT,
                 ReduDestination.SETTINGS,
+                ReduDestination.SETUP,
+                ReduDestination.EXPORT,
             ),
             availableDestinationsFor(setupComplete = false, hasSessions = true),
         )
@@ -31,11 +32,31 @@ class ReduAppScreenTest {
             listOf(
                 ReduDestination.DASHBOARD,
                 ReduDestination.HISTORY,
-                ReduDestination.EXPORT,
                 ReduDestination.SETTINGS,
+                ReduDestination.SETUP,
+                ReduDestination.EXPORT,
             ),
             availableDestinationsFor(setupComplete = true, hasSessions = false),
         )
+    }
+
+    @Test
+    fun primaryNavigationOnlyIncludesParticipantDestinations() {
+        assertEquals(
+            listOf(
+                ReduDestination.DASHBOARD,
+                ReduDestination.HISTORY,
+                ReduDestination.SETTINGS,
+            ),
+            primaryDestinations(),
+        )
+    }
+
+    @Test
+    fun mainShellRemainsAvailableWhenMonitoringStopsAfterSessionsExist() {
+        assertEquals(false, canShowMainShell(setupComplete = false, hasSessions = false))
+        assertEquals(true, canShowMainShell(setupComplete = false, hasSessions = true))
+        assertEquals(true, canShowMainShell(setupComplete = true, hasSessions = false))
     }
 
     @Test
