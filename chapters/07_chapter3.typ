@@ -660,4 +660,4 @@ The system does not transmit routine study data to external servers and does not
 
 The study does not involve clinical diagnosis or treatment of mental health conditions. The pause-and-reset prompts, break reminders, and short breathing breaks are designed as general digital wellness prompts, not therapeutic interventions.
 
-The methodological and technical limitations arising from the research design and system architecture of this study are documented in Chapter 1 under *Limitations*.
+The methodological and technical limitations arising from the research design and system architecture of this study are documented in Chapter 1 under *Scope, Delimitations, and Limitations*.
