@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="redu_background">#0B0E0D</color>
+    <color name="redu_surface_low">#101412</color>
+    <color name="redu_surface">#121715</color>
+    <color name="redu_surface_high">#1A211E</color>
+    <color name="redu_surface_highest">#222B27</color>
+    <color name="redu_text_primary">#EEF3F0</color>
+    <color name="redu_text_secondary">#A7B2AC</color>
+    <color name="redu_outline">#68766F</color>
+    <color name="redu_outline_variant">#34423C</color>
+    <color name="redu_sea_glass">#76CDB8</color>
+    <color name="redu_on_sea_glass">#08231C</color>
+    <color name="redu_sea_glass_container">#143B32</color>
+    <color name="redu_honey">@color/redu_sea_glass</color>
+    <color name="redu_on_honey">@color/redu_on_sea_glass</color>
+    <color name="redu_warning">#E3B76F</color>
+    <color name="redu_warning_container">#3D2F17</color>
+    <color name="redu_error">#E5968C</color>
+    <color name="redu_error_container">#42211E</color>
+</resources>
