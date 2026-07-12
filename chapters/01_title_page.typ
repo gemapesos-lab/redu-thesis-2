@@ -51,7 +51,7 @@ June 2026
 
 #v(2fr)
 
-Mrs. Rain Marilyn M. Sanchez \
+MS. MARILYN M. SANCHEZ \
 Thesis Adviser
 
 #v(1fr)
