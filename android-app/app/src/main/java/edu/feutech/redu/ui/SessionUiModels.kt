@@ -68,12 +68,6 @@ internal data class ActivityPatternPresentation(
     val tone: StatusTone,
 )
 
-internal enum class PlatformMonitoringState {
-    ON,
-    OFF,
-    PAUSED,
-}
-
 data class DashboardSummary(
     val todaySessionCount: Int,
     val todayActiveMillis: Long,
@@ -82,18 +76,17 @@ data class DashboardSummary(
     val latestSession: SessionEntity?,
 )
 
-internal data class PlatformMonitoringUiState(
-    val platform: Platform,
-    val state: PlatformMonitoringState,
-    val latestSession: SessionEntity?,
+internal data class DailyActivityPoint(
+    val date: LocalDate,
+    val activeMillis: Long,
+    val sessionCount: Int,
 )
 
 internal data class DashboardUiState(
     val date: LocalDate,
     val setupComplete: Boolean,
-    val accessibilityEnabled: Boolean,
     val summary: DashboardSummary,
-    val platforms: List<PlatformMonitoringUiState>,
+    val weeklyActivity: List<DailyActivityPoint>,
     val totalSessionCount: Int,
     val reliableSessionCount: Int,
 )
@@ -106,7 +99,7 @@ data class SessionDateGroup(
 internal fun dashboardSummary(
     sessions: List<SessionEntity>,
     nowMillis: Long = System.currentTimeMillis(),
-    zoneId: ZoneId = ZoneId.systemDefault(),
+    zoneId: ZoneId = CsvExporter.STUDY_ZONE,
 ): DashboardSummary {
     val today = Instant.ofEpochMilli(nowMillis).atZone(zoneId).toLocalDate()
     val todaySessions = sessions.filter {
@@ -127,36 +120,24 @@ internal fun dashboardSummary(
 internal fun dashboardUiState(
     sessions: List<SessionEntity>,
     setupComplete: Boolean,
-    accessibilityEnabled: Boolean,
-    trackTikTokEnabled: Boolean,
-    trackInstagramEnabled: Boolean,
-    trackFacebookEnabled: Boolean,
     nowMillis: Long = System.currentTimeMillis(),
-    zoneId: ZoneId = ZoneId.systemDefault(),
+    zoneId: ZoneId = CsvExporter.STUDY_ZONE,
 ): DashboardUiState {
-    val enabledPlatforms = mapOf(
-        Platform.TIKTOK to trackTikTokEnabled,
-        Platform.INSTAGRAM to trackInstagramEnabled,
-        Platform.FACEBOOK to trackFacebookEnabled,
-    )
     val date = Instant.ofEpochMilli(nowMillis).atZone(zoneId).toLocalDate()
+    val sessionsByDate = sessions.groupBy {
+        Instant.ofEpochMilli(it.startedAtMillis).atZone(zoneId).toLocalDate()
+    }
     return DashboardUiState(
         date = date,
         setupComplete = setupComplete,
-        accessibilityEnabled = accessibilityEnabled,
         summary = dashboardSummary(sessions, nowMillis, zoneId),
-        platforms = enabledPlatforms.map { (platform, enabled) ->
-            PlatformMonitoringUiState(
-                platform = platform,
-                state = when {
-                    !accessibilityEnabled -> PlatformMonitoringState.PAUSED
-                    enabled -> PlatformMonitoringState.ON
-                    else -> PlatformMonitoringState.OFF
-                },
-                latestSession = sessions
-                    .asSequence()
-                    .filter { it.platform == platform }
-                    .maxByOrNull { it.startedAtMillis },
+        weeklyActivity = (6L downTo 0L).map { daysAgo ->
+            val pointDate = date.minusDays(daysAgo)
+            val daySessions = sessionsByDate[pointDate].orEmpty()
+            DailyActivityPoint(
+                date = pointDate,
+                activeMillis = daySessions.sumOf { it.rawDurationMillis },
+                sessionCount = daySessions.size,
             )
         },
         totalSessionCount = sessions.size,
@@ -235,7 +216,7 @@ internal fun filteredSessions(
 
 internal fun groupedSessionsByDate(
     sessions: List<SessionEntity>,
-    zoneId: ZoneId = ZoneId.systemDefault(),
+    zoneId: ZoneId = CsvExporter.STUDY_ZONE,
 ): List<SessionDateGroup> =
     sessions
         .sortedByDescending { it.startedAtMillis }
@@ -253,11 +234,17 @@ internal fun exportIncludedFiles(): List<String> =
         "risk_personalization.csv",
     )
 
-internal fun studyGroupForParticipantCode(code: String): StudyGroup =
-    when (code.trim().lastOrNull()?.uppercaseChar()) {
-        'Y' -> StudyGroup.CONTROL
-        else -> StudyGroup.INTERVENTION
+internal fun studyGroupForParticipantCode(code: String): StudyGroup {
+    val normalized = code.trim().uppercase().filter(Char::isLetterOrDigit)
+    val groupMarker = when {
+        normalized.startsWith("PX") -> 'X'
+        normalized.startsWith("PY") -> 'Y'
+        normalized.endsWith('X') -> 'X'
+        normalized.endsWith('Y') -> 'Y'
+        else -> null
     }
+    return if (groupMarker == 'Y') StudyGroup.CONTROL else StudyGroup.INTERVENTION
+}
 
 internal sealed interface StudyPeriodParseResult {
     data class Valid(

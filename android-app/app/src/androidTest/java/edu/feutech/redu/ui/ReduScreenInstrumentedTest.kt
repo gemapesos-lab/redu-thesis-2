@@ -3,17 +3,22 @@ package edu.feutech.redu.ui
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToIndex
 import edu.feutech.redu.data.AppSettingsEntity
+import edu.feutech.redu.data.RiskLevel
 import edu.feutech.redu.data.StudyGroup
 import edu.feutech.redu.ui.theme.ReduTheme
 import edu.feutech.redu.vlm.ModelState
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 
 class ReduScreenInstrumentedTest {
     @get:Rule
@@ -28,20 +33,71 @@ class ReduScreenInstrumentedTest {
                     state = dashboardUiState(
                         sessions = emptyList(),
                         setupComplete = false,
-                        accessibilityEnabled = false,
-                        trackTikTokEnabled = true,
-                        trackInstagramEnabled = false,
-                        trackFacebookEnabled = false,
                     ),
                     onOpenSetup = {},
-                    onOpenHistory = {},
                 )
             }
         }
 
         composeRule.onNodeWithText("Monitoring needs attention").assertIsDisplayed()
         composeRule.onNodeWithText("Review setup").assertIsDisplayed()
-        composeRule.onNodeWithText("No saved sessions yet").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Your last 7 days").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("No activity in the last 7 days").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("How activity patterns are calculated").assertDoesNotExist()
+    }
+
+    @Test
+    fun dashboardKeepsContextualHelpAndMakesWeeklyDaysSelectable() {
+        val monday = LocalDate.of(2026, 7, 13)
+        val activity = (6L downTo 0L).map { daysAgo ->
+            val date = monday.minusDays(daysAgo)
+            DailyActivityPoint(
+                date = date,
+                activeMillis = when (date) {
+                    monday.minusDays(1) -> 120_000L
+                    monday -> 42_000L
+                    else -> 0L
+                },
+                sessionCount = when (date) {
+                    monday.minusDays(1) -> 1
+                    monday -> 2
+                    else -> 0
+                },
+            )
+        }
+        composeRule.setContent {
+            ReduTheme {
+                DashboardScreen(
+                    padding = PaddingValues(),
+                    state = DashboardUiState(
+                        date = monday,
+                        setupComplete = true,
+                        summary = DashboardSummary(
+                            todaySessionCount = 2,
+                            todayActiveMillis = 42_000L,
+                            latestRiskScore = 16.7,
+                            peakRiskLevel = RiskLevel.SAFE,
+                            latestSession = null,
+                        ),
+                        weeklyActivity = activity,
+                        totalSessionCount = 3,
+                        reliableSessionCount = 3,
+                    ),
+                    onOpenSetup = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithContentDescription("How activity patterns are calculated").assertDoesNotExist()
+        composeRule.onNodeWithText("42 sec").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Sunday, July 12: 2 min, 1 session")
+            .performScrollTo()
+            .performClick()
+            .assertIsSelected()
+        composeRule.onNodeWithText("Sunday, July 12").assertIsDisplayed()
+        composeRule.onNodeWithText("2 min · 1 session").assertIsDisplayed()
+        composeRule.onNodeWithText("What this means").performScrollTo().performClick()
+        composeRule.onNodeWithText("Activity patterns").assertIsDisplayed()
     }
 
     @Test
@@ -150,7 +206,6 @@ class ReduScreenInstrumentedTest {
                     onPromptsEnabledChange = {},
                     onDebugOverlayChange = {},
                     onOpenAccessibilitySettings = {},
-                    onOpenSetup = {},
                     onOpenExport = {},
                 )
             }

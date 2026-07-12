@@ -60,6 +60,12 @@ class ReduAppScreenTest {
     }
 
     @Test
+    fun participantCodeLocksWheneverSavedSessionsExist() {
+        assertEquals(false, isParticipantCodeLocked(hasSessions = false))
+        assertEquals(true, isParticipantCodeLocked(hasSessions = true))
+    }
+
+    @Test
     fun exportIncludedFilesIncludesRiskPersonalization() {
         assertEquals(
             listOf(

@@ -1,5 +1,6 @@
 package edu.feutech.redu.risk
 
+import edu.feutech.redu.data.AppSettingsEntity
 import edu.feutech.redu.data.Platform
 import edu.feutech.redu.data.RiskLevel
 import edu.feutech.redu.data.SentimentReliability
@@ -12,6 +13,45 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RiskPersonalizationTest {
+
+    @Test
+    fun configuredWeekOneBoundsLimitPersonalizationBaseline() {
+        val bounds = RiskPersonalization.baselineBounds(
+            settings = AppSettingsEntity(
+                studyCode = "P-01X",
+                studyGroup = StudyGroup.INTERVENTION,
+                week1StartMillis = 100L,
+                week1EndMillis = 199L,
+                week2StartMillis = 200L,
+                week2EndMillis = 299L,
+            ),
+            studyCode = "P-01X",
+            studyGroup = StudyGroup.INTERVENTION,
+            lockedAtMillis = 250L,
+        )
+
+        assertEquals(100L, bounds.startInclusiveMillis)
+        assertEquals(200L, bounds.endExclusiveMillis)
+    }
+
+    @Test
+    fun personalizationBaselineFallsBackToPreLockHistoryWithoutMatchingStudyPeriod() {
+        val bounds = RiskPersonalization.baselineBounds(
+            settings = AppSettingsEntity(
+                studyCode = "OTHER",
+                studyGroup = StudyGroup.INTERVENTION,
+                week1StartMillis = 100L,
+                week1EndMillis = 199L,
+            ),
+            studyCode = "P-01X",
+            studyGroup = StudyGroup.INTERVENTION,
+            lockedAtMillis = 250L,
+        )
+
+        assertEquals(Long.MIN_VALUE, bounds.startInclusiveMillis)
+        assertEquals(250L, bounds.endExclusiveMillis)
+    }
+
     @Test
     fun nearestRankQuantilesUseThesisAnchors() {
         val quantiles = with(RiskPersonalization) {

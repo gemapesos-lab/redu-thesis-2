@@ -2,6 +2,10 @@ package edu.feutech.redu.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -50,25 +54,35 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.feutech.redu.BuildConfig
+import edu.feutech.redu.R
 import edu.feutech.redu.data.Platform
 import edu.feutech.redu.data.RiskLevel
 import edu.feutech.redu.data.SentimentReliability
 import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.StudyGroup
+import edu.feutech.redu.export.CsvExporter
 import edu.feutech.redu.ui.theme.ReduTheme
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +90,6 @@ internal fun DashboardScreen(
     padding: PaddingValues,
     state: DashboardUiState,
     onOpenSetup: () -> Unit,
-    onOpenHistory: () -> Unit,
 ) {
     var scoreInfoOpen by rememberSaveable { mutableStateOf(false) }
     var diagnosticsExpanded by rememberSaveable { mutableStateOf(false) }
@@ -85,11 +98,6 @@ internal fun DashboardScreen(
         padding = padding,
         title = "Today",
         subtitle = state.date.formatDashboardDate(),
-        actions = {
-            IconButton(onClick = { scoreInfoOpen = true }, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.Outlined.Info, contentDescription = "How activity patterns are calculated")
-            }
-        },
     ) {
         if (!state.setupComplete) {
             item {
@@ -111,42 +119,11 @@ internal fun DashboardScreen(
         }
 
         item {
-            ReduSectionHeader(
-                title = "Monitoring",
-                subtitle = "Selected short-form video platforms",
-                trailing = {
-                    ReduStatusLabel(
-                        label = if (state.accessibilityEnabled) "Service on" else "Permission needed",
-                        tone = if (state.accessibilityEnabled) StatusTone.SUCCESS else StatusTone.ATTENTION,
-                    )
-                },
-            )
+            ReduSectionHeader(title = "Your last 7 days", subtitle = "Active time by day")
         }
 
         item {
-            MonitoringSection(
-                platforms = state.platforms,
-                date = state.date,
-                onOpenSetup = onOpenSetup,
-            )
-        }
-
-        item {
-            ReduSectionHeader(title = "Latest session")
-        }
-
-        item {
-            val latest = state.summary.latestSession
-            if (latest == null) {
-                ReduEmptyState(
-                    title = "No saved sessions yet",
-                    body = "Use a selected platform while monitoring is on. New sessions will appear here.",
-                    actionLabel = "Check monitoring",
-                    onAction = onOpenSetup,
-                )
-            } else {
-                LatestSessionRow(session = latest, onClick = onOpenHistory)
-            }
+            WeeklyActivityChart(state.weeklyActivity)
         }
 
         if (BuildConfig.DEBUG) {
@@ -225,7 +202,7 @@ private fun DailyOverview(
         ) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
-                    text = if (summary.todaySessionCount == 0) "No activity" else formatReadableDuration(summary.todayActiveMillis),
+                    text = if (summary.todaySessionCount == 0) "No activity" else summary.todayActiveMillis.formatDashboardDuration(),
                     style = MaterialTheme.typography.displaySmall,
                 )
                 ReduSecondaryText(
@@ -255,82 +232,205 @@ private fun DailyOverview(
                 }
             }
         } else {
-            ReduCaption("Today begins at midnight in your device timezone.")
+            ReduCaption("Today follows the study timezone (${CsvExporter.STUDY_ZONE.id}).")
         }
         ReduDivider()
     }
 }
 
 @Composable
-private fun MonitoringSection(
-    platforms: List<PlatformMonitoringUiState>,
-    date: LocalDate,
-    onOpenSetup: () -> Unit,
-) {
-    val needsAttention = platforms.any { it.state != PlatformMonitoringState.ON }
-    ReduSection(
-        modifier = if (needsAttention) Modifier.clickable(role = Role.Button, onClick = onOpenSetup) else Modifier,
-    ) {
-        platforms.forEachIndexed { index, item ->
-            MonitoringRow(item = item, date = date)
-            if (index < platforms.lastIndex) ReduDivider(Modifier.padding(horizontal = 16.dp))
-        }
+private fun WeeklyActivityChart(activity: List<DailyActivityPoint>) {
+    val totalMillis = activity.sumOf { it.activeMillis }
+    val sessionCount = activity.sumOf { it.sessionCount }
+    val activeDays = activity.count { it.sessionCount > 0 }
+    val maxMillis = activity.maxOfOrNull { it.activeMillis }?.coerceAtLeast(1L) ?: 1L
+    val dates = activity.map { it.date.toEpochDay() }
+    var selectedEpochDay by rememberSaveable(dates) {
+        mutableStateOf(activity.lastOrNull()?.date?.toEpochDay())
     }
-}
+    LaunchedEffect(dates) {
+        if (selectedEpochDay !in dates) selectedEpochDay = activity.lastOrNull()?.date?.toEpochDay()
+    }
+    val selectedPoint = activity.firstOrNull { it.date.toEpochDay() == selectedEpochDay }
+        ?: activity.lastOrNull()
 
-@Composable
-private fun MonitoringRow(item: PlatformMonitoringUiState, date: LocalDate) {
-    val (label, tone) = when (item.state) {
-        PlatformMonitoringState.ON -> "Monitoring" to StatusTone.SUCCESS
-        PlatformMonitoringState.OFF -> "Off" to StatusTone.NEUTRAL
-        PlatformMonitoringState.PAUSED -> "Permission needed" to StatusTone.ATTENTION
+    if (activity.none { it.sessionCount > 0 }) {
+        WeeklyActivityEmptyState()
+        return
     }
-    val largeText = LocalDensity.current.fontScale >= 1.5f
-    val modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)
-    if (largeText) {
-        Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(item.platform.displayName(), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-            ReduCaption(item.latestSession.monitoringRecency(date))
-            ReduStatusLabel(label, tone)
-        }
-    } else {
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(item.platform.displayName(), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                ReduCaption(item.latestSession.monitoringRecency(date))
-            }
-            ReduStatusLabel(label, tone)
-        }
-    }
-}
 
-@Composable
-private fun LatestSessionRow(session: SessionEntity, onClick: () -> Unit) {
-    val presentation = activityPatternFor(session.riskLevel)
     ReduSection {
         Column(
-            modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(totalMillis.formatDashboardDuration(), style = MaterialTheme.typography.titleLarge)
+                    ReduCaption("Total active time")
+                }
+                ReduCaption("$sessionCount ${sessionCount.sessionLabel()}")
+            }
+
+            selectedPoint?.let { point ->
+                WeeklySelectedDaySummary(point)
+            }
+
+            WeeklyActivityBars(
+                activity = activity,
+                maxMillis = maxMillis,
+                selectedEpochDay = selectedEpochDay,
+                onSelect = { selectedEpochDay = it.date.toEpochDay() },
+            )
+
+            ReduDivider()
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                ReduInfoMetric(label = "Active days", value = "$activeDays of 7")
+                ReduInfoMetric(
+                    label = "Average session",
+                    value = (totalMillis / sessionCount).formatDashboardDuration(),
+                    alignEnd = true,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WeeklySelectedDaySummary(point: DailyActivityPoint) {
+    val largeText = LocalDensity.current.fontScale >= 1.3f
+    val dateLabel = point.date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.US))
+    val activityLabel = "${point.activeMillis.formatDashboardDuration()} · ${point.sessionCount} ${point.sessionCount.sessionLabel()}"
+    Surface(
+        modifier = Modifier.fillMaxWidth().semantics {
+            contentDescription = "$dateLabel. $activityLabel"
+        },
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.shapes.small,
+    ) {
+        if (largeText) {
+            Column(Modifier.padding(horizontal = 12.dp, vertical = 9.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(dateLabel, style = MaterialTheme.typography.titleSmall)
+                ReduCaption(activityLabel)
+            }
+        } else {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(session.platform.displayName(), style = MaterialTheme.typography.titleMedium)
-                    ReduSecondaryText("${session.startedAtMillis.formatTimeOfDay()} / ${formatReadableDuration(session.rawDurationMillis)}")
-                }
-                ReduStatusLabel(presentation.label, presentation.tone)
-                Icon(Icons.Outlined.ChevronRight, contentDescription = "Open session history")
+                Text(dateLabel, style = MaterialTheme.typography.titleSmall)
+                ReduCaption(activityLabel)
             }
-            ActivityPatternMeter(session.riskScore)
-            ReduCaption("Score ${session.riskScore.formatOneDecimal()}/100 / ${session.sentimentReliability.displayName()}")
         }
+    }
+}
+
+@Composable
+private fun WeeklyActivityBars(
+    activity: List<DailyActivityPoint>,
+    maxMillis: Long,
+    selectedEpochDay: Long?,
+    onSelect: (DailyActivityPoint) -> Unit,
+) {
+    Row(modifier = Modifier.fillMaxWidth().height(112.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        activity.forEach { point ->
+            val selected = point.date.toEpochDay() == selectedEpochDay
+            val dateLabel = point.date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.US))
+            val durationLabel = point.activeMillis.formatDashboardDuration()
+            val semanticsLabel = "$dateLabel: $durationLabel, ${point.sessionCount} ${point.sessionCount.sessionLabel()}"
+            val labelColor by animateColorAsState(
+                targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                animationSpec = tween(180),
+                label = "weekly day label",
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(112.dp)
+                    .semantics {
+                        role = Role.Button
+                        this.selected = selected
+                        contentDescription = semanticsLabel
+                    }
+                    .clickable(role = Role.Button) { onSelect(point) }
+                    .padding(horizontal = 1.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                BoxWithConstraints(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    val proportionalHeight = maxHeight * (point.activeMillis.toFloat() / maxMillis.toFloat())
+                    val targetHeight = if (point.activeMillis == 0L) 0.dp else proportionalHeight.coerceAtLeast(6.dp)
+                    val barHeight by animateDpAsState(targetHeight, tween(220), label = "weekly activity bar")
+                    val barColor by animateColorAsState(
+                        targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.48f),
+                        animationSpec = tween(180),
+                        label = "weekly activity color",
+                    )
+                    Box(
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .width(20.dp)
+                            .height(2.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.extraSmall),
+                    )
+                    if (point.activeMillis > 0L) {
+                        Box(
+                            Modifier
+                                .align(Alignment.BottomCenter)
+                                .width(20.dp)
+                                .height(barHeight)
+                                .background(barColor, MaterialTheme.shapes.extraSmall),
+                        )
+                    }
+                }
+                Text(
+                    point.date.format(DateTimeFormatter.ofPattern("EEE", Locale.US)).take(2),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = labelColor,
+                    textAlign = TextAlign.Center,
+                )
+                Box(
+                    Modifier
+                        .width(18.dp)
+                        .height(2.dp)
+                        .background(
+                            if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            MaterialTheme.shapes.extraSmall,
+                        ),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WeeklyActivityEmptyState() {
+    ReduSection {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp),
+        ) {
+            Text("No activity in the last 7 days", style = MaterialTheme.typography.titleMedium)
+            ReduSecondaryText("Your seven-day activity will appear here after REDU saves a session.")
+        }
+    }
+}
+
+private fun Long.formatDashboardDuration(): String = formatMetricDuration()
+
+@Composable
+private fun ReduInfoMetric(label: String, value: String, alignEnd: Boolean = false) {
+    Column(horizontalAlignment = if (alignEnd) Alignment.End else Alignment.Start) {
+        Text(value, style = MaterialTheme.typography.titleMedium)
+        ReduCaption(label)
     }
 }
 
@@ -560,6 +660,7 @@ internal fun SetupScreen(
     padding: PaddingValues,
     studyCode: String,
     hasSavedParticipantCode: Boolean,
+    participantCodeLocked: Boolean = false,
     accessibilityEnabled: Boolean,
     trackTikTokEnabled: Boolean,
     trackInstagramEnabled: Boolean,
@@ -605,6 +706,7 @@ internal fun SetupScreen(
                     ParticipantStepContent(
                         studyCode = studyCode,
                         hasSavedParticipantCode = hasSavedParticipantCode,
+                        participantCodeLocked = participantCodeLocked,
                         onStudyCodeChange = onStudyCodeChange,
                         onSave = onSave,
                         onDone = { expandedStep = null },
@@ -754,6 +856,7 @@ private fun SetupStepBlock(
 private fun ParticipantStepContent(
     studyCode: String,
     hasSavedParticipantCode: Boolean,
+    participantCodeLocked: Boolean,
     onStudyCodeChange: (String) -> Unit,
     onSave: () -> Unit,
     onDone: () -> Unit,
@@ -765,22 +868,31 @@ private fun ParticipantStepContent(
         label = { Text("Participant study code") },
         modifier = Modifier.fillMaxWidth(),
         singleLine = true,
+        enabled = !participantCodeLocked,
         shape = MaterialTheme.shapes.medium,
     )
     if (studyCode.isNotBlank()) {
         ReduInfoRow("Assigned group", studyGroupForParticipantCode(studyCode).name.lowercase().replaceFirstChar { it.uppercase() })
     }
-    ReduCaption("The study code links local exports to the assigned participant without using a name or email address.")
-    ReduPrimaryButton(
-        text = if (hasSavedParticipantCode) "Save changes" else "Save participant code",
-        onClick = {
-            focusManager.clearFocus()
-            onSave()
-            onDone()
+    ReduCaption(
+        if (participantCodeLocked) {
+            "The participant code is locked while saved sessions exist. Reset study data before assigning a different participant."
+        } else {
+            "The study code links local exports to the assigned participant without using a name or email address."
         },
-        modifier = Modifier.fillMaxWidth(),
-        enabled = studyCode.isNotBlank(),
     )
+    if (!participantCodeLocked) {
+        ReduPrimaryButton(
+            text = if (hasSavedParticipantCode) "Save changes" else "Save participant code",
+            onClick = {
+                focusManager.clearFocus()
+                onSave()
+                onDone()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = studyCode.isNotBlank(),
+        )
+    }
 }
 
 @Composable
@@ -792,11 +904,11 @@ private fun PlatformStepContent(
     onContinue: () -> Unit,
 ) {
     ReduCaption("Choose only the platforms used for short-form video during the study.")
-    PlatformToggleRow("TikTok", trackTikTokEnabled) { onPlatformTrackingChange(Platform.TIKTOK, it) }
+    PlatformToggleRow(Platform.TIKTOK, trackTikTokEnabled) { onPlatformTrackingChange(Platform.TIKTOK, it) }
     ReduDivider()
-    PlatformToggleRow("Instagram", trackInstagramEnabled) { onPlatformTrackingChange(Platform.INSTAGRAM, it) }
+    PlatformToggleRow(Platform.INSTAGRAM, trackInstagramEnabled) { onPlatformTrackingChange(Platform.INSTAGRAM, it) }
     ReduDivider()
-    PlatformToggleRow("Facebook", trackFacebookEnabled) { onPlatformTrackingChange(Platform.FACEBOOK, it) }
+    PlatformToggleRow(Platform.FACEBOOK, trackFacebookEnabled) { onPlatformTrackingChange(Platform.FACEBOOK, it) }
     val anyEnabled = trackTikTokEnabled || trackInstagramEnabled || trackFacebookEnabled
     ReduPrimaryButton(
         text = "Continue",
@@ -808,19 +920,49 @@ private fun PlatformStepContent(
 
 @Composable
 internal fun PlatformToggleRow(
-    label: String,
+    platform: Platform,
     checked: Boolean,
     enabled: Boolean = true,
     onCheckedChange: (Boolean) -> Unit,
 ) {
+    val label = platform.displayName()
     Row(
         modifier = Modifier.fillMaxWidth().clickable(enabled = enabled, role = Role.Switch) { onCheckedChange(!checked) }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 7.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+        PlatformAppIcon(platform)
+        Text(
+            label,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+        )
         ReduSwitch(checked = checked, enabled = enabled, onCheckedChange = onCheckedChange, label = "$label monitoring")
+    }
+}
+
+@Composable
+private fun PlatformAppIcon(platform: Platform) {
+    val iconRes = when (platform) {
+        Platform.TIKTOK -> R.drawable.ic_tiktok
+        Platform.INSTAGRAM -> R.drawable.ic_instagram
+        Platform.FACEBOOK -> R.drawable.ic_facebook
+    }
+    Surface(
+        modifier = Modifier.size(34.dp),
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                painter = painterResource(iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(19.dp),
+                tint = Color.Unspecified,
+            )
+        }
     }
 }
 
@@ -972,15 +1114,10 @@ private fun DashboardPopulatedPreview() {
             state = dashboardUiState(
                 sessions = listOf(session),
                 setupComplete = true,
-                accessibilityEnabled = true,
-                trackTikTokEnabled = true,
-                trackInstagramEnabled = true,
-                trackFacebookEnabled = false,
                 nowMillis = now,
                 zoneId = ZoneId.of("Asia/Manila"),
             ),
             onOpenSetup = {},
-            onOpenHistory = {},
         )
     }
 }
@@ -1002,15 +1139,10 @@ private fun DashboardLargeFontPreview() {
             state = dashboardUiState(
                 sessions = emptyList(),
                 setupComplete = false,
-                accessibilityEnabled = false,
-                trackTikTokEnabled = true,
-                trackInstagramEnabled = false,
-                trackFacebookEnabled = false,
                 nowMillis = Instant.parse("2026-07-11T12:00:00Z").toEpochMilli(),
                 zoneId = ZoneId.of("Asia/Manila"),
             ),
             onOpenSetup = {},
-            onOpenHistory = {},
         )
     }
 }

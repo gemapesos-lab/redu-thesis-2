@@ -8,6 +8,14 @@ class FacebookCaptionRulesTest {
     private val rootBounds = TikTokBounds(0, 0, 1080, 2340)
 
     @Test
+    fun truncatedEllipsisSpaceMoreSuffixIsRemoved() {
+        assertEquals(
+            "This caption is truncated",
+            FacebookCaptionRules.normalizeCaptionText("This caption is truncated… more"),
+        )
+    }
+
+    @Test
     fun lowerReelsCaptionButtonIsSelected() {
         val match = FacebookCaptionRules.classify(
             text = "",

@@ -87,8 +87,8 @@ object TikTokCaptionRules {
             ?.trim()
             .orEmpty()
         return normalized
-            .replace(Regex("\\s+more\\s*$", RegexOption.IGNORE_CASE), "")
             .replace(Regex("\\s*[.…]+\\s*more\\s*$", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("\\s+more\\s*$", RegexOption.IGNORE_CASE), "")
             .trim()
     }
 

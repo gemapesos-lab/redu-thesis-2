@@ -27,4 +27,47 @@ class NativeVisualSentimentResolverTest {
             parseVisualSentimentLabel("unclear"),
         )
     }
+
+    @Test
+    fun parseVisualSentimentLabelRejectsAmbiguousResponses() {
+        assertEquals(
+            VisualSentimentLabel.UNRESOLVED,
+            parseVisualSentimentLabel("MILD_NEG or NEUTRAL"),
+        )
+    }
+
+    @Test
+    fun majorityVoteRejectsTiesAndPluralities() {
+        assertEquals(
+            VisualSentimentLabel.UNRESOLVED,
+            majorityVisualSentimentLabel(
+                listOf(VisualSentimentLabel.MILD_NEG, VisualSentimentLabel.MILD_POS),
+            ),
+        )
+        assertEquals(
+            VisualSentimentLabel.UNRESOLVED,
+            majorityVisualSentimentLabel(
+                listOf(
+                    VisualSentimentLabel.MILD_NEG,
+                    VisualSentimentLabel.NEUTRAL,
+                    VisualSentimentLabel.MILD_POS,
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun majorityVoteReturnsStrictMajorityOfResolvedVotes() {
+        assertEquals(
+            VisualSentimentLabel.MILD_NEG,
+            majorityVisualSentimentLabel(
+                listOf(
+                    VisualSentimentLabel.MILD_NEG,
+                    VisualSentimentLabel.MILD_NEG,
+                    VisualSentimentLabel.MILD_POS,
+                    VisualSentimentLabel.UNRESOLVED,
+                ),
+            ),
+        )
+    }
 }
