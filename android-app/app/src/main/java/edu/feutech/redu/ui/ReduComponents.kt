@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -39,7 +38,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
@@ -57,7 +56,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,6 +63,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -127,6 +126,7 @@ private fun ReduBottomNavigation(
     selectedDestination: ReduDestination,
     onDestinationSelected: (ReduDestination) -> Unit,
 ) {
+    val largeText = LocalDensity.current.fontScale >= 1.5f
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 0.dp,
@@ -135,7 +135,7 @@ private fun ReduBottomNavigation(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .height(72.dp),
+                .heightIn(min = if (largeText) 88.dp else 72.dp),
         ) {
             destinations.forEach { destination ->
                 ReduNavigationItem(
@@ -155,9 +155,10 @@ private fun ReduNavigationRail(
     selectedDestination: ReduDestination,
     onDestinationSelected: (ReduDestination) -> Unit,
 ) {
+    val largeText = LocalDensity.current.fontScale >= 1.5f
     Surface(
         modifier = Modifier
-            .width(88.dp)
+            .width(if (largeText) 128.dp else 88.dp)
             .fillMaxHeight(),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 0.dp,
@@ -176,7 +177,7 @@ private fun ReduNavigationRail(
                     onClick = { onDestinationSelected(destination) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(76.dp),
+                        .heightIn(min = if (largeText) 92.dp else 76.dp),
                 )
             }
         }
@@ -195,19 +196,15 @@ private fun ReduNavigationItem(
         animationSpec = tween(180),
         label = "navigation color",
     )
-    val interactionSource = remember { MutableInteractionSource() }
+    val largeText = LocalDensity.current.fontScale >= 1.5f
     Column(
         modifier = modifier
             .semantics {
                 role = Role.Tab
                 this.selected = selected
             }
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick,
-            )
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .clickable(role = Role.Tab, onClick = onClick)
+            .padding(horizontal = if (largeText) 4.dp else 8.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -227,7 +224,7 @@ private fun ReduNavigationItem(
         Spacer(Modifier.height(4.dp))
         Text(
             text = destination.label,
-            style = MaterialTheme.typography.labelMedium,
+            style = if (largeText) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
             color = contentColor,
             maxLines = 1,
         )
@@ -279,7 +276,7 @@ private fun ReduPageHeader(
     ) {
         if (onBack != null) {
             IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
             }
         }
         Column(
@@ -304,16 +301,27 @@ internal fun ReduSectionHeader(
     subtitle: String? = null,
     trailing: (@Composable () -> Unit)? = null,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 28.dp, bottom = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+    val stackTrailing = trailing != null && LocalDensity.current.fontScale >= 1.3f
+    val modifier = Modifier.fillMaxWidth().padding(top = 28.dp, bottom = 12.dp)
+
+    if (stackTrailing) {
+        Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(title, style = MaterialTheme.typography.titleMedium)
             subtitle?.let { ReduSecondaryText(it) }
+            trailing()
         }
-        trailing?.invoke()
+    } else {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                subtitle?.let { ReduSecondaryText(it) }
+            }
+            trailing?.invoke()
+        }
     }
 }
 
@@ -412,26 +420,45 @@ internal fun ReduInfoRow(
     value: String,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Text(
-            label,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            value,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
-            fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.End,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis,
-        )
+    val largeText = LocalDensity.current.fontScale >= 1.5f
+    if (largeText) {
+        Column(
+            modifier = modifier.fillMaxWidth().padding(vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
+        ) {
+            Text(
+                label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                value,
+                style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
+    } else {
+        Row(
+            modifier = modifier.fillMaxWidth().padding(vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(
+                label,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                value,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.End,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -524,22 +551,35 @@ internal fun ReduSettingRow(
     } else {
         Modifier
     }
-    Row(
-        modifier = modifier.fillMaxWidth().then(clickableModifier).padding(horizontal = 16.dp, vertical = 14.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+    val containerModifier = modifier.fillMaxWidth().then(clickableModifier)
+        .padding(horizontal = 16.dp, vertical = 14.dp)
+    val stackTrailing = trailing != null && LocalDensity.current.fontScale >= 1.5f
+    if (stackTrailing) {
+        Column(modifier = containerModifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
             subtitle?.let { ReduCaption(it) }
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                trailing()
+            }
         }
-        when {
-            trailing != null -> trailing()
-            onClick != null -> Icon(
-                Icons.Outlined.ChevronRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+    } else {
+        Row(
+            modifier = containerModifier,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                subtitle?.let { ReduCaption(it) }
+            }
+            when {
+                trailing != null -> trailing()
+                onClick != null -> Icon(
+                    Icons.Outlined.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
