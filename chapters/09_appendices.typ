@@ -611,6 +611,17 @@ _(Signature)_ \
 #pagebreak()
 #heading(level: 1, numbering: none)[APPENDIX H]
 #v(1em)
+#align(center)[*Curriculum Vitae — Psychology Expert*]
+#v(1em)
+
+#image("../put_in_appendices/Psychology_Expert_CV_1.png", width: 100%)
+#image("../put_in_appendices/Psychology_Expert_CV_2.png", width: 100%)
+#image("../put_in_appendices/Psychology_Expert_CV_3.png", width: 100%)
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX I]
+#v(1em)
 #align(center)[*Curriculum Vitae — Mobile/Software Engineering Expert*]
 #v(1em)
 
@@ -618,96 +629,31 @@ _(Signature)_ \
 
 #pagebreak()
 
-#heading(level: 1, numbering: none)[APPENDIX I]
+#heading(level: 1, numbering: none)[APPENDIX J]
 #v(1em)
-#align(center)[*Curriculum Vitae — Psychology Expert*]
-
+#align(center)[*System Evaluation Survey Instrument*]
 #v(1em)
 
-*VILLAMARZO, CHRISTINE ANNE MORENO, RPsy* \
-_183 Jasmin Street Brgy. Lingga,_ \
-_Calamba City, Laguna_ \
-_Mobile No.: +63935-750-1025_ \
-_Email address: christineanne006\@gmail.com_
+#image("../put_in_appendices/Survey_1.png", width: 100%)
+#image("../put_in_appendices/Survey_2.png", width: 100%)
+#image("../put_in_appendices/Survey_3.png", width: 100%)
+#image("../put_in_appendices/Survey_4.png", width: 100%)
+#image("../put_in_appendices/Survey_5.png", width: 100%)
+#image("../put_in_appendices/Survey_6.png", width: 100%)
+#image("../put_in_appendices/Survey_7.png", width: 100%)
+#image("../put_in_appendices/Survey_8.png", width: 100%)
+#image("../put_in_appendices/Survey_9.png", width: 100%)
+#image("../put_in_appendices/Survey_10.png", width: 100%)
 
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX K]
 #v(1em)
-*EDUCATIONAL BACKGROUND:*
-- *Doctor of Psychology* \
-  _Colegio de San Gabriel Arcangel, Inc_ \
-  San Jose del Monte, Bulacan \
-  Currently Enrolled
-- *Master of Science in Psychology* \
-  _Laguna College of Business and Arts_ \
-  Poblacion, Calamba City \
-  September 2020 -- August 2022
-- *Bachelor of Science in Psychology* \
-  _Saint John Colleges_ \
-  Chipeco Avenue, Barangay 3, Calamba City \
-  2012 - 2016
-- *License: Registered Psychologist* \
-  August 2023
-
+#align(center)[*Signed Progress Reports*]
 #v(1em)
-*WORKING EXPERIENCE:*
-+ *Chief Psychologist* \
-  _KZen Psychological Services_ \
-  March 26, 2026 - Present
-+ *Clinical Psychologist* \
-  _Psych Counseling and Health Support Services_ \
-  November 11, 2024 - March 26, 2026
-+ *Consultant Psychologist - Part Time* \
-  _Micah Medical Clinic and Diagnostic Laboratory_ \
-  June 01, 2024 - December 30, 2025
-+ *Clinical Psychologist - Part Time* \
-  _Mind Care Center-Perpetual Help Medical Center_ \
-  March 16, 2024 -- December 2024
-+ *Counseling Psychologist- Part Time* \
-  _Mary May Malabanan- Fernando Psychological Services_ \
-  September 01, 2023 -- October 2024
-+ *Assistant Professor 1* \
-  _Pamantasang ng Cabuyao_ \
-  August 25, 2023 - April 26, 2024
-+ *HR Officer* \
-  _Magnaxa Construction_ \
-  December 2018 - May 2023
-+ *Operations Assistant* \
-  _AB Nutribev_ \
-  April 2017 - December 2018
-+ *HR Coordinator* \
-  _Cebu General Services Inc._ \
-  May 2016 - March 2017
 
-#v(1em)
-*SEMINARS ATTENDED:*
-- The Impact of Quiet Quitting (September 21, 2022)
-- World Mental Health Awareness (Perpetual Help Medical Center, Las Piñas City, October 20, 2022)
-- Navigating Towards a Successful Workplace: Understanding and Dealing with Employee Expectations (April 27, 2023)
-- An Introduction to the 6 steps Rational Approach Designing and Developing Psychological Screening and Assessments. (November 12, 2023)
-- Research Advances on Mental Health by SAGE (October 18, 2023)
-- The Changing Landscape of Filipino Counseling and Psychotherapy: Key Issues and Next Step (October 7, 2023)
-- Cognitive Behavioral Therapy in the Context of the Filipino Clients (November 11, 2023)
-- Developing a Comprehensive School-Based Mental Health and Suicide Awareness and Prevention Toolkit For Grade Student (June 21, 2024)
-- Mastering Cognitive Behavioral Therapy: A Practical Guide for Practitioners in the Philippine Setting Basic Skills I (October 05, 2024)
-- Healing Through Art: Creative Arts Therapy for Child and Teen Depression (January 11, 2025)
-- Trauma-Informed Care: Principles and Practices for Clinicians and Educators (April 05, 2025)
-
-#v(1em)
-*PERSONAL BACKGROUND:*
-- Born: December 1, 1994, in Dasmariñas Cavite.
-- Languages: English and Filipino.
-- Skills: Proficient in Microsoft Word, Excel, and PowerPoint.
-- Clinical Skills: Psychotherapy, Counseling and Psychological Assessment
-- Traits: Adaptable, goal-oriented, and quality-oriented.
-
-#v(1em)
-*CHARACTER REFERENCES:*
-- Available upon request.
-
-#v(1em)
-*CERTIFICATION:* \
-"I hereby certify that the above statements and information are true and accurate to the best of my knowledge and beliefs."
-
-#v(3em)
-
-CHRISTINE ANNE M. VILLAMARZO, RPsy \
-Applicant
+#image("../put_in_appendices/Progress_Report_1.png", width: 100%)
+#image("../put_in_appendices/Progress_Report_2.jpg", width: 100%)
+#image("../put_in_appendices/Progress_Report_3.png", width: 100%)
+#image("../put_in_appendices/Progress_Report_4.png", width: 100%)
+#image("../put_in_appendices/Progress_Report_5.png", width: 100%)
