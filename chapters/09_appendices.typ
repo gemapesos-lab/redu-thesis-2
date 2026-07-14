@@ -622,14 +622,61 @@ _(Signature)_ \
 
 #heading(level: 1, numbering: none)[APPENDIX I]
 #v(1em)
-#align(center)[*Curriculum Vitae — Mobile/Software Engineering Expert*]
+#align(center)[*Software Engineering Expert Validation Feedback*]
+#v(1.5em)
+
+#align(center)[*Software Engineering Expert Validation Certificate*]
+#v(1em)
+
+This certifies that I, *Jim Carlo S. Pajenado*, have personally reviewed and validated the technical design, algorithm logic, and system architecture of the mobile application developed by Genesis A. Cadigal, Rayan Kennard O. Chuayap, Luigi Karl B. Limos, and Gean Dhylan E. Mapesos for their study titled *"REINVENT: Doomscrolling Detection and Digital Mindfulness Mobile Application for Short-Form Video Platforms using VADER and Fuzzy Logic"*. 
+
+My evaluation specifically assessed the accuracy and reliability of the VADER sentiment analysis for code-mixed Filipino/Taglish text, the design and internal consistency of the 27-rule fuzzy logic inference base, and the system performance and scalability of the edge-processing Android Accessibility Service framework.
+
+#v(1.5em)
+#align(right)[
+  *Jim Carlo S. Pajenado* \
+  IT Instructor / Software Engineering Expert \
+  North Eastern Mindanao State University \
+  Date: May 26, 2026
+]
+
+#v(2em)
+== Rubric Rating Evaluation
+
+#table(
+  columns: (auto, 1fr, auto),
+  [*No.*], [*Evaluation Area*], [*Rating (1-5)*],
+  [1], [Accuracy and Reliability of VADER Sentiment Scoring (Filipino/Taglish context)], [5],
+  [2], [Effectiveness of the Fuzzy Logic Decision-Making Pipeline (27-rule consistency)], [5],
+  [3], [On-Device Performance, Edge Resource Efficiency, and Responsiveness], [5],
+  [4], [System Performance and Scalability under Real-World Load], [5],
+  [5], [Privacy-Preserving Local-Only Processing Architecture], [5],
+  [6], [Intervention Appropriateness and Escalation Structure], [5],
+  [*Overall Mean*], [], [*5.00 / 5.00*]
+)
+
+#v(1.5em)
+== Transcript of Recommendations
+
+The following is the transcript of recommendations and feedback provided for system refinement:
+
+1. *Clarify Fallback Criteria:* The routing logic between the primary text path and the VLM fallback should be clearly defined. The system must establish a robust OOV (Out-of-Vocabulary) threshold to determine when text-based sentiment analysis is unreliable and when the VLM fallback should be triggered to prevent classification drift.
+2. *Optimize Screen-Frame Processing:* Since the VLM fallback uses screen-capture sampling, the system should avoid storing frames in non-volatile storage. The frames must be processed transiently in RAM and destroyed immediately to maintain the privacy boundary.
+3. *Softness of Risk Terminology:* The user-facing prompts and scores should use supportive and non-alarming terminology. Avoid clinical or alarmist terms such as "Risk Score," "Warning," or "Critical" in the interface to reduce user anxiety and potential prompt resistance.
+4. *Personalized Threshold Calibration:* Future versions of the application should implement personalized threshold calibration based on baseline usage patterns to make the digital well-being prompts more relevant to individual scrolling habits.
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX J]
+#v(1em)
+#align(center)[*Curriculum Vitae — Software Engineering Expert*]
 #v(1em)
 
 #image("../put_in_appendices/Jim_Carlo_Pajendo_CV.png", width: 100%)
 
 #pagebreak()
 
-#heading(level: 1, numbering: none)[APPENDIX J]
+#heading(level: 1, numbering: none)[APPENDIX K]
 #v(1em)
 #align(center)[*System Evaluation Survey Instrument*]
 #v(1em)
@@ -647,7 +694,7 @@ _(Signature)_ \
 
 #pagebreak()
 
-#heading(level: 1, numbering: none)[APPENDIX K]
+#heading(level: 1, numbering: none)[APPENDIX L]
 #v(1em)
 #align(center)[*Signed Progress Reports*]
 #v(1em)
@@ -661,7 +708,7 @@ _(Signature)_ \
 #pagebreak()
 
 #set page(fill: white)
-#heading(level: 1, numbering: none)[APPENDIX L]
+#heading(level: 1, numbering: none)[APPENDIX M]
 #v(0.5em)
 #align(center)[*Representative REDU Mobile Application Screens*]
 #v(0.75em)

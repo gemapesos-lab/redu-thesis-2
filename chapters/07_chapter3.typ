@@ -14,7 +14,7 @@ This study adopted a *design-and-development research* approach with a *two-grou
 The study followed a primarily quantitative orientation, with open-ended feedback used as supplementary qualitative context. Automated system logs and structured survey responses were used to assess software quality, user acceptance, expert review, baseline convergent association, and short-term behavioral differences after data collection.
 
 == Research Design
-The study used a *two-group baseline-intervention field design* treated as a *pilot-scale randomized field evaluation*. After consent and study-compatibility screening, participants were assigned 1:1 to either an *intervention group* or a *logging-only control group* using a concealed permuted-block allocation list with randomly ordered block sizes of 2 and 4. The allocation list was generated before enrollment by a researcher who was not responsible for participant screening and released only after eligibility was confirmed, which helped preserve balance without making the next assignment easily predictable. Participants then completed an identical one-week baseline logging phase with prompts disabled. During Week 2, the intervention group received adaptive prompts while the control group continued logging-only.
+The study used a *two-group baseline-intervention field design* treated as a *pilot-scale randomized field evaluation*. This design can also be characterized as a *pre-test/post-test design with a non-equivalent control group*: Week 1 serves as the pre-test (baseline) measurement period during which both groups are monitored without intervention, and Week 2 serves as the post-test period during which the intervention group receives adaptive prompts while the control group continues logging-only. After consent and study-compatibility screening, participants were assigned 1:1 to either an *intervention group* or a *logging-only control group* using a concealed permuted-block allocation list with randomly ordered block sizes of 2 and 4. The allocation list was generated before enrollment by a researcher who was not responsible for participant screening and released only after eligibility was confirmed, which helped preserve balance without making the next assignment easily predictable. Participants then completed an identical one-week baseline logging phase with prompts disabled. During Week 2, the intervention group received adaptive prompts while the control group continued logging-only.
 
 The study questions were answered through related but distinct methodological parts. Research Question 1 is addressed by the architecture, routing, variable-justification, and algorithm sections. Research Question 2 is addressed by Week 1-to-Week 2 change analyses of selected logged metrics and self-reported doomscrolling scores, comparing the intervention and control groups and using a paired within-intervention comparison as secondary evidence. As a pilot-scale study, these analyses estimate short-term observed differences under the study conditions rather than definitive intervention efficacy. Research Question 3 is addressed by the baseline convergent association between Week 1 DSI and the Doomscrolling Scale. Research Questions 4 and 5 are addressed by the ISO/IEC 25010, TAM, and SME evaluations.
 
@@ -332,6 +332,42 @@ This route extends NSD coverage to no-text items while remaining within the devi
 
 Operationally, each viewed item stays on the text path when usable text exists and moves to the VLM fallback only when no usable text exists. If the session-level OOV ratio reaches 50% or more, or if no-text resolution fails, the session is marked *Sentiment-Unreliable*: the sentiment input is dropped, inference proceeds on Video Dwell Time and Session Duration only, Level 3 prompts are disabled, and the session is excluded from main DSI computation. The 50% OOV screen functions as a study-defined reliability rule, and the study reports the number and proportion of sentiment-unreliable sessions to show DSI coverage.
 
+=== Handling Potential Inconsistencies Between Visual Content and Textual Comments
+
+In short-form video environments, the visual content of a video may in principle convey a different sentiment than its accompanying textual comments. For example, a video depicting distressing imagery might attract sarcastic or humorous commentary, or a visually neutral video might elicit strongly negative textual reactions. This subsection explains how the current system addresses such cases and how future implementations could extend coverage.
+
+*Current Design Decision: Text-First Routing.* The system uses a *text-first routing architecture* in which the text path and the visual VLM fallback path are mutually exclusive per viewed item. When usable caption or visible-comment text exists, the text path takes precedence because textual comments are direct affective reactions from viewers and represent the social reception of the content. The VLM visual path is reserved only for *no-text items* as a fallback. This routing choice serves three purposes: (1) it minimizes computational cost by avoiding dual-path inference on every item, (2) it preserves privacy by minimizing screenshot frequency, and (3) it prioritizes the most directly available and linguistically interpretable signal.
+
+*Session-Level Conflict Resolution Through Fuzzy Logic.* Even within the text-only path, the fuzzy logic engine already handles "conflicting signals" at the session level. A session may contain a mix of negative-sentiment and positive-sentiment items; the NSD aggregation computes the proportion of negative items rather than forcing a binary per-session decision. The three-input fuzzy inference then combines this graded NSD value with Session Duration and Video Dwell Time to produce a graded risk score. This design naturally accommodates within-session sentiment heterogeneity without requiring per-item cross-modal comparison.
+
+*Future Multi-Modal Approach.* A future version of the system could implement *weighted multi-modal scoring* in which both text and visual paths run in parallel for every viewed item. In such an approach, a combined score could be computed as:
+
+$ S_"combined" = w_"text" dot S_"text" + w_"visual" dot S_"visual" $
+
+where $w_"text"$ and $w_"visual"$ are empirically tuned weights reflecting the relative reliability of each modality. When the two modalities diverge significantly (e.g., text positive but visual negative), fuzzy conflict-resolution rules could be defined to arbitrate the final per-item sentiment label. This approach would improve coverage of sarcasm, ironic commentary, and cross-modal sentiment mismatches, but would increase computational cost because VLM inference would no longer be reserved for no-text items only.
+
+*Sample Scenarios.* The following table illustrates how the current system and a potential future multi-modal system would handle representative cases:
+
+#thesis_table(
+  caption: [Sample Scenarios: Image–Text Sentiment Handling],
+  columns: (0.35fr, 0.85fr, 0.85fr, 1.1fr, 1.1fr),
+  cell_align: table_align((center, left, left, left, left)),
+  header: (
+    [*No.*],
+    [*Image/Video*],
+    [*Text/Comments*],
+    [*Current System Decision*],
+    [*Future Multi-Modal Decision*],
+  ),
+  body: (
+    [1], [Distressing video], ["So sad 😭"], [Text path → Negative (concordant)], [Both paths agree → Negative],
+    [2], [Distressing video], ["lol 💀" (sarcastic)], [Text path → Mixed/Positive (text dominates)], [Weighted: visual negative + text ambiguous → likely Negative],
+    [3], [Neutral video], ["This is horrible"], [Text path → Negative (text dominates)], [Weighted: visual neutral + text negative → Moderate Negative],
+  ),
+)
+
+In Scenario 1, both modalities agree and the current text-first approach produces the correct label. In Scenario 2, sarcastic text may mislead the text-only path; a multi-modal approach could use the visual signal to override ambiguous text. In Scenario 3, the current system correctly captures negative textual sentiment even when the visual content is neutral. The text-first approach therefore handles most cases adequately, with multi-modal analysis offering incremental improvement mainly for sarcasm and ironic commentary.
+
 *4. Fuzzy Logic Inference System:*
 The system uses fuzzy logic because the target construct is gradual, the rule base must remain inspectable for SME review, and labeled session data are not available for supervised on-device modeling #cite(<vashishtha-2023>) #cite(<pickering-2025>). The fuzzy engine operates at the per-session inference level, while the statistical tests in Chapter 4 are used later for sample-level evaluation. The membership boundaries below define the fixed scoring framework for week-level DSI across both study weeks. In Week 2 live prompting, Session Duration and NSD memberships may be personalized from Week 1 sentiment-reliable sessions, while Video Dwell Time remains fixed #cite(<ikegaya-2025>).
 
@@ -452,12 +488,12 @@ Each construct is measured using 6 Likert-scale items aligned to these two core 
 === Subject Matter Expert (SME) Evaluation
 
 A panel of *two (2) subject matter experts* evaluates the system's technical quality and risk-estimation logic. The SME panel is composed of:
-- One (1) expert in software engineering or mobile application development
+- One (1) expert in *software engineering* who evaluates both the system architecture and the algorithm design, including the accuracy and reliability of VADER sentiment analysis for the target text types, the effectiveness and coherence of the fuzzy logic decision-making pipeline, and system performance and scalability.
 - One (1) expert in digital well-being, behavioral psychology, or educational technology
 
-The originally planned third reviewer with a dedicated data science, machine learning, or fuzzy-logic specialization could not be engaged within the study period; the rule-base coherence items were therefore reviewed from the software-engineering and behavioral perspectives of the two available experts, and the absence of a dedicated fuzzy-systems reviewer is stated as a limitation of the expert appraisal.
+The software engineering expert's evaluation specifically covers the computational components of the system, including the VADER scoring accuracy for code-mixed social media text, the effectiveness of the fuzzy inference rules and membership boundaries, and the scalability characteristics of the on-device processing pipeline. This addresses the need for formal expert evaluation of the algorithm design within the available SME panel.
 
-Each SME evaluates the system using a structured rubric covering: (1) the technical soundness of the hybrid risk-estimation framework, including VADER integration and fuzzy inference behavior, (2) the plausibility of the selected input ranges for Video Dwell Time, Negative Sentiment Density, and Session Duration, (3) the internal coherence of the 27-rule base, including whether nearby rules change in a sensible direction across duration and negative exposure and whether exception rules such as rapid negative-content chaining are reasonable, (4) the quality of the system architecture and privacy implementation, (5) the appropriateness of the intervention design, and (6) overall software quality using the same ISO/IEC 25010 characteristics evaluated by end users. SME responses are collected using a 5-point Likert scale and, given the two-member panel, reported descriptively per expert against the study's favorable target rather than as a panel mean with standard deviation, alongside qualitative feedback; the behavioral-psychology expert additionally provided a signed structured narrative validation whose observations are synthesized with the rubric results. This SME review serves as narrative expert appraisal of the rule logic and as an expert plausibility check, not as formal empirical calibration or a content-validity index.
+Each SME evaluates the system using a structured 5-point Likert-scale rubric covering: (1) the technical soundness of the hybrid risk-estimation framework, including VADER integration, fuzzy inference behavior, and algorithm accuracy and reliability, (2) the plausibility of the selected input ranges for Video Dwell Time, Negative Sentiment Density, and Session Duration, (3) the internal coherence of the 27-rule base, including whether nearby rules change in a sensible direction across duration and negative exposure and whether exception rules such as rapid negative-content chaining are reasonable, (4) the quality of the system architecture and privacy implementation, (5) the appropriateness of the intervention design, and (6) overall software quality using the same ISO/IEC 25010 characteristics evaluated by end users. The software engineering expert additionally assesses the system's computational efficiency and scalability for real-world deployment. SME responses are collected using a 5-point Likert scale and, given the two-member panel, reported descriptively per expert against the study's favorable target rather than as a panel mean with standard deviation, alongside qualitative feedback; the behavioral-psychology expert additionally provided a signed structured narrative validation whose observations are synthesized with the rubric results. This SME review serves as narrative expert appraisal of the rule logic, algorithm design, and expert plausibility check, not as formal empirical calibration or a content-validity index.
 
 === Testing Method
 The study uses both *black box* and *white box* testing. Black-box testing checks whether visible functions behave as expected under realistic use, while white-box testing checks whether the internal scoring, routing, and data-flow logic behave correctly at code and module level.
@@ -482,20 +518,20 @@ Prior to deployment, each participant completed a baseline profile form capturin
 
 Week 1 provides the fixed-prior baseline DSI and self-report anchor. At the end of the 7-day baseline, the live prompt engine may lock participant-specific Session Duration and NSD memberships from Week 1 sentiment-reliable sessions while leaving Video Dwell Time fixed. This follows recent JITAI evidence favoring personalized intervention criteria over uniform ones for live prompting #cite(<ikegaya-2025>). If reliable baseline coverage is insufficient, the default priors are retained.
 
-*Phase 3: Week 1 Baseline Logging Phase*
-During Week 1, the app's built-in logger records quantitative usage metrics locally on the participant's device while adaptive intervention prompts remain inactive. This baseline period establishes the participant's observed usage pattern under the study conditions and provides the baseline DSI and self-report anchor used for convergent association testing.
+*Phase 3: Week 1 Baseline Logging Phase (Pre-Test)*
+During Week 1, the app's built-in logger records quantitative usage metrics locally on the participant's device while adaptive intervention prompts remain inactive. This pre-test baseline period establishes the participant's observed usage pattern — including doomscrolling duration, frequency, and content-exposure density — under the study conditions and provides the baseline DSI and self-report anchor used for convergent association testing.
 
-The Week 1 logged data include:
+The Week 1 pre-test logged data include:
 - *Usage Metrics:* Session duration, video dwell time, and supporting interaction counts such as swipe totals.
 - *Sentiment-Related Indicators:* Session-level sentiment scores and Negative Sentiment Density estimates.
 - *Reliability Events:* Application crashes, service interruptions, and related system-stability notes.
 
 At the conclusion of Week 1, participants completed the short-form 4-item *Doomscrolling Scale* #cite(<sharma-2022>) #cite(<satici-2023>), using Items 1, 2, 10, and 12 of the original instrument and a 7-day recall instruction stem (e.g., "In the past week…"; see Appendix E), to provide the baseline self-report anchor for convergent association. The original instrument was validated as a general self-report scale, so changes between administrations are interpreted as short-horizon self-report differences.
 
-*Phase 4: Week 2 Deployment Phase*
-During Week 2, *intervention-group* participants received adaptive digital mindfulness prompts through a live prompt engine that retained the fixed rule base and fixed Video Dwell Time memberships but, when available, replaced the global Session Duration and NSD memberships with participant-specific Week 1 quantile-derived bounds. *Control-group* participants continued logging-only operation with prompts disabled via a configuration flag. Both groups continued to have usage and sentiment-related metrics logged, while prompt-response data for the intervention group were recorded descriptively.
+*Phase 4: Week 2 Deployment Phase (Post-Test)*
+During Week 2, *intervention-group* participants received adaptive digital mindfulness prompts through a live prompt engine that retained the fixed rule base and fixed Video Dwell Time memberships but, when available, replaced the global Session Duration and NSD memberships with participant-specific Week 1 quantile-derived bounds. *Control-group* participants continued logging-only operation with prompts disabled via a configuration flag. Both groups continued to have usage and sentiment-related metrics logged, while prompt-response data for the intervention group were recorded descriptively. This post-test phase enables comparison of behavioral changes after exposure to the intervention, including changes in doomscrolling duration, frequency, and content-exposure patterns.
 
-For behavioral comparison, raw elapsed session duration and raw elapsed video dwell time were treated as the primary time-based metrics. *Prompt-excluded active-use metrics* were also retained: when a prompt appeared, the active content-view interval was closed, and time spent inside the system-generated intervention was excluded until the participant returned to the target platform. These prompt-excluded metrics are reported as supplementary traces of prompt-interrupted use. Observed Week 2 differences are interpreted as short-term behavioral differences under the study conditions.
+For behavioral comparison, raw elapsed session duration and raw elapsed video dwell time were treated as the primary time-based metrics. *Prompt-excluded active-use metrics* were also retained: when a prompt appeared, the active content-view interval was closed, and time spent inside the system-generated intervention was excluded until the participant returned to the target platform. These prompt-excluded metrics are reported as supplementary traces of prompt-interrupted use. The pre-test (Week 1) to post-test (Week 2) comparison uses change scores and appropriate statistical tests (as described in the Statistical Treatment section) to determine whether there is a significant improvement in the monitored behavioral outcomes.
 
 Potential confounds include time-of-day and day-of-week variation, external events during the two-week window, and device-specific differences in processing speed or background-process management. The randomized two-group design is intended to help balance these factors across study arms, while the within-subject Week 1 to Week 2 comparison in the intervention group accounts for stable individual differences.
 
@@ -578,6 +614,18 @@ The alignment between the study's research variables, data sources, and instrume
 The respondents of this study were Filipino Android users aged 18 years and above who actively used at least one of the target short-form video platforms. Findings apply to this target population and to the non-probability nature of the sample. The sampling technique employed was *purposive-convenience sampling* because participants had to meet specific technical and behavioral eligibility criteria and be reachable through channels accessible to the researchers.
 
 The study reports how many participants used TikTok, Facebook Reels, and Instagram Reels during the field evaluation, including platform mix by study arm. Per-platform extraction success rates and analyzable-session counts are also reported, and cross-platform interpretation is limited to platforms that yielded stable extraction throughout the deployment window.
+
+=== Categories of Respondents
+
+The following demographic categories were collected through the baseline profile form administered during Phase 2 to characterize the respondent sample and support interpretation of results:
+
+- *Age Group:* Participants were categorized into defined age brackets (18–20, 21–23, 24–26, 27–29) to describe the age distribution of the sample.
+- *Sex:* Biological sex (male/female) was recorded. However, sex or gender was not included as an independent variable or moderator in the behavioral or evaluation analyses. This is stated as a study limitation, and future studies are recommended to include gender as a factor for deeper behavioral insights.
+- *Frequency of Social Media Usage:* Participants self-reported their general platform-use habits, categorized as having a few sessions daily, multiple sessions daily, or many sessions through the day. This classification describes the participants' baseline engagement intensity with short-form video platforms.
+
+Academic program or course was not collected as a demographic variable in this study. This limits the ability to analyze differences in doomscrolling behavior or intervention responsiveness across different academic disciplines.
+
+The frequency distribution of these categories is presented in Chapter 4, §4.1.3 (Respondent Baseline Profile).
 
 *Inclusion Criteria:*
 - Must be aged 18 years or older to provide independent informed consent.
