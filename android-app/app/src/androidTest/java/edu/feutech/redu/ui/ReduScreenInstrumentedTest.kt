@@ -216,6 +216,6 @@ class ReduScreenInstrumentedTest {
         composeRule.onNode(hasScrollAction()).performScrollToIndex(6)
         composeRule.onNodeWithText("Study configuration").assertIsDisplayed()
         composeRule.onNode(hasScrollAction()).performScrollToIndex(7)
-        composeRule.onNodeWithText("Visual fallback").assertIsDisplayed()
+        composeRule.onNodeWithText("Image scanning").assertIsDisplayed()
     }
 }

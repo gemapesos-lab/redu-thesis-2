@@ -296,7 +296,7 @@ internal fun SettingsScreen(
         }
 
         item {
-            ReduSectionHeader(title = "Visual fallback", subtitle = "Optional on-device no-text model")
+            ReduSectionHeader(title = "Image scanning", subtitle = "Optional analysis for items without usable text")
         }
         item {
             VlmModelSection(
