@@ -421,7 +421,7 @@ object PromptPresenter {
         })
 
         content.addView(
-            promptButton(service, "Take a break", filled = false) {
+            promptButton(service, "Finish early", filled = false) {
                 close(PromptAction.TAKE_BREAK)
                 service.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
             },
@@ -430,7 +430,7 @@ object PromptPresenter {
             },
         )
         content.addView(
-            textAction(service, "Skip", textSecondary) { close(PromptAction.DISMISSED) },
+            textAction(service, "Return to scrolling", textSecondary) { close(PromptAction.DISMISSED) },
             LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, service.reduDp(48)),
         )
 

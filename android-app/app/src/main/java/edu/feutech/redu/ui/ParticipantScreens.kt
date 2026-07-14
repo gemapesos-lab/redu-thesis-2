@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FileUpload
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.History
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -525,6 +526,7 @@ internal fun HistoryScreen(
                     } else {
                         "Change one of the filters to see more of your saved history."
                     },
+                    icon = Icons.Outlined.History,
                 )
             }
         } else {

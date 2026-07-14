@@ -657,3 +657,50 @@ _(Signature)_ \
 #image("../put_in_appendices/Progress_Report_3.png", width: 100%)
 #image("../put_in_appendices/Progress_Report_4.png", width: 100%)
 #image("../put_in_appendices/Progress_Report_5.png", width: 100%)
+
+#pagebreak()
+
+#set page(fill: white)
+#heading(level: 1, numbering: none)[APPENDIX L]
+#v(0.5em)
+#align(center)[*Representative REDU Mobile Application Screens*]
+#v(0.75em)
+
+The following screens document the principal participant flow and intervention
+surfaces of the implemented REDU Android application. Intermediate menu states,
+confirmation dialogs, developer-only diagnostics, and repetitive variants are
+omitted to keep the appendix concise.
+
+#let app_screen(path, label) = block(width: 100%)[
+  #align(center)[#image(path, width: 1.72in)]
+  #v(0.2em)
+  #align(center)[#text(size: 8pt)[#label]]
+]
+
+#v(0.75em)
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  gutter: 0.18in,
+  app_screen("../app_showcase/01_setup_participant.png", [*L1.* Participant setup]),
+  app_screen("../app_showcase/03_setup_platforms.png", [*L2.* Platform selection]),
+  app_screen("../app_showcase/10_dashboard_empty.png", [*L3.* Participant dashboard]),
+)
+
+#pagebreak()
+
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  gutter: 0.18in,
+  app_screen("../app_showcase/12_history_empty.png", [*L4.* Session history]),
+  app_screen("../app_showcase/17_settings_image_scanning.png", [*L5.* Image scanning settings]),
+  app_screen("../app_showcase/21_export_study_data.png", [*L6.* Aggregate-data export]),
+)
+
+#pagebreak()
+
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 0.35in,
+  app_screen("../app_showcase/26_demo_intervention_l2_unlocked.png", [*L7.* Level 2 pause intervention]),
+  app_screen("../app_showcase/27_demo_intervention_l3_breathing.png", [*L8.* Level 3 breathing intervention]),
+)

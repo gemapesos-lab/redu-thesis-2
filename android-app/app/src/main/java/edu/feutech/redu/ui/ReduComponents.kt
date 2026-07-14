@@ -642,6 +642,7 @@ internal fun ActivityPatternMeter(
 internal fun ReduEmptyState(
     title: String,
     body: String,
+    icon: ImageVector? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
 ) {
@@ -649,7 +650,24 @@ internal fun ReduEmptyState(
         modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Box(Modifier.width(36.dp).height(3.dp).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
+        if (icon != null) {
+            Surface(
+                modifier = Modifier.size(56.dp),
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                    )
+                }
+            }
+        } else {
+            Box(Modifier.width(36.dp).height(3.dp).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
+        }
         Text(title, style = MaterialTheme.typography.titleLarge)
         ReduSecondaryText(body, Modifier.widthIn(max = 520.dp))
         if (actionLabel != null && onAction != null) {
