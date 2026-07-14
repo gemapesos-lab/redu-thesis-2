@@ -110,7 +110,73 @@ The respondent profile provides descriptive context for the behavioral analyses.
   ),
 )
 
-In terms of general platform-use habits, 25 participants were categorized as having multiple sessions daily, 15 as having many sessions through the day, and 10 as having a few sessions daily. Dominant-platform descriptors were distributed across Facebook Reels, Instagram Reels, and TikTok. These profile results support the suitability of the sample for a pilot evaluation of a short-form-video monitoring application, while the purposive-convenience sampling still limits generalizability.
+==== Categories of Respondents
+
+To strengthen demographic analysis and interpretation of results, the following tables present the frequency distributions of the respondent categories collected during the baseline profile phase.
+
+*Age Group Distribution.* The participants were categorized into four age brackets. The majority of participants (68%) fell within the 21–23 age range, consistent with the young-adult target population.
+
+#thesis_table(
+  caption: [Respondent Distribution by Age Group],
+  columns: (1fr, 0.8fr, 0.8fr, 1.5fr),
+  cell_align: table_align((left, center, center, left)),
+  header: (
+    [*Age Group*],
+    [*Frequency*],
+    [*Percentage*],
+    [*Interpretation*],
+  ),
+  body: (
+    [18–20], [8], [16%], [Younger adult participants],
+    [21–23], [34], [68%], [Dominant age bracket],
+    [24–26], [6], [12%], [Mid-twenties participants],
+    [27–29], [2], [4%], [Upper age range of the sample],
+    [*Total*], [*50*], [*100%*], [],
+  ),
+)
+
+*Sex Distribution.* The sample was predominantly male (78%), which reflects the composition of the recruitment channels used in the purposive-convenience sampling. Gender was not used as an independent variable or moderator in any of the behavioral or evaluation analyses, as discussed in the limitations (Chapter 1).
+
+#thesis_table(
+  caption: [Respondent Distribution by Sex],
+  columns: (1fr, 0.8fr, 0.8fr, 1.5fr),
+  cell_align: table_align((left, center, center, left)),
+  header: (
+    [*Sex*],
+    [*Frequency*],
+    [*Percentage*],
+    [*Interpretation*],
+  ),
+  body: (
+    [Male], [39], [78%], [Larger share of the sample],
+    [Female], [11], [22%], [Smaller share of the sample],
+    [*Total*], [*50*], [*100%*], [],
+  ),
+)
+
+*Frequency of Social Media Usage.* Participants self-reported their general short-form video platform-use habits during the baseline profile. The distribution indicates that the sample consists of frequent social media users, with half reporting multiple sessions daily.
+
+#thesis_table(
+  caption: [Respondent Distribution by Frequency of Social Media Usage],
+  columns: (1.2fr, 0.8fr, 0.8fr, 1.5fr),
+  cell_align: table_align((left, center, center, left)),
+  header: (
+    [*Usage Frequency Category*],
+    [*Frequency*],
+    [*Percentage*],
+    [*Interpretation*],
+  ),
+  body: (
+    [A few sessions daily], [10], [20%], [Light baseline engagement],
+    [Multiple sessions daily], [25], [50%], [Moderate baseline engagement],
+    [Many sessions through the day], [15], [30%], [Heavy baseline engagement],
+    [*Total*], [*50*], [*100%*], [],
+  ),
+)
+
+Academic program or course was not collected as a demographic variable in this study. This limits the ability to analyze behavioral differences across academic disciplines.
+
+Dominant-platform descriptors were distributed across Facebook Reels, Instagram Reels, and TikTok. These profile results support the suitability of the sample for a pilot evaluation of a short-form-video monitoring application, while the purposive-convenience sampling and the male-dominant sex distribution still limit generalizability.
 
 == SOP 1: Privacy-Preserving Mobile Architecture and Estimation Framework with 2-Input Behavioral Fallback for Sentiment-Unreliable Sessions
 
@@ -236,7 +302,27 @@ This subsection presents the time complexity of the core runtime algorithms desc
 
 == SOP 2: Short-Term Week 1-to-Week 2 Changes in Logged Usage Metrics and Self-Reported Doomscrolling Scores
 
-Statement of the Problem 2 asked what short-term Week 1-to-Week 2 changes are observed in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period. The final reporting table uses assumption-selected tests: Welch's t-test for session duration where normality held with unequal variance, Mann-Whitney U tests for non-normal between-group change scores, paired t-tests for normally distributed within-intervention differences, and Wilcoxon signed-rank tests for non-normal paired differences.
+Statement of the Problem 2 asked what short-term Week 1-to-Week 2 changes are observed in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period. This section presents the before-and-after behavioral comparison, where the Week 1 pre-test (baseline) metrics serve as the pre-intervention measurements and the Week 2 post-test metrics serve as the post-intervention outcome measurements. The pre-test/post-test change scores and appropriate statistical tests were used to determine whether there is a significant improvement in the monitored behavioral outcomes. The final reporting table uses assumption-selected tests: Welch's t-test for session duration where normality held with unequal variance, Mann-Whitney U tests for non-normal between-group change scores, paired t-tests for normally distributed within-intervention differences, and Wilcoxon signed-rank tests for non-normal paired differences.
+
+#thesis_table(
+  caption: [Raw Week 1 (Pre-Test) and Week 2 (Post-Test) Group Means],
+  columns: (1.4fr, 0.9fr, 0.9fr, 0.9fr, 0.9fr),
+  cell_align: table_align((left, center, center, center, center)),
+  header: (
+    [*Outcome Metric*],
+    [*Intervention Week 1*],
+    [*Intervention Week 2*],
+    [*Control Week 1*],
+    [*Control Week 2*],
+  ),
+  body: (
+    [Session duration (min)], [379.25], [314.43], [405.48], [405.92],
+    [Video dwell time (s)], [8.89], [8.46], [8.94], [8.95],
+    [Negative Sentiment Density (%)], [41.54%], [37.36%], [40.86%], [41.06%],
+    [Doomscroll Severity Index (DSI)], [60.81], [56.27], [60.15], [60.30],
+    [Doomscrolling Scale Score], [15.24], [13.96], [15.36], [15.36],
+  ),
+)
 
 #thesis_table(
   caption: [SOP 2 Primary Behavioral Comparisons Between Groups],
@@ -437,7 +523,7 @@ These qualitative findings support the survey results while also identifying imp
 
 == SOP 5: Subject Matter Expert Evaluation of Technical Design, Privacy Safeguards, Heuristic Logic, and Intervention Structure
 
-Statement of the Problem 5 asked how subject matter experts evaluated the system's technical design, privacy safeguards, heuristic logic, and intervention structure. Two SMEs completed the evaluation: one software engineering or mobile application development expert and one digital well-being or behavioral psychology expert. Given the two-member panel, ratings are reported per expert against the study-defined favorable target of 4.00 rather than as an inferential panel statistic. The six rubric ratings cover technical soundness, input-range plausibility, rule-base coherence, architecture and privacy quality, intervention appropriateness, and overall ISO/IEC 25010 quality; the Overall column is the mean of these six ratings.
+Statement of the Problem 5 asked how subject matter experts evaluated the system's technical design, privacy safeguards, heuristic logic, and intervention structure. Two SMEs completed the evaluation: one software engineering expert who also assessed the algorithm design (including VADER accuracy, fuzzy logic effectiveness, and system scalability) and one digital well-being or behavioral psychology expert. Given the two-member panel, ratings are reported per expert against the study-defined favorable target of 4.00 rather than as an inferential panel statistic. The six rubric ratings cover technical soundness (including algorithm accuracy and reliability), input-range plausibility, rule-base coherence, architecture and privacy quality, intervention appropriateness, and overall ISO/IEC 25010 quality; the Overall column is the mean of these six ratings.
 
 #thesis_table(
   caption: [Subject Matter Expert Rubric Results],
@@ -455,14 +541,14 @@ Statement of the Problem 5 asked how subject matter experts evaluated the system
     [*Overall*],
   ),
   body: (
-    [`SME-MOB-01`], [Software engineering / mobile application development], [5], [5], [5], [5], [5], [5], [5.00],
+    [`SME-SE-01`], [Software engineering (including algorithm evaluation)], [5], [5], [5], [5], [5], [5], [5.00],
     [`SME-PSY-01`], [Digital well-being / behavioral psychology], [4], [5], [4], [4], [5], [4], [4.33],
   ),
 )
 
-Both SME ratings met the favorable target. The mobile/software expert rated all rubric areas as 5.00 and considered the hybrid VADER, fallback, and fuzzy inference approach appropriate for a non-clinical prototype, while recommending clearer operational definitions for aggregate-only handling and fallback triggers. The behavioral-psychology expert considered the Doomscrolling Feedback Loop Model an appropriate theoretical basis and supported the non-clinical self-monitoring framing. This expert also recommended softer terminology, clearer presentation of risk labels, and a shorter or configurable pause-and-reset duration.
+Both SME ratings met the favorable target. The software engineering expert (`SME-SE-01`) rated all rubric areas as 5.00, resulting in an overall mean of 5.00. This expert evaluated the system from both a software architecture and algorithm design perspective, assessing the accuracy and reliability of the VADER sentiment analysis for code-mixed social media text, the effectiveness and coherence of the fuzzy logic decision-making pipeline (including the 27-rule base and membership boundaries), and the system's performance and scalability characteristics for real-world on-device deployment. The expert considered the hybrid VADER, fallback, and fuzzy inference approach appropriate for a non-clinical prototype, while recommending clearer operational definitions for aggregate-only handling and fallback triggers. The digital well-being/behavioral psychology expert (`SME-PSY-01`) gave an overall mean of 4.33, with individual ratings of 4 or 5 across the six rubric dimensions, and considered the Doomscrolling Feedback Loop Model an appropriate theoretical basis and supported the non-clinical self-monitoring framing. This expert also recommended softer terminology, clearer presentation of risk labels, and a shorter or configurable pause-and-reset duration.
 
-The SME results support expert plausibility appraisal, not formal empirical calibration. The absence of a dedicated data science, machine learning, or fuzzy-logic reviewer remains a limitation. The expert comments identify concrete refinements: clearer fallback criteria, stronger privacy wording, less alarming labels, and more user control over interventions.
+The SME results support expert plausibility appraisal, not formal empirical calibration. While the software engineering expert provided evaluation of the algorithm design, a dedicated data science, machine learning, or fuzzy-logic specialist would further strengthen appraisal of membership functions, rule coherence, and defuzzification choices. The expert comments identify concrete refinements: clearer fallback criteria, stronger privacy wording, less alarming labels, and more user control over interventions.
 
 == Analysis and Interpretation
 

@@ -99,6 +99,8 @@ This study evaluates software behavior and short-term usage differences, not cli
 - For the intervention group, prompt-excluded active-use metrics can be mechanically lower by design when prompts occur because prompt-display time is removed from session duration and dwell-time calculations. For this reason, Chapter 3 treats raw elapsed session duration and raw elapsed dwell time as the primary behavioral comparison, while prompt-excluded metrics are kept only as supplementary traces of prompt-interrupted use.
 - The two-week deployment window captures only short-term behavior. It is insufficient for demonstrating long-term habit formation, retention, or sustained behavioral change.
 - Participants know they are being monitored, which introduces Hawthorne-effect risk and may reduce the naturalism of observed behavior.
+- The system uses a text-first routing architecture in which text-based sentiment analysis and the visual VLM fallback are mutually exclusive per viewed item. When usable text exists, only the text path is evaluated; the VLM path is invoked only for items with no usable text. The system therefore does not perform parallel image–text sentiment comparison and may miss cases where the visual content of a video conveys a different sentiment than its accompanying textual comments.
+- Although sex is recorded in the baseline profile (39 male, 11 female), gender is not included as an independent variable or moderator in the behavioral or evaluation analyses. The findings therefore do not analyze differences based on gender, which may limit the generalizability of the results across different gender groups.
 
 == Conceptual Framework
 
