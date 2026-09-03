@@ -2,7 +2,6 @@ package edu.feutech.redu.debug
 
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.text.TextUtils
 import android.view.Gravity
@@ -13,7 +12,11 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import kotlin.math.roundToInt
+import edu.feutech.redu.R
+import edu.feutech.redu.ui.theme.applyReduTextStyle
+import edu.feutech.redu.ui.theme.reduDp
+import edu.feutech.redu.ui.theme.reduRippleBackground
+import edu.feutech.redu.ui.theme.reduShape
 
 class DebugOverlayView(
     private val context: Context,
@@ -21,6 +24,11 @@ class DebugOverlayView(
     private val onMinimize: () -> Unit,
     private val onTouch: (View, MotionEvent) -> Boolean,
 ) {
+    private val surface = context.getColor(R.color.redu_surface)
+    private val surfaceHigh = context.getColor(R.color.redu_surface_high)
+    private val textPrimary = context.getColor(R.color.redu_text_primary)
+    private val outline = context.getColor(R.color.redu_outline_variant)
+    private val seaGlass = context.getColor(R.color.redu_sea_glass)
     private val chipBackgrounds = mutableMapOf<RiskBand, GradientDrawable>()
     private var minimized = true
     private var lastState: DebugOverlayState? = null
@@ -32,13 +40,12 @@ class DebugOverlayView(
 
     private val chipView: TextView = TextView(context).apply {
         gravity = Gravity.CENTER
-        setTextColor(Color.WHITE)
-        textSize = 13f
-        typeface = Typeface.DEFAULT_BOLD
+        applyReduTextStyle(sizeSp = 13f, color = textPrimary, weight = 700, tabular = true)
         minWidth = CHIP_SIZE_DP.dp
         minHeight = CHIP_SIZE_DP.dp
         background = chipBackground(RiskBand.SAFE)
         setOnTouchListener(onTouch)
+        contentDescription = "REDU extraction metrics"
     }
 
     private val riskTextView = labelText(sizeSp = 16f, bold = true)
@@ -48,14 +55,14 @@ class DebugOverlayView(
     private val negativeTextView = labelText()
     private val positiveTextView = labelText()
     private val unscoredTextView = labelText()
-    private val snippetTextView = labelText(color = 0xFFE5E7EB.toInt(), maxLines = 2)
-    private val statusTextView = labelText(color = 0xFFBBF7D0.toInt(), sizeSp = 10f, maxLines = 1)
+    private val snippetTextView = labelText(color = textPrimary, maxLines = 2)
+    private val statusTextView = labelText(color = seaGlass, sizeSp = 10f, maxLines = 1)
     private val captureButton = smallButton("Capture", onCapture)
 
     private val panelView: LinearLayout = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setOnTouchListener(onTouch)
-        background = roundedBackground(0xE6141720.toInt(), 10.dp)
+        background = context.reduShape(surface, radiusDp = 8, strokeColor = outline)
         setPadding(12.dp, 10.dp, 12.dp, 10.dp)
         addView(
             LinearLayout(context).apply {
@@ -107,6 +114,8 @@ class DebugOverlayView(
         val riskBand = state.riskBand()
         chipView.text = state.chipText()
         chipView.background = chipBackground(riskBand)
+        chipView.setTextColor(riskBand.color)
+        chipView.contentDescription = "${state.chipText()} activity score. Double tap and drag to move."
         riskTextView.text = state.riskBadgeText()
         riskTextView.setTextColor(riskBand.color)
         sessionTextView.text = state.sessionLine()
@@ -130,11 +139,13 @@ class DebugOverlayView(
     fun resetCaptureStatus() {
         statusTextView.text = ""
         captureButton.isEnabled = true
+        captureButton.alpha = 1f
         captureButton.text = "Capture"
     }
 
     fun setCapturing() {
         captureButton.isEnabled = false
+        captureButton.alpha = 0.5f
         captureButton.text = "Saving"
         statusTextView.text = "Capturing..."
     }
@@ -142,6 +153,7 @@ class DebugOverlayView(
     fun setCaptureResult(text: String) {
         statusTextView.text = text
         captureButton.isEnabled = true
+        captureButton.alpha = 1f
         captureButton.text = "Capture"
     }
 
@@ -155,15 +167,18 @@ class DebugOverlayView(
     }
 
     private fun labelText(
-        color: Int = 0xFFF8FAFC.toInt(),
+        color: Int = textPrimary,
         sizeSp: Float = 11f,
         bold: Boolean = false,
         maxLines: Int = 1,
     ): TextView =
         TextView(context).apply {
-            setTextColor(color)
-            textSize = sizeSp
-            typeface = if (bold) Typeface.DEFAULT_BOLD else Typeface.MONOSPACE
+            applyReduTextStyle(
+                sizeSp = sizeSp,
+                color = color,
+                weight = if (bold) 700 else 500,
+                tabular = true,
+            )
             this.maxLines = maxLines
             includeFontPadding = false
             setPadding(0, 3.dp, 0, 3.dp)
@@ -180,12 +195,21 @@ class DebugOverlayView(
             minimumHeight = 30.dp
             minimumWidth = 52.dp
             setPadding(8.dp, 0, 8.dp, 0)
+            applyReduTextStyle(sizeSp = 10f, color = seaGlass, weight = 600)
+            background = context.reduRippleBackground(
+                fillColor = surfaceHigh,
+                rippleColor = Color.argb(42, 118, 205, 184),
+                radiusDp = 6,
+                strokeColor = outline,
+            )
+            stateListAnimator = null
             setOnClickListener { onClick() }
+            contentDescription = label
         }
 
     private fun separator(): View =
         View(context).apply {
-            setBackgroundColor(0x33FFFFFF)
+            setBackgroundColor(outline)
             layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1.dp).apply {
                 topMargin = 5.dp
                 bottomMargin = 5.dp
@@ -195,17 +219,11 @@ class DebugOverlayView(
     private fun chipBackground(riskBand: RiskBand): GradientDrawable =
         chipBackgrounds.getOrPut(riskBand) {
             GradientDrawable().apply {
-                shape = GradientDrawable.OVAL
-                setColor(riskBand.color)
-                setStroke(1.dp, 0xCCFFFFFF.toInt())
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 6.dp.toFloat()
+                setColor(riskBand.containerColor)
+                setStroke(1.dp, riskBand.color)
             }
-        }
-
-    private fun roundedBackground(color: Int, radius: Int): GradientDrawable =
-        GradientDrawable().apply {
-            setColor(color)
-            cornerRadius = radius.toFloat()
-            setStroke(1.dp, 0x33FFFFFF)
         }
 
     private fun DebugOverlayState.riskBand(): RiskBand =
@@ -215,14 +233,14 @@ class DebugOverlayView(
             else -> RiskBand.SAFE
         }
 
-    private enum class RiskBand(val color: Int) {
-        SAFE(0xFF22C55E.toInt()),
-        WARNING(0xFFF59E0B.toInt()),
-        CRITICAL(0xFFEF4444.toInt()),
+    private enum class RiskBand(val color: Int, val containerColor: Int) {
+        SAFE(0xFF76CDB8.toInt(), 0xFF143B32.toInt()),
+        WARNING(0xFFE3B76F.toInt(), 0xFF3D2F17.toInt()),
+        CRITICAL(0xFFE5968C.toInt(), 0xFF42211E.toInt()),
     }
 
     private val Int.dp: Int
-        get() = (this * context.resources.displayMetrics.density).roundToInt()
+        get() = context.reduDp(this)
 
     companion object {
         const val CHIP_SIZE_DP = 52

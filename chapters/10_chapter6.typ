@@ -26,6 +26,8 @@ Future versions should improve platform-specific extraction reliability. The sys
 
 The VLM fallback should be further optimized and documented. Since unresolved VLM events contributed to reliability issues, future development should test prompt wording, model-response mapping, screenshot timing, and fallback thresholds. The goal should be to improve no-text handling while preserving local-only processing and avoiding persistent storage of screen frames.
 
+Future versions should explore multi-modal parallel analysis to address potential inconsistencies between visual content and textual comments. The current system uses a text-first routing architecture where the VLM fallback is invoked only for no-text items, so cases where a video's visual sentiment differs from its accompanying text are handled entirely through the text path. A future multi-modal implementation could run both text and visual analysis paths in parallel, apply weighted scoring between modalities (e.g., $S_"combined" = w_"text" dot S_"text" + w_"visual" dot S_"visual"$), and define fuzzy logic rules for conflict resolution when the two modalities diverge. Such an approach would improve coverage of sarcasm, ironic commentary, and cross-modal sentiment mismatches, though it would increase computational cost due to the additional VLM inference per item.
+
 The terminology used in the interface should be softened. Expert feedback recommended reducing alarming labels such as "Risk Score," "Warning," and "Critical." Future versions may use terms such as "Activity Pattern Score," "Elevated Use," and "Extended Exposure," as long as the thesis or documentation clearly maps these labels to the underlying analytic bands.
 
 The system should retain the privacy-preserving local architecture. The favorable user and expert feedback around local processing indicates that privacy is a key strength of the system. Future enhancements should avoid unnecessary cloud processing and continue storing only aggregate metrics unless a new ethics review and consent procedure justifies a different design.
@@ -34,13 +36,15 @@ The system should retain the privacy-preserving local architecture. The favorabl
 
 Future researchers should conduct a longer deployment with a larger and more diverse sample. The present study used 50 purposively recruited participants over two weeks, which is appropriate for a pilot software evaluation but not enough for long-term efficacy or population-level claims. A longer study would help assess whether behavioral changes persist after novelty effects and initial prompting wear off.
 
-Future researchers should include a dedicated data science, machine learning, or fuzzy-logic expert in the SME panel. The current two-expert panel provided useful software and behavioral feedback, but a dedicated fuzzy-systems reviewer would strengthen appraisal of membership functions, rule coherence, fallback thresholds, and defuzzification choices.
+Future researchers should consider expanding the SME panel to include a dedicated data science, machine learning, or fuzzy-logic expert in addition to the software engineering and behavioral psychology reviewers. While the present study's software engineering expert evaluated the algorithm's accuracy, fuzzy logic effectiveness, and scalability, a dedicated fuzzy-systems reviewer would further strengthen appraisal of membership functions, rule coherence, fallback thresholds, and defuzzification choices.
 
 Future researchers should validate the DSI against additional external anchors. The present study found strong convergence with self-reported doomscrolling but also found that session duration had a higher rank association than the composite DSI. Future studies should compare DSI with full-scale doomscrolling instruments, ecological momentary reports, platform-independent digital well-being logs, or other validated behavioral measures.
 
 Future researchers should evaluate whether the fuzzy composite adds explanatory value beyond simpler metrics. Because mean daily session duration showed the strongest baseline rank association with self-report, later studies should test whether DSI improves prediction, interpretability, or intervention timing after controlling for duration alone.
 
 Future researchers should report effective sample sizes and sentiment coverage transparently. Sentiment-unreliable sessions affect NSD and DSI analysis, so future reports should continue to disclose retained sessions, excluded sessions, participant-level coverage, and platform-specific reliability patterns.
+
+Future researchers should consider including gender as an independent variable or moderator to examine whether doomscrolling patterns, intervention responsiveness, or user acceptance differ across gender groups. The present study recorded sex in the baseline profile but did not analyze gender-based differences, which may limit the generalizability of the results.
 
 == Recommendations for Future Implementation and Deployment
 

@@ -355,3 +355,206 @@ The study uses the short-form 4-item *Doomscrolling Scale*, corresponding to Ite
 
 *Scoring Note:*
 Item responses are summed or averaged to produce a single doomscrolling score, with higher values indicating greater self-reported doomscrolling during the recalled 7-day period. The 4-item short form contains no reverse-coded items.
+
+#pagebreak()
+#heading(level: 1, numbering: none)[APPENDIX F]
+#v(1em)
+#align(center)[*Filipino MVL Expert Validation Documents*]
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Certificate.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_1.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_2.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_3.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_4.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_5.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_6.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_7.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Filipino_Expert_Validation_8.png", width: 100%)
+
+#pagebreak()
+#align(center)[*Curriculum Vitae — Filipino Language Expert*]
+#v(1em)
+
+#image("../put_in_appendices/Joshua_Urrete_CV.png", width: 100%)
+
+#pagebreak()
+#heading(level: 1, numbering: none)[APPENDIX G]
+#v(1em)
+#align(center)[*Psychology Expert Validation Feedback*]
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_1.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_2.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_3.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_4.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_5.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_6.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_7.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_8.png", width: 100%)
+
+#pagebreak()
+#image("../put_in_appendices/Psychology_Expert_Validation_9.png", width: 100%)
+
+#pagebreak()
+#heading(level: 1, numbering: none)[APPENDIX H]
+#v(1em)
+#align(center)[*Curriculum Vitae — Psychology Expert*]
+#v(1em)
+
+#image("../put_in_appendices/Psychology_Expert_CV_1.png", width: 100%)
+#image("../put_in_appendices/Psychology_Expert_CV_2.png", width: 100%)
+#image("../put_in_appendices/Psychology_Expert_CV_3.png", width: 100%)
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX I]
+#v(1em)
+#align(center)[*Software Engineering Expert Validation Feedback*]
+#v(1.5em)
+
+#pagebreak()
+#image("../put_in_appendices/Mobile_Expert_Certificate.png", width: 100%)
+
+#pagebreak()
+#v(2em)
+== Rubric Rating Evaluation
+
+#table(
+  columns: (auto, 1fr, auto),
+  [*No.*], [*Evaluation Area*], [*Rating (1-5)*],
+  [1], [Accuracy and Reliability of VADER Sentiment Scoring (Filipino/Taglish context)], [5],
+  [2], [Effectiveness of the Fuzzy Logic Decision-Making Pipeline (27-rule consistency)], [5],
+  [3], [On-Device Performance, Edge Resource Efficiency, and Responsiveness], [5],
+  [4], [System Performance and Scalability under Real-World Load], [5],
+  [5], [Privacy-Preserving Local-Only Processing Architecture], [5],
+  [6], [Intervention Appropriateness and Escalation Structure], [5],
+  [*Overall Mean*], [], [*5.00 / 5.00*]
+)
+
+#v(1.5em)
+== Transcript of Recommendations
+
+The following is the transcript of recommendations and feedback provided for system refinement:
+
+1. *Clarify Fallback Criteria:* The routing logic between the primary text path and the VLM fallback should be clearly defined. The system must establish a robust OOV (Out-of-Vocabulary) threshold to determine when text-based sentiment analysis is unreliable and when the VLM fallback should be triggered to prevent classification drift.
+2. *Optimize Screen-Frame Processing:* Since the VLM fallback uses screen-capture sampling, the system should avoid storing frames in non-volatile storage. The frames must be processed transiently in RAM and destroyed immediately to maintain the privacy boundary.
+3. *Softness of Risk Terminology:* The user-facing prompts and scores should use supportive and non-alarming terminology. Avoid clinical or alarmist terms such as "Risk Score," "Warning," or "Critical" in the interface to reduce user anxiety and potential prompt resistance.
+4. *Personalized Threshold Calibration:* Future versions of the application should implement personalized threshold calibration based on baseline usage patterns to make the digital well-being prompts more relevant to individual scrolling habits.
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX J]
+#v(1em)
+#align(center)[*Curriculum Vitae — Software Engineering Expert*]
+#v(1em)
+
+#image("../put_in_appendices/Jim_Carlo_Pajendo_CV.png", width: 100%)
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX K]
+#v(1em)
+#align(center)[*System Evaluation Survey Instrument*]
+#v(1em)
+
+#image("../put_in_appendices/Survey_1.png", width: 100%)
+#image("../put_in_appendices/Survey_2.png", width: 100%)
+#image("../put_in_appendices/Survey_3.png", width: 100%)
+#image("../put_in_appendices/Survey_4.png", width: 100%)
+#image("../put_in_appendices/Survey_5.png", width: 100%)
+#image("../put_in_appendices/Survey_6.png", width: 100%)
+#image("../put_in_appendices/Survey_7.png", width: 100%)
+#image("../put_in_appendices/Survey_8.png", width: 100%)
+#image("../put_in_appendices/Survey_9.png", width: 100%)
+#image("../put_in_appendices/Survey_10.png", width: 100%)
+
+#pagebreak()
+
+#heading(level: 1, numbering: none)[APPENDIX L]
+#v(1em)
+#align(center)[*Signed Progress Reports*]
+#v(1em)
+
+#image("../put_in_appendices/Progress_Report_1.png", width: 100%)
+#image("../put_in_appendices/Progress_Report_2.jpg", width: 100%)
+#image("../put_in_appendices/Progress_Report_3.png", width: 100%)
+#image("../put_in_appendices/Progress_Report_4.png", width: 100%)
+#image("../put_in_appendices/Progress_Report_5.png", width: 100%)
+
+#pagebreak()
+
+#set page(fill: white)
+#heading(level: 1, numbering: none)[APPENDIX M]
+#v(0.5em)
+#align(center)[*Representative REDU Mobile Application Screens*]
+#v(0.75em)
+
+The following screens document the principal participant flow and intervention
+surfaces of the implemented REDU Android application. Intermediate menu states,
+confirmation dialogs, developer-only diagnostics, and repetitive variants are
+omitted to keep the appendix concise.
+
+#let app_screen(path, label) = block(width: 100%)[
+  #align(center)[#image(path, width: 1.72in)]
+  #v(0.2em)
+  #align(center)[#text(size: 8pt)[#label]]
+]
+
+#v(0.75em)
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  gutter: 0.18in,
+  app_screen("../app_showcase/01_setup_participant.png", [*L1.* Participant setup]),
+  app_screen("../app_showcase/03_setup_platforms.png", [*L2.* Platform selection]),
+  app_screen("../app_showcase/10_dashboard_empty.png", [*L3.* Participant dashboard]),
+)
+
+#pagebreak()
+
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  gutter: 0.18in,
+  app_screen("../app_showcase/12_history_empty.png", [*L4.* Session history]),
+  app_screen("../app_showcase/17_settings_image_scanning.png", [*L5.* Image scanning settings]),
+  app_screen("../app_showcase/21_export_study_data.png", [*L6.* Aggregate-data export]),
+)
+
+#pagebreak()
+
+#grid(
+  columns: (1fr, 1fr),
+  gutter: 0.35in,
+  app_screen("../app_showcase/26_demo_intervention_l2_unlocked.png", [*L7.* Level 2 pause intervention]),
+  app_screen("../app_showcase/27_demo_intervention_l3_breathing.png", [*L8.* Level 3 breathing intervention]),
+)

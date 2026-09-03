@@ -5,6 +5,7 @@ class CommentSheetSurfaceResolver(
     private val transitionGraceMillis: Long = COMMENT_SHEET_TRANSITION_GRACE_MILLIS,
 ) {
     private var lastCommentSheetWindowId: Int = -1
+    private var lastCommentSheetPlatformName: String? = null
     private var lastCommentSheetWasReels: Boolean = false
     private var canInheritReelsSurface: Boolean = false
     private var lastDirectSupportedPlatformName: String? = null
@@ -20,8 +21,7 @@ class CommentSheetSurfaceResolver(
     ): Boolean {
         val now = clock()
         if (directSupported) {
-            lastCommentSheetWindowId = -1
-            lastCommentSheetWasReels = false
+            resetCommentSheet()
             canInheritReelsSurface = true
             lastDirectSupportedPlatformName = platformName
             lastDirectSupportedWindowId = rootWindowId
@@ -42,12 +42,16 @@ class CommentSheetSurfaceResolver(
             return false
         }
 
-        val supported = if (rootWindowId == lastCommentSheetWindowId) {
+        val supported = if (
+            rootWindowId == lastCommentSheetWindowId &&
+            platformName == lastCommentSheetPlatformName
+        ) {
             lastCommentSheetWasReels
         } else {
             val resolved = multiWindowSupported() ||
                 canInheritFromRecentTargetSurface(platformName, rootWindowId, now)
             lastCommentSheetWindowId = rootWindowId
+            lastCommentSheetPlatformName = platformName
             lastCommentSheetWasReels = resolved
             resolved
         }
@@ -82,6 +86,7 @@ class CommentSheetSurfaceResolver(
 
     private fun resetCommentSheet() {
         lastCommentSheetWindowId = -1
+        lastCommentSheetPlatformName = null
         lastCommentSheetWasReels = false
     }
 

@@ -33,13 +33,13 @@ In partial fulfillment of the course of requirement for the *Degree of Bachelor 
   align(center)[
     #line(length: 80%)
     #v(-0.5em)
-    *DR. DENNIS GONZALES* \
+    *DR. DENNIS B. GONZALES* \
     External Panelist
   ],
   align(center)[
     #line(length: 80%)
     #v(-0.5em)
-    *PROF. JUSTINE PURA* \
+    *MR. JUSTINE JUDE C. PURA* \
     Internal Panelist
   ],
 )
@@ -65,13 +65,13 @@ Accepted as partial fulfillment of the requirements for the Degree of Bachelor o
   align(center)[
     #line(length: 80%)
     #v(-0.5em)
-    *MRS. RAIN MARILYN M. SANCHEZ* \
+    *MS. MARILYN M. SANCHEZ* \
     Thesis Adviser
   ],
   align(center)[
     #line(length: 80%)
     #v(-0.5em)
-    *MRS. ELISA V. MALASAGA* \
+    *MS. ELISA V. MALASAGA* \
     Course Adviser
   ],
 )

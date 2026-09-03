@@ -1,5 +1,7 @@
 package edu.feutech.redu.vlm
 
+import android.app.DownloadManager
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -7,6 +9,30 @@ import java.io.File
 import java.security.MessageDigest
 
 class ModelFileValidationTest {
+    @Test
+    fun successfulDownloadStatusTriggersFinalization() {
+        assertEquals(
+            DownloadStatusDisposition.COMPLETE,
+            downloadStatusDisposition(DownloadManager.STATUS_SUCCESSFUL),
+        )
+        assertEquals(
+            DownloadStatusDisposition.FAILED,
+            downloadStatusDisposition(DownloadManager.STATUS_FAILED),
+        )
+        assertEquals(
+            DownloadStatusDisposition.ACTIVE,
+            downloadStatusDisposition(DownloadManager.STATUS_RUNNING),
+        )
+    }
+
+    @Test
+    fun activeDownloadProgressNeverClaimsCompletion() {
+        assertEquals(0.5f, activeDownloadProgress(50L, 100L), 0f)
+        assertEquals(0.99f, activeDownloadProgress(100L, 100L), 0f)
+        assertEquals(0.99f, activeDownloadProgress(120L, 100L), 0f)
+        assertEquals(0f, activeDownloadProgress(100L, 0L), 0f)
+    }
+
     @Test
     fun validationAcceptsMatchingSizeAndHash() {
         val file = File.createTempFile("redu-model", ".gguf")

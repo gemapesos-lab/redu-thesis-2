@@ -55,26 +55,28 @@ To design, develop, and evaluate the proposed system as a privacy-preserving, on
 1. To design and develop the system to estimate doomscrolling-related risk using behavioral indicators and sentiment-related indicators when reliably resolvable, with 2-input behavioral fallback for sentiment-unreliable sessions.
 2. To determine the short-term Week 1-to-Week 2 changes in selected logged usage metrics and self-reported doomscrolling scores between the intervention group and the logging-only control group, and within the intervention group across the same period.
 3. To determine the baseline convergent association between the fixed-prior Week 1 Doomscroll Severity Index (DSI) and participants' self-reported doomscrolling scores among participants with at least three sentiment-reliable Week 1 sessions.
-4. To evaluate the system from the users' perspective using the ISO/IEC 25010 software quality model and TAM.
+4. To evaluate the computational efficiency of the system's core runtime algorithms through analytic time-complexity analysis of VADER scoring, per-item routing, VLM fallback, fuzzy inference, NSD aggregation, week-level DSI computation, and quantile personalization, and to evaluate the system from the users' perspective using the ISO/IEC 25010 software quality model and TAM.
 5. To obtain subject matter expert evaluation of the system's technical design, privacy safeguards, heuristic logic, and intervention structure.
 
-== Scope and Delimitations
+== Scope, Delimitations, and Limitations
 
 This study covers the design, development, and evaluation of the system. The scope centers on the software artifact, its risk-estimation variables, and the two-week field evaluation.
 
 *Scope:*
-- Development of a native Android application using modern software engineering practices.
-- Implementation and evaluation cover one deployable system and a pilot-scale two-week field study.
+- Development of a native Android application with Android 8.0 (API level 26) as the minimum supported operating-system version. The screenshot-assisted no-text VLM path requires Android 11 (API level 30) or higher; devices below this version use the sentiment-unreliable, 2-input behavioral fallback when screenshot capture is unavailable.
+- Implementation and evaluation cover one deployable system and a pilot-scale two-week field study involving 50 adult Filipino Android users assigned equally to an intervention group and a logging-only control group. Both groups completed a one-week baseline phase with prompts disabled. During the second week, adaptive prompts were enabled only for the intervention group, while the control group continued logging without prompts. Aggregate usage and sentiment-related metrics were recorded throughout both weeks, followed by post-usage user evaluation.
 - Use of the Android Accessibility Service API for text extraction, interaction-event monitoring, and screenshot-assisted no-text routing through `AccessibilityService.takeScreenshot`, with related interaction signals used to estimate session duration, compute video dwell time from content transitions, and process sentiment-related indicators from visible text or no-text visual items. Swipe counts are retained only as supporting logs.
 - Design of a modular architecture with separation between data collection, processing, and user interface components.
 - Implementation of the core estimation framework using threshold-based rules, text-first VADER sentiment analysis, an on-device no-text VLM fallback using Moondream 0.5B, and fuzzy-logic inference, with unresolved cases handled through sentiment-unreliable classification and 2-input behavioral fallback.
 - The system is designed for TikTok, Facebook Reels, and Instagram Reels as target platforms, although actual platform exposure during the field deployment varied by participant and empirical claims are limited to platforms that yielded stable extraction.
 - On-device processing, where raw text and temporary no-text screen frames are processed locally in RAM and discarded after scoring, while only aggregate local metrics and configuration data are retained on-device.
 - A user-directed design in which risk estimates and prompts are delivered only to the consenting user on their own device, with no remote administrator dashboard.
-- The evaluation used a pilot-scale two-week deployment: participants completed a one-week baseline logging phase, after which the intervention group received adaptive prompts during Week 2 while the control group continued logging-only.
 - Evaluation uses the ISO/IEC 25010 Software Quality Model (Functional Suitability, Performance Efficiency, Usability, Reliability), the Technology Acceptance Model (Perceived Usefulness, Perceived Ease of Use), subject matter expert review, and short-term observed differences under the study conditions.
 
-*Delimitations:*
+*Delimitations and Limitations:*
+
+This study evaluates software behavior and short-term usage differences, not clinical outcomes. The following boundaries include both deliberate choices made to define the study's coverage and constraints that may affect the findings or their generalizability. Changes in logged metrics should not be interpreted as reductions in anxiety, distress, or mental health conditions.
+
 - The study targets Filipino Android users aged 18 years and above who actively use at least one of the target short-form video platforms. Its external validity does not extend to minors, iOS users, or users who primarily consume long-form or non-short-form content.
 - Any field deployment is limited to Android devices that can install the study build, maintain the required permissions, and keep the monitoring service sufficiently stable during the evaluation window.
 - The risk-estimation framework addresses only short-form video platforms and does not cover long-form video, news websites, general web browsing, or other social media formats outside TikTok, Facebook Reels, and Instagram Reels.
@@ -82,13 +84,6 @@ This study covers the design, development, and evaluation of the system. The sco
 - The study does not claim to prevent doomscrolling. It evaluates a heuristic risk-estimation system and observes short-term behavioral differences between intervention and control groups.
 - The study does not attempt multi-site rollout, large-sample validation, or extensive model optimization.
 - The study excludes covert monitoring, employer surveillance, parental-control workflows, remote dashboards, and third-party alerting mechanisms.
-
-== Limitations
-
-This study evaluates software behavior and short-term usage differences — not clinical outcomes. Changes in logged metrics should not be interpreted as reductions in anxiety, distress, or mental health conditions.
-
-The following limitations describe constraints beyond the researchers' control that may affect the study's findings and generalizability:
-
 - The use of Android Accessibility Service to read on-screen content from third-party applications may create platform-policy concerns. Ethical risk is reduced through explicit user consent, local processing, and the absence of third-party surveillance workflows, but policy changes remain outside the researchers' control.
 - The Accessibility Service approach is fragile by nature. Changes in the user interface of TikTok, Facebook, or Instagram may disrupt extraction logic, and Android device manufacturers may aggressively terminate background services, affecting data continuity.
 - Continuous monitoring may affect battery life, thermal behavior, and background stability on some devices, which can in turn influence both system reliability and user acceptance.
@@ -104,6 +99,8 @@ The following limitations describe constraints beyond the researchers' control t
 - For the intervention group, prompt-excluded active-use metrics can be mechanically lower by design when prompts occur because prompt-display time is removed from session duration and dwell-time calculations. For this reason, Chapter 3 treats raw elapsed session duration and raw elapsed dwell time as the primary behavioral comparison, while prompt-excluded metrics are kept only as supplementary traces of prompt-interrupted use.
 - The two-week deployment window captures only short-term behavior. It is insufficient for demonstrating long-term habit formation, retention, or sustained behavioral change.
 - Participants know they are being monitored, which introduces Hawthorne-effect risk and may reduce the naturalism of observed behavior.
+- The system uses a text-first routing architecture in which text-based sentiment analysis and the visual VLM fallback are mutually exclusive per viewed item. When usable text exists, only the text path is evaluated; the VLM path is invoked only for items with no usable text. The system therefore does not perform parallel image–text sentiment comparison and may miss cases where the visual content of a video conveys a different sentiment than its accompanying textual comments.
+- Although sex is recorded in the baseline profile (39 male, 11 female), gender is not included as an independent variable or moderator in the behavioral or evaluation analyses. The findings therefore do not analyze differences based on gender, which may limit the generalizability of the results across different gender groups.
 
 == Conceptual Framework
 

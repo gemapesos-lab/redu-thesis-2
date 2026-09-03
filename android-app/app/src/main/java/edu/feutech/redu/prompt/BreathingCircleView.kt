@@ -3,84 +3,73 @@ package edu.feutech.redu.prompt
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Typeface
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import edu.feutech.redu.R
 
-/**
- * Animated breathing guide circle for the L3 intervention overlay.
- *
- * Cycles through three phases:
- * 1. **Breathe in** (4 s) — circle expands from small to large
- * 2. **Hold** (3 s) — circle stays at max size
- * 3. **Breathe out** (4 s) — circle shrinks back to small
- *
- * The total cycle is 11 seconds, repeating until [stop] is called
- * or the overlay times out.
- */
+internal data class BreathingPhase(
+    val label: String,
+    val instruction: String,
+)
+
 class BreathingCircleView(context: Context) : View(context) {
-
     companion object {
         private const val INHALE_MS = 4_000L
         private const val HOLD_MS = 3_000L
         private const val EXHALE_MS = 4_000L
         private const val CYCLE_MS = INHALE_MS + HOLD_MS + EXHALE_MS
-
         private const val MIN_RADIUS_FRACTION = 0.18f
-        private const val MAX_RADIUS_FRACTION = 0.42f
-
-        private const val CIRCLE_COLOR = 0xFF4FC3F7.toInt()   // light blue
-        private const val CIRCLE_ALPHA_MIN = 60
-        private const val CIRCLE_ALPHA_MAX = 180
+        private const val MAX_RADIUS_FRACTION = 0.40f
+        private const val CIRCLE_ALPHA_MIN = 72
+        private const val CIRCLE_ALPHA_MAX = 188
     }
 
     private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = CIRCLE_COLOR
+        color = context.getColor(R.color.redu_sea_glass)
         style = Paint.Style.FILL
     }
-
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = CIRCLE_COLOR
+        color = context.getColor(R.color.redu_sea_glass)
         style = Paint.Style.STROKE
-        strokeWidth = 3f
-        alpha = 100
+        strokeWidth = context.resources.displayMetrics.density * 2f
+        alpha = 92
     }
-
-    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
-        textSize = 48f
-        textAlign = Paint.Align.CENTER
-        typeface = Typeface.DEFAULT_BOLD
+    private val corePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = context.getColor(R.color.redu_sea_glass)
+        style = Paint.Style.FILL
+        alpha = 34
     }
-
-    private val subPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
-        textSize = 30f
-        textAlign = Paint.Align.CENTER
-        alpha = 180
-    }
-
-    /** Normalized progress 0..1 mapping to radius fraction. */
-    private var radiusFraction = MIN_RADIUS_FRACTION
-    private var phaseLabel = "Breathe in"
-    private var phaseSubLabel = ""
-
     private val phaseInterpolator = AccelerateDecelerateInterpolator()
+    private var radiusFraction = MIN_RADIUS_FRACTION
+    private var currentPhase = BreathingPhase("Breathe in", "Slowly")
+    private var phaseListener: ((BreathingPhase) -> Unit)? = null
     private var animator: ValueAnimator? = null
+
+    init {
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
+
+    internal fun setOnPhaseChanged(listener: (BreathingPhase) -> Unit) {
+        phaseListener = listener
+        listener(currentPhase)
+    }
 
     fun start() {
         animator?.cancel()
+        if (!ValueAnimator.areAnimatorsEnabled()) {
+            radiusFraction = 0.3f
+            setPhase(BreathingPhase("Breathe slowly", "At your own pace"))
+            invalidate()
+            return
+        }
         animator = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = CYCLE_MS
             repeatCount = ValueAnimator.INFINITE
             interpolator = LinearInterpolator()
-            addUpdateListener { anim ->
-                val t = anim.animatedValue as Float
-                val cycleProgress = t * CYCLE_MS
-                updatePhase(cycleProgress)
+            addUpdateListener { animation ->
+                updatePhase((animation.animatedValue as Float) * CYCLE_MS)
                 invalidate()
             }
             start()
@@ -94,56 +83,49 @@ class BreathingCircleView(context: Context) : View(context) {
 
     private fun updatePhase(progressMs: Float) {
         when {
-            // Inhale phase: 0 → INHALE_MS
             progressMs < INHALE_MS -> {
-                val t = phaseInterpolator.getInterpolation(progressMs / INHALE_MS)
-                radiusFraction = lerp(MIN_RADIUS_FRACTION, MAX_RADIUS_FRACTION, t)
-                circlePaint.alpha = lerp(CIRCLE_ALPHA_MIN.toFloat(), CIRCLE_ALPHA_MAX.toFloat(), t).toInt()
-                phaseLabel = "Breathe in"
-                phaseSubLabel = "slowly…"
+                val fraction = phaseInterpolator.getInterpolation(progressMs / INHALE_MS)
+                radiusFraction = lerp(MIN_RADIUS_FRACTION, MAX_RADIUS_FRACTION, fraction)
+                circlePaint.alpha = lerp(CIRCLE_ALPHA_MIN.toFloat(), CIRCLE_ALPHA_MAX.toFloat(), fraction).toInt()
+                setPhase(BreathingPhase("Breathe in", "Slowly"))
             }
-            // Hold phase: INHALE_MS → INHALE_MS + HOLD_MS
             progressMs < INHALE_MS + HOLD_MS -> {
                 radiusFraction = MAX_RADIUS_FRACTION
                 circlePaint.alpha = CIRCLE_ALPHA_MAX
-                phaseLabel = "Hold"
-                phaseSubLabel = ""
+                setPhase(BreathingPhase("Hold", "Stay comfortable"))
             }
-            // Exhale phase: INHALE_MS + HOLD_MS → CYCLE_MS
             else -> {
-                val t = phaseInterpolator.getInterpolation((progressMs - INHALE_MS - HOLD_MS) / EXHALE_MS)
-                radiusFraction = lerp(MAX_RADIUS_FRACTION, MIN_RADIUS_FRACTION, t)
-                circlePaint.alpha = lerp(CIRCLE_ALPHA_MAX.toFloat(), CIRCLE_ALPHA_MIN.toFloat(), t).toInt()
-                phaseLabel = "Breathe out"
-                phaseSubLabel = "slowly…"
+                val fraction = phaseInterpolator.getInterpolation(
+                    (progressMs - INHALE_MS - HOLD_MS) / EXHALE_MS,
+                )
+                radiusFraction = lerp(MAX_RADIUS_FRACTION, MIN_RADIUS_FRACTION, fraction)
+                circlePaint.alpha = lerp(CIRCLE_ALPHA_MAX.toFloat(), CIRCLE_ALPHA_MIN.toFloat(), fraction).toInt()
+                setPhase(BreathingPhase("Breathe out", "Slowly"))
             }
         }
+    }
+
+    private fun setPhase(phase: BreathingPhase) {
+        if (phase == currentPhase) return
+        currentPhase = phase
+        phaseListener?.invoke(phase)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val cx = width / 2f
-        val cy = height / 2f
-        val maxRadius = minOf(cx, cy)
-
-        // Outer reference ring at max size
-        canvas.drawCircle(cx, cy, maxRadius * MAX_RADIUS_FRACTION, ringPaint)
-
-        // Animated circle
-        val radius = maxRadius * radiusFraction
-        canvas.drawCircle(cx, cy, radius, circlePaint)
-
-        // Phase label
-        canvas.drawText(phaseLabel, cx, cy + labelPaint.textSize * 0.35f, labelPaint)
-        if (phaseSubLabel.isNotEmpty()) {
-            canvas.drawText(phaseSubLabel, cx, cy + labelPaint.textSize * 0.35f + subPaint.textSize * 1.3f, subPaint)
-        }
+        val centerX = width / 2f
+        val centerY = height / 2f
+        val maxRadius = minOf(centerX, centerY)
+        canvas.drawCircle(centerX, centerY, maxRadius * MAX_RADIUS_FRACTION, ringPaint)
+        canvas.drawCircle(centerX, centerY, maxRadius * 0.48f, corePaint)
+        canvas.drawCircle(centerX, centerY, maxRadius * radiusFraction, circlePaint)
     }
 
     override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
         stop()
+        super.onDetachedFromWindow()
     }
 
-    private fun lerp(a: Float, b: Float, t: Float): Float = a + (b - a) * t.coerceIn(0f, 1f)
+    private fun lerp(start: Float, end: Float, fraction: Float): Float =
+        start + (end - start) * fraction.coerceIn(0f, 1f)
 }

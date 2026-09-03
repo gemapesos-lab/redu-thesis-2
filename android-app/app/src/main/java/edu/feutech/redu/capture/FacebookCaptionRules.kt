@@ -104,8 +104,8 @@ object FacebookCaptionRules {
     fun normalizeCaptionText(text: String?): String {
         val normalized = text.normalizeWhitespace()
         return normalized
-            .replace(Regex("\\s+more\\s*$", RegexOption.IGNORE_CASE), "")
             .replace(Regex("\\s*[.…]+\\s*more\\s*$", RegexOption.IGNORE_CASE), "")
+            .replace(Regex("\\s+more\\s*$", RegexOption.IGNORE_CASE), "")
             .trim()
     }
 

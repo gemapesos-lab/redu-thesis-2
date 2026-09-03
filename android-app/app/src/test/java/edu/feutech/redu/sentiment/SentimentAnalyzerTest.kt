@@ -210,6 +210,30 @@ class SentimentAnalyzerTest {
     }
 
     @Test
+    fun variationSelectorDoesNotMergeAdjacentEmoji() {
+        val analyzer = VADERCompatibleAnalyzer(MvlLexicon.extensionLexicon)
+
+        val result = analyzer.analyze("❤️😭")
+
+        assertEquals("Both emoji should be recognized independently", 2, result.recognizedTokens)
+        assertEquals("Both emoji should be tokenized independently", 2, result.totalTokens)
+        assertEquals(0.0, result.oovRatio, 0.0)
+    }
+
+    @Test
+    fun emojiSkinToneModifierStaysAttachedToBaseEmoji() {
+        val analyzer = VADERCompatibleAnalyzer(MvlLexicon.extensionLexicon)
+
+        val result = analyzer.analyze("👍🏽")
+
+        assertTrue(result.compound > 0.05)
+        assertEquals(1, result.recognizedTokens)
+        assertEquals(1, result.totalTokens)
+        assertEquals(0.0, result.oovRatio, 0.0)
+        assertTrue(result.reliable)
+    }
+
+    @Test
     fun handlesCapitalizationAmplification() {
         val analyzer = VADERCompatibleAnalyzer(MvlLexicon.extensionLexicon)
         
@@ -241,6 +265,18 @@ class SentimentAnalyzerTest {
         val normalTl = analyzer.analyze("maganda ito")
         val boostedTl = analyzer.analyze("sobrang maganda ito")
         assertTrue("Tagalog booster 'sobrang' should amplify sentiment", boostedTl.compound > normalTl.compound)
+    }
+
+    @Test
+    fun handlesMultiWordDampeners() {
+        val analyzer = VADERCompatibleAnalyzer(MvlLexicon.extensionLexicon)
+
+        val normal = analyzer.analyze("good")
+        val kindOf = analyzer.analyze("kind of good")
+        val sortOf = analyzer.analyze("sort of good")
+
+        assertTrue("'kind of' should dampen positive sentiment", kindOf.compound < normal.compound)
+        assertTrue("'sort of' should dampen positive sentiment", sortOf.compound < normal.compound)
     }
 
     @Test
