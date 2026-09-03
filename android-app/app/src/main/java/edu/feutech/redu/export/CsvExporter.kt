@@ -85,7 +85,7 @@ class CsvExporter(
         // change before export cannot shift sessions across daily buckets.
         internal val STUDY_ZONE: ZoneId = ZoneId.of("Asia/Manila")
 
-        private val ZIP_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmm", Locale.US)
+        private val ZIP_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss-SSS", Locale.US)
 
         internal fun exportZipName(studyCode: String, timestampMillis: Long): String {
             val safeCode = studyCode.replace(Regex("[^A-Za-z0-9_-]"), "").ifBlank { "UNSET" }

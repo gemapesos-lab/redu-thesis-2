@@ -6,6 +6,7 @@ android-app/.gradle/
 android-app/app/.cxx/
 android-app/app/build/
 android-app/local.properties
+.codex
 
 # VLM model files (too large for git, download separately)
 *.gguf

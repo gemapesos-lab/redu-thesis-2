@@ -5,22 +5,32 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
 import edu.feutech.redu.ui.ReduAppScreen
+import edu.feutech.redu.ui.theme.ReduTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val systemBarColor = getColor(R.color.redu_background)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(systemBarColor),
+            navigationBarStyle = SystemBarStyle.dark(systemBarColor),
+        )
         val app = application as ReduApp
         setContent {
-            ReduAppScreen(
-                database = app.database,
-                isAccessibilityServiceEnabled = ::isReduAccessibilityServiceEnabled,
-                onOpenAccessibilitySettings = {
-                    startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                },
-                context = this,
-            )
+            ReduTheme {
+                ReduAppScreen(
+                    database = app.database,
+                    isAccessibilityServiceEnabled = ::isReduAccessibilityServiceEnabled,
+                    onOpenAccessibilitySettings = {
+                        startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                    },
+                    context = this,
+                )
+            }
         }
     }
 
@@ -34,4 +44,5 @@ class MainActivity : ComponentActivity() {
             .mapNotNull(ComponentName::unflattenFromString)
             .any { it == expectedService }
     }
+
 }

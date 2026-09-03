@@ -1,5 +1,6 @@
 package edu.feutech.redu.risk
 
+import edu.feutech.redu.data.AppSettingsEntity
 import edu.feutech.redu.data.ReduDatabase
 import edu.feutech.redu.data.RiskPersonalizationEntity
 import edu.feutech.redu.data.SentimentReliability
@@ -19,7 +20,18 @@ object RiskPersonalization {
         database.riskPersonalizationDao().getFor(studyCode, studyGroup)
             ?.takeIf { shouldReuseExistingLock(it) }
             ?.let { return it }
-        val baseline = database.sessionDao().reliableBaselineSessions(studyCode, studyGroup, lockedAtMillis)
+        val baselineBounds = baselineBounds(
+            settings = database.settingsDao().get(),
+            studyCode = studyCode,
+            studyGroup = studyGroup,
+            lockedAtMillis = lockedAtMillis,
+        )
+        val baseline = database.sessionDao().reliableBaselineSessions(
+            studyCode = studyCode,
+            studyGroup = studyGroup,
+            startInclusiveMillis = baselineBounds.startInclusiveMillis,
+            endExclusiveMillis = baselineBounds.endExclusiveMillis,
+        )
         val personalization = buildLock(
             studyCode = studyCode,
             studyGroup = studyGroup,
@@ -32,6 +44,32 @@ object RiskPersonalization {
 
     internal fun shouldReuseExistingLock(existing: RiskPersonalizationEntity): Boolean =
         existing.hasAnyPersonalizedBounds()
+
+    internal fun baselineBounds(
+        settings: AppSettingsEntity?,
+        studyCode: String,
+        studyGroup: StudyGroup,
+        lockedAtMillis: Long,
+    ): BaselineBounds {
+        val matchingSettings = settings?.takeIf {
+            it.studyCode == studyCode && it.studyGroup == studyGroup
+        }
+        val week1StartMillis = matchingSettings?.week1StartMillis
+        val week1EndMillis = matchingSettings?.week1EndMillis
+        if (week1StartMillis == null || week1EndMillis == null) {
+            return BaselineBounds(Long.MIN_VALUE, lockedAtMillis)
+        }
+
+        val week1EndExclusive = if (week1EndMillis == Long.MAX_VALUE) {
+            Long.MAX_VALUE
+        } else {
+            week1EndMillis + 1L
+        }
+        return BaselineBounds(
+            startInclusiveMillis = week1StartMillis,
+            endExclusiveMillis = minOf(lockedAtMillis, week1EndExclusive),
+        )
+    }
 
     fun buildLock(
         studyCode: String,
@@ -124,6 +162,11 @@ data class Quantiles(
     val q50: Double,
     val q75: Double,
     val q95: Double,
+)
+
+internal data class BaselineBounds(
+    val startInclusiveMillis: Long,
+    val endExclusiveMillis: Long,
 )
 
 internal fun RiskPersonalizationEntity.hasAnyPersonalizedBounds(): Boolean =

@@ -92,7 +92,7 @@ class VADERCompatibleAnalyzer internal constructor(
         var recognized = 0
 
         tokens.forEachIndexed { index, token ->
-            val tokenLower = token.lowercase()
+            val tokenLower = token.sentimentLookupKey()
             val laughterValence = laughterValence(tokenLower)
             
             // Check if recognized
@@ -131,6 +131,14 @@ class VADERCompatibleAnalyzer internal constructor(
                 }
 
                 // Lookback up to 3 words for modifiers
+                if (index >= 2 &&
+                    tokens[index - 1].lowercase() == "of" &&
+                    tokens[index - 2].lowercase() in multiWordDampeners
+                ) {
+                    var dampener = -0.293
+                    if (valence < 0) dampener *= -1.0
+                    valence += dampener
+                }
                 for (startI in 0 until 3) {
                     val prevIndex = index - (startI + 1)
                     if (prevIndex >= 0) {
@@ -260,7 +268,7 @@ class VADERCompatibleAnalyzer internal constructor(
         val unscored = mutableListOf<String>()
 
         tokens.forEach { token ->
-            val tokenLower = token.lowercase()
+            val tokenLower = token.sentimentLookupKey()
             val laughterValence = laughterValence(tokenLower)
             val inLexicon = lexicon.containsKey(tokenLower)
             val isStopWord = tokenLower in extensionLexicon
@@ -330,24 +338,29 @@ class VADERCompatibleAnalyzer internal constructor(
         val tokens = mutableListOf<String>()
         var current = StringBuilder()
         var previousWasJoiner = false
-        var pendingVariation = false
         for (codePoint in codePoints().toArray()) {
             val chars = String(Character.toChars(codePoint))
             val isVariation = codePoint == 0xFE0F
             val isJoiner = codePoint == 0x200D
+            val isEmojiModifier = codePoint in 0x1F3FB..0x1F3FF
             when {
                 current.isEmpty() -> current.append(chars)
-                isVariation || previousWasJoiner || pendingVariation || isJoiner -> current.append(chars)
+                isVariation || isEmojiModifier || previousWasJoiner || isJoiner -> current.append(chars)
                 else -> {
                     tokens += current.toString()
                     current = StringBuilder(chars)
                 }
             }
             previousWasJoiner = isJoiner
-            pendingVariation = isVariation
         }
         if (current.isNotEmpty()) tokens += current.toString()
         return tokens
+    }
+
+    private fun String.sentimentLookupKey(): String = buildString {
+        for (codePoint in this@sentimentLookupKey.lowercase().codePoints().toArray()) {
+            if (codePoint !in 0x1F3FB..0x1F3FF) appendCodePoint(codePoint)
+        }
     }
 
     private fun String.withoutUserMentions(): String =
@@ -366,6 +379,7 @@ class VADERCompatibleAnalyzer internal constructor(
     companion object {
         private val USER_MENTION_REGEX = Regex("(?<![\\p{L}\\p{N}_])@[\\p{L}\\p{N}._]{1,32}")
         private val LAUGHTER_REGEX = Regex("(?=.{4,}$)(?=(?:.*h){2,})(?=(?:.*a){2,})[ha]*ha[ha]*")
+        private val multiWordDampeners = setOf("kind", "sort")
         private const val LAUGHTER_VALENCE = 4.0
 
         fun fromAsset(

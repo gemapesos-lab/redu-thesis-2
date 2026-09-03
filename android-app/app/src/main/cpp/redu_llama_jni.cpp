@@ -3,6 +3,7 @@
 #include <vector>
 #include <atomic>
 #include <chrono>
+#include <mutex>
 #include <android/log.h>
 
 #include "llama.h"
@@ -23,6 +24,11 @@ static struct llama_batch generation_batch;
 static bool generation_batch_ready = false;
 static std::atomic<bool> abort_inference(false);
 static std::chrono::steady_clock::time_point inference_deadline;
+// The Kotlin caller currently serializes inference, but the JNI object is
+// process-global and can be reached from more than one caller. Keep model
+// initialization, inference, and destruction mutually exclusive so a late
+// freeModels() cannot release llama.cpp state while native inference uses it.
+static std::mutex model_mutex;
 static constexpr int kInferenceThreads = 4;
 static constexpr int kContextSize = 2048;
 static constexpr int kBatchSize = 256;
@@ -67,6 +73,11 @@ static void free_models() {
 extern "C" JNIEXPORT jboolean JNICALL
 Java_edu_feutech_redu_vlm_MoondreamLlamaNative_initModels(JNIEnv* env, jobject /* this */, jstring model_path, jstring mmproj_path) {
     const auto start = std::chrono::steady_clock::now();
+    if (model_path == nullptr || mmproj_path == nullptr) {
+        LOGE("initModels received a null model path");
+        return JNI_FALSE;
+    }
+    const std::lock_guard<std::mutex> lock(model_mutex);
     LOGI("initModels start already_loaded=%d partial_loaded=%d",
          model != nullptr && ctx_mtmd != nullptr && ctx_llama != nullptr && smpl != nullptr,
          model != nullptr || ctx_mtmd != nullptr || ctx_llama != nullptr || smpl != nullptr);
@@ -187,6 +198,7 @@ extern "C" JNIEXPORT void JNICALL
 Java_edu_feutech_redu_vlm_MoondreamLlamaNative_freeModels(JNIEnv* env, jobject /* this */) {
     LOGI("freeModels requested from JNI");
     abort_inference.store(true);
+    const std::lock_guard<std::mutex> lock(model_mutex);
     free_models();
 }
 
@@ -199,6 +211,11 @@ Java_edu_feutech_redu_vlm_MoondreamLlamaNative_cancelInference(JNIEnv* env, jobj
 extern "C" JNIEXPORT jstring JNICALL
 Java_edu_feutech_redu_vlm_MoondreamLlamaNative_inferenceImage(JNIEnv* env, jobject /* this */, jbyteArray image_bytes) {
     const auto start = std::chrono::steady_clock::now();
+    if (image_bytes == nullptr) {
+        LOGE("inferenceImage received a null image buffer");
+        return env->NewStringUTF("UNRESOLVED");
+    }
+    const std::lock_guard<std::mutex> lock(model_mutex);
     if (!model || !ctx_mtmd || !ctx_llama || !smpl || !generation_batch_ready) {
         LOGE("inferenceImage called before models ready");
         return env->NewStringUTF("UNRESOLVED");

@@ -41,6 +41,14 @@ class CommentSheetSurfaceResolverTest {
     }
 
     @Test
+    fun cachedCommentSheetDecisionIsNotSharedAcrossPlatforms() {
+        val resolver = CommentSheetSurfaceResolver()
+
+        assertTrue(resolver.resolve(4, directSupported = false, commentSheet = true, platformName = "INSTAGRAM") { true })
+        assertFalse(resolver.resolve(4, directSupported = false, commentSheet = true, platformName = "TIKTOK") { false })
+    }
+
+    @Test
     fun targetExitStopsInheritanceFallback() {
         val resolver = CommentSheetSurfaceResolver()
 

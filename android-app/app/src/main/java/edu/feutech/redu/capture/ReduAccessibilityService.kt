@@ -218,13 +218,34 @@ class ReduAccessibilityService : AccessibilityService() {
         }
 
         val isUserInteraction = event.eventType.isUserInteractionEvent()
+        val advancesBlankItem = event.eventType.advancesBlankItem()
         val eventPackageName = event.packageName?.toString() ?: platform.name
-        triggerScreenProcessing(platform, eventPackageName, foregroundChanged, isUserInteraction)
+        triggerScreenProcessing(
+            platform = platform,
+            packageName = eventPackageName,
+            windowChanged = foregroundChanged,
+            isUserInteraction = isUserInteraction,
+            advancesBlankItem = advancesBlankItem,
+        )
     }
 
     private fun handleNonTargetEvent(event: AccessibilityEvent) {
         if (!targetInForeground) return
-        if (event.packageName?.toString() == packageName) return
+        val eventPackageName = event.packageName?.toString()
+        if (eventPackageName == packageName) {
+            val appActivityOpened = isAppActivityWindowChange(
+                eventPackageName = eventPackageName,
+                servicePackageName = packageName,
+                eventType = event.eventType,
+                eventClassName = event.className?.toString(),
+            )
+            if (appActivityOpened) {
+                commentSheetSurfaceResolver.onTargetExit()
+                cancelPendingVlm("REDU app opened")
+                scheduleTargetExit()
+            }
+            return
+        }
         val eventType = event.eventType
         if (eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             commentSheetSurfaceResolver.onTargetExit()
@@ -267,7 +288,7 @@ class ReduAccessibilityService : AccessibilityService() {
                     try {
                         PlatformAdapterRegistry.isSupportedSurface(platform, roots)
                     } finally {
-                        roots.forEach { if (it != root) it.recycle() }
+                        roots.forEach { if (it !== root) it.recycle() }
                     }
                 },
             )
@@ -276,19 +297,25 @@ class ReduAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun triggerScreenProcessing(platform: Platform, packageName: String, windowChanged: Boolean, isUserInteraction: Boolean = false) {
+    private fun triggerScreenProcessing(
+        platform: Platform,
+        packageName: String,
+        windowChanged: Boolean,
+        isUserInteraction: Boolean = false,
+        advancesBlankItem: Boolean = false,
+    ) {
         val now = System.currentTimeMillis()
         val timeSinceLastProcess = now - lastProcessTimeMillis
         if (windowChanged || timeSinceLastProcess >= 300L) {
             pendingProcessingJob?.cancel()
             lastProcessTimeMillis = now
-            processScreen(platform, packageName, windowChanged, isUserInteraction)
+            processScreen(platform, packageName, windowChanged, isUserInteraction, advancesBlankItem)
         } else {
             pendingProcessingJob?.cancel()
             pendingProcessingJob = scope.launch(Dispatchers.Main) {
                 delay(200L)
                 lastProcessTimeMillis = System.currentTimeMillis()
-                processScreen(platform, packageName, windowChanged, isUserInteraction)
+                processScreen(platform, packageName, windowChanged, isUserInteraction, advancesBlankItem)
             }
         }
 
@@ -300,7 +327,13 @@ class ReduAccessibilityService : AccessibilityService() {
         }
     }
 
-    private fun processScreen(eventPlatform: Platform, packageName: String, windowChanged: Boolean, isUserInteraction: Boolean = false) {
+    private fun processScreen(
+        eventPlatform: Platform,
+        packageName: String,
+        windowChanged: Boolean,
+        isUserInteraction: Boolean = false,
+        advancesBlankItem: Boolean = false,
+    ) {
         val root = rootInActiveWindow ?: return
         try {
             val activeRootPlatform = PlatformAdapterRegistry.platformFor(root.packageName)
@@ -339,7 +372,7 @@ class ReduAccessibilityService : AccessibilityService() {
                     try {
                         PlatformAdapterRegistry.isSupportedSurface(platform, roots)
                     } finally {
-                        roots.forEach { if (it != root) it.recycle() }
+                        roots.forEach { if (it !== root) it.recycle() }
                     }
                 },
             )
@@ -382,6 +415,7 @@ class ReduAccessibilityService : AccessibilityService() {
                     val trackerUpdate = updateTrackerForScreen(
                         platform = platform,
                         isUserInteraction = isUserInteraction,
+                        advancesBlankItem = advancesBlankItem && !commentSheet,
                         transitionFingerprint = transitionFingerprint,
                         hasCaptionContent = hasCaptionContent,
                         visibleText = visibleText,
@@ -763,6 +797,7 @@ class ReduAccessibilityService : AccessibilityService() {
     private suspend fun updateTrackerForScreen(
         platform: Platform,
         isUserInteraction: Boolean,
+        advancesBlankItem: Boolean,
         transitionFingerprint: String,
         hasCaptionContent: Boolean,
         visibleText: String,
@@ -791,7 +826,7 @@ class ReduAccessibilityService : AccessibilityService() {
             blankNoTextFingerprint(
                 platform = platform,
                 sessionStartedAtMillis = tracker.snapshot()?.startedAtMillis,
-                advanceForInteraction = isUserInteraction,
+                advanceForScroll = advancesBlankItem,
             )
         } else {
             transitionFingerprint
@@ -985,7 +1020,7 @@ class ReduAccessibilityService : AccessibilityService() {
                         try {
                             PlatformAdapterRegistry.isSupportedSurface(platform, roots)
                         } finally {
-                            roots.forEach { if (it != root) it.recycle() }
+                            roots.forEach { if (it !== root) it.recycle() }
                         }
                     },
                 )
@@ -1100,13 +1135,13 @@ class ReduAccessibilityService : AccessibilityService() {
     private fun blankNoTextFingerprint(
         platform: Platform,
         sessionStartedAtMillis: Long?,
-        advanceForInteraction: Boolean,
+        advanceForScroll: Boolean,
     ): String {
         val now = System.currentTimeMillis()
         if (blankNoTextSequence == 0) {
             blankNoTextSequence = 1
             lastBlankNoTextSequenceIncrementAtMillis = now
-        } else if (advanceForInteraction &&
+        } else if (advanceForScroll &&
             now - lastBlankNoTextSequenceIncrementAtMillis >= BLANK_ITEM_DEBOUNCE_MILLIS
         ) {
             blankNoTextSequence += 1

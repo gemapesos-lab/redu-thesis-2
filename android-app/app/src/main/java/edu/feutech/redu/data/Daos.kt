@@ -36,8 +36,13 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE sentimentReliability = 'RELIABLE' ORDER BY startedAtMillis DESC")
     suspend fun reliableSessions(): List<SessionEntity>
 
-    @Query("SELECT * FROM sessions WHERE studyCode = :studyCode AND studyGroup = :studyGroup AND sentimentReliability = 'RELIABLE' AND startedAtMillis < :beforeMillis ORDER BY startedAtMillis ASC")
-    suspend fun reliableBaselineSessions(studyCode: String, studyGroup: StudyGroup, beforeMillis: Long): List<SessionEntity>
+    @Query("SELECT * FROM sessions WHERE studyCode = :studyCode AND studyGroup = :studyGroup AND sentimentReliability = 'RELIABLE' AND startedAtMillis >= :startInclusiveMillis AND startedAtMillis < :endExclusiveMillis ORDER BY startedAtMillis ASC")
+    suspend fun reliableBaselineSessions(
+        studyCode: String,
+        studyGroup: StudyGroup,
+        startInclusiveMillis: Long,
+        endExclusiveMillis: Long,
+    ): List<SessionEntity>
 
     @Query("SELECT COUNT(*) FROM sessions")
     fun observeCount(): Flow<Int>

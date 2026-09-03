@@ -96,7 +96,109 @@ class SessionUiModelsTest {
     }
 
     @Test
+    fun dashboardUiStateBuildsSevenDayActivitySeries() {
+        val zone = ZoneId.of("UTC")
+        val now = Instant.parse("2026-07-11T12:00:00Z").toEpochMilli()
+        val sessions = listOf(
+            session(
+                platform = Platform.TIKTOK,
+                startedAtMillis = Instant.parse("2026-07-11T09:00:00Z").toEpochMilli(),
+                rawDurationMillis = 60_000L,
+            ),
+            session(
+                platform = Platform.TIKTOK,
+                startedAtMillis = Instant.parse("2026-07-11T10:00:00Z").toEpochMilli(),
+                rawDurationMillis = 120_000L,
+            ),
+            session(
+                platform = Platform.FACEBOOK,
+                startedAtMillis = Instant.parse("2026-07-10T08:00:00Z").toEpochMilli(),
+                rawDurationMillis = 30_000L,
+            ),
+            session(startedAtMillis = Instant.parse("2026-07-04T08:00:00Z").toEpochMilli()),
+        )
+
+        val state = dashboardUiState(
+            sessions = sessions,
+            setupComplete = true,
+            nowMillis = now,
+            zoneId = zone,
+        )
+
+        assertEquals("2026-07-11", state.date.toString())
+        assertEquals(7, state.weeklyActivity.size)
+        assertEquals("2026-07-05", state.weeklyActivity.first().date.toString())
+        assertEquals(30_000L, state.weeklyActivity[5].activeMillis)
+        assertEquals(1, state.weeklyActivity[5].sessionCount)
+        assertEquals(180_000L, state.weeklyActivity.last().activeMillis)
+        assertEquals(2, state.weeklyActivity.last().sessionCount)
+    }
+
+    @Test
+    fun dashboardUiStateIncludesEmptyDaysInActivitySeries() {
+        val state = dashboardUiState(
+            sessions = emptyList(),
+            setupComplete = false,
+        )
+
+        assertEquals(7, state.weeklyActivity.size)
+        assertTrue(state.weeklyActivity.all { it.activeMillis == 0L && it.sessionCount == 0 })
+    }
+
+    @Test
+    fun dashboardDefaultsToTheFixedStudyTimezone() {
+        val now = Instant.parse("2026-07-12T17:00:00Z").toEpochMilli()
+        val state = dashboardUiState(
+            sessions = listOf(session(startedAtMillis = now)),
+            setupComplete = true,
+            nowMillis = now,
+        )
+
+        assertEquals("2026-07-13", state.date.toString())
+        assertEquals(1, state.summary.todaySessionCount)
+        assertEquals("1:00 AM", now.formatTimeOfDay())
+        assertEquals("2026-07-13", groupedSessionsByDate(state.summary.latestSession?.let(::listOf).orEmpty()).single().date.toString())
+    }
+
+    @Test
+    fun readableDurationUsesParticipantFriendlyUnits() {
+        assertEquals("<1 min", formatReadableDuration(0L))
+        assertEquals("<1 min", formatReadableDuration(59_999L))
+        assertEquals("1 min", formatReadableDuration(60_000L))
+        assertEquals("59 min", formatReadableDuration(3_599_999L))
+        assertEquals("1h", formatReadableDuration(3_600_000L))
+        assertEquals("2h 22m", formatReadableDuration(8_520_000L))
+    }
+
+    @Test
+    fun riskLevelsMapToDistinctStatusTones() {
+        assertEquals(StatusTone.NORMAL, statusToneFor(RiskLevel.SAFE))
+        assertEquals(StatusTone.ELEVATED, statusToneFor(RiskLevel.WARNING))
+        assertEquals(StatusTone.EXTENDED, statusToneFor(RiskLevel.CRITICAL))
+    }
+
+    @Test
+    fun activityPatternPresentationUsesParticipantFacingLabels() {
+        assertEquals("Low", activityPatternFor(RiskLevel.SAFE).label)
+        assertEquals("Elevated", activityPatternFor(RiskLevel.WARNING).label)
+        assertEquals("High", activityPatternFor(RiskLevel.CRITICAL).label)
+        assertEquals("0-33", activityPatternFor(RiskLevel.SAFE).rangeLabel)
+        assertEquals("67-100", activityPatternFor(RiskLevel.CRITICAL).rangeLabel)
+    }
+
+    @Test
+    fun setupStepAdvancesThroughRequiredStates() {
+        assertEquals(SetupStep.PARTICIPANT, setupStepFor(false, false, false))
+        assertEquals(SetupStep.PLATFORMS, setupStepFor(true, false, false))
+        assertEquals(SetupStep.MONITORING, setupStepFor(true, true, false))
+        assertEquals(SetupStep.COMPLETE, setupStepFor(true, true, true))
+    }
+
+    @Test
     fun participantCodeSuffixControlsStudyGroup() {
+        assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("PX01"))
+        assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("PY02"))
+        assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("PY"))
         assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("P-01X"))
         assertEquals(StudyGroup.INTERVENTION, studyGroupForParticipantCode("p-01x"))
         assertEquals(StudyGroup.CONTROL, studyGroupForParticipantCode("P-02Y"))
@@ -136,12 +238,21 @@ class SessionUiModelsTest {
         )
     }
 
+    @Test
+    fun storedStudyDateRoundTripsInStudyTimezone() {
+        val date = java.time.LocalDate.parse("2026-07-12")
+
+        assertEquals(date, date.studyDayStartMillis().toStudyLocalDate())
+        assertEquals(date, date.studyDayEndMillis().toStudyLocalDate())
+    }
+
     private fun session(
         platform: Platform = Platform.TIKTOK,
         startedAtMillis: Long = Instant.parse("2026-05-23T00:00:00Z").toEpochMilli(),
         rawDurationMillis: Long = 10_000L,
         riskLevel: RiskLevel = RiskLevel.SAFE,
         riskScore: Double = 25.0,
+        sentimentReliability: SentimentReliability = SentimentReliability.RELIABLE,
     ): SessionEntity =
         SessionEntity(
             studyCode = "P01",
@@ -159,6 +270,6 @@ class SessionUiModelsTest {
             nsdPercent = 50.0,
             riskScore = riskScore,
             riskLevel = riskLevel,
-            sentimentReliability = SentimentReliability.RELIABLE,
+            sentimentReliability = sentimentReliability,
         )
 }
