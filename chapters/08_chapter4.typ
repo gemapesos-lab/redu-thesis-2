@@ -324,6 +324,35 @@ Statement of the Problem 2 asked what short-term Week 1-to-Week 2 changes are ob
   ),
 )
 
+=== Illustrative Individual Before-and-After Behavior
+
+To make the before-and-after pattern visible at the respondent level, Table @illustrative-individual-behavior presents five anonymized participant records with complete Week 1 and Week 2 coverage for all displayed metrics. The records are shown in ascending study-code order after excluding cases without complete sentiment-reliable coverage for NSD and DSI. They are illustrative only; all inferential findings in this chapter remain based on the full 50-participant sample and the outcome-specific effective samples reported in the subsequent tables.
+
+#thesis_table(
+  caption: [Illustrative Individual Before-and-After Behavior],
+  label: <illustrative-individual-behavior>,
+  columns: (0.6fr, 0.85fr, 1.1fr, 1.0fr, 1.0fr, 0.85fr, 0.95fr),
+  cell_align: table_align((center, center, center, center, center, center, center)),
+  header: (
+    [*Participant*],
+    [*Group*],
+    [*Session Duration (min)*],
+    [*Video Dwell (s)*],
+    [*NSD (%)*],
+    [*DSI*],
+    [*Doomscrolling Score*],
+  ),
+  body: (
+    [`R1`], [Intervention], [53.35 to 22.05], [6.95 to 6.74], [30.97 to 26.10], [46.62 to 43.00], [11 to 9],
+    [`R2`], [Control], [71.90 to 72.38], [7.19 to 7.30], [31.05 to 31.43], [47.46 to 47.93], [12 to 12],
+    [`R3`], [Intervention], [83.86 to 45.56], [7.47 to 6.81], [32.70 to 27.49], [48.69 to 43.71], [13 to 11],
+    [`R4`], [Control], [97.32 to 97.65], [7.04 to 7.26], [31.12 to 31.34], [47.39 to 47.57], [14 to 14],
+    [`R6`], [Control], [54.07 to 55.12], [7.40 to 7.20], [28.67 to 30.41], [46.29 to 47.01], [11 to 11],
+  ),
+)
+
+*Note.* Values are reported as Week 1 to Week 2. The five records are the first in ascending study-code order with complete values for all displayed metrics. The intervention and control classifications reflect the assigned study groups. These records show individual variation and must not be interpreted as representative effect estimates.
+
 #thesis_table(
   caption: [SOP 2 Primary Behavioral Comparisons Between Groups],
   columns: (1.2fr, 0.7fr, 1fr, 0.8fr, 0.75fr, 0.9fr, 1.05fr),
