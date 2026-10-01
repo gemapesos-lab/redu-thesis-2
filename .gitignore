@@ -12,3 +12,7 @@ android-app/local.properties
 *.gguf
 *.gguf.*
 android-app/app/src/main/cpp/llama.cpp/models/*.gguf*
+
+# ACM paper build artifacts
+acm-paper/.venv/
+acm-paper/build/
