@@ -9,7 +9,7 @@ venue_rest: , 1st Trimester SY 2026–2027, Manila, Philippines.
 rights: Copyright 2026 held by the owner/author(s).
 ---
 ABSTRACT:
-Doomscrolling on short-form video platforms is difficult to address with time-based digital well-being tools alone, because risk may depend on both prolonged engagement and exposure to negative content. This study designed, developed, and evaluated a privacy-preserving Android application that estimates doomscrolling-related risk on TikTok, Facebook Reels, and Instagram Reels. The system combines Android Accessibility Service monitoring, local session tracking, VADER-compatible sentiment analysis with a Filipino/Taglish lexicon, a Moondream 0.5B no-text visual fallback, and a fuzzy inference engine that produces session risk scores and a week-level Doomscroll Severity Index (DSI). A two-week pilot field evaluation with 50 adult Filipino Android users, assigned evenly to an intervention group and a logging-only control group, produced 10,134 logged sessions, 87.0% of them sentiment-reliable. Week 1-to-Week 2 reductions favored the intervention group for session duration, video dwell time, Negative Sentiment Density, and Doomscrolling Scale scores (all *p* < .001 after Holm correction). Week 1 DSI correlated strongly with self-reported doomscrolling (Spearman’s ρ = 0.76), and users and experts evaluated the system favorably. The system is a feasible non-clinical prototype for privacy-preserving self-monitoring; longer and larger validation is still needed.
+Doomscrolling on short-form video platforms is difficult to address with time-based digital well-being tools alone, because risk may depend on both prolonged engagement and exposure to negative content. This study designed, developed, and evaluated a privacy-preserving Android application that estimates doomscrolling-related risk on TikTok, Facebook Reels, and Instagram Reels. The system combines Android Accessibility Service monitoring, local session tracking, VADER-compatible sentiment analysis with a Filipino/Taglish lexicon, a Moondream 0.5B no-text visual fallback, and a fuzzy inference engine that produces session risk scores and a week-level Doomscroll Severity Index (DSI). A two-week pilot field evaluation with 50 adult Filipino Android users, assigned evenly to an intervention group and a logging-only control group, produced 10,134 logged sessions, 87.0% of them sentiment-reliable. Week 1-to-Week 2 reductions favored the intervention group for session duration, video dwell time, Negative Sentiment Density, and Doomscrolling Scale scores (all *p* < .001 after Holm correction). Week 1 DSI correlated with self-reported doomscrolling (Spearman’s ρ = 0.76), though session duration alone was stronger (ρ = 0.92). Users and experts evaluated the system favorably. The system is a feasible non-clinical prototype for privacy-preserving self-monitoring; longer and larger validation is still needed.
 
 # INTRODUCTION
 
@@ -39,7 +39,7 @@ The study combined software development with a pilot field evaluation. The syste
 
 ## Participants
 
-Fifty Filipino Android users aged 18 years or older, each an active user of at least one target platform, were recruited through purposive-convenience sampling and gave informed consent. A concealed permuted-block list allocated them 1:1 to the intervention (*n* = 25) and control (*n* = 25) groups. Ages ranged from 18 to 29 (mean 22.12), and 39 participants were male and 11 female. All 50 completed both weeks. Analyses that need sentiment-reliable data report smaller effective samples (*n* = 48 for DSI; 23 intervention and 25 control for NSD).
+Fifty Filipino Android users aged 18 years or older, each an active user of at least one target platform, were recruited through purposive-convenience sampling and gave informed consent. A concealed permuted-block list allocated them 1:1 to the intervention (*n* = 25) and control (*n* = 25) groups. Ages ranged from 18 to 29 (mean 22.12), and 39 participants were male and 11 female. All 50 completed both weeks. Two intervention participants lacked sufficient sentiment-reliable coverage, so analyses that need it use smaller samples (*n* = 48 for DSI; 23 intervention and 25 control for NSD).
 
 ## Proposed System
 
@@ -121,17 +121,17 @@ The system ran on participants’ own devices for two weeks and logged 10,134 se
 
 ## Short-Term Behavioral Changes
 
-All four primary outcomes favored the intervention group after Holm correction (Table 2), and every 95% interval lies below zero.
+All four primary outcomes favored the intervention group after Holm correction (Table 2), and every 95% interval for Cohen’s *d* lies below zero.
 
 :::table
-span: full
-caption: Between-group Week 1-to-Week 2 change comparisons for the four primary outcomes (intervention *n* / control *n*).
-widths: 2400|1000|1700|1400|1100|1000|1480
-header: Outcome|*n* (I / C)|Final test|Statistic|*p* (Holm)|Cohen’s *d*|95% CI
-row: Session duration (min)|25 / 25|Welch’s *t*-test|*t* = −4.17|< .001|−1.18|[−1.78, −0.58]
-row: Video dwell time (s)|25 / 25|Mann-Whitney *U*|*U* = 124.0|< .001|−1.33|[−1.94, −0.72]
-row: NSD (%)|23 / 25|Mann-Whitney *U*|*U* = 68.0|< .001|−1.82|[−2.50, −1.15]
-row: Doomscrolling Scale|25 / 25|Mann-Whitney *U*|*U* = 105.0|< .001|−1.50|[−2.13, −0.87]
+span: single
+caption: Week 1-to-Week 2 between-group changes. *n* is intervention/control; *t* is Welch’s *t* and *U* is Mann–Whitney *U*; *p* is Holm-adjusted.
+widths: 1480|760|1120|1440
+header: Outcome|*n*|Statistic|*d* [95% CI]
+row: Duration (min)|25/25|*t* = −4.17<br>*p* < .001|−1.18<br>[−1.78, −0.58]
+row: Dwell (s)|25/25|*U* = 124.0<br>*p* < .001|−1.33<br>[−1.94, −0.72]
+row: NSD (%)|23/25|*U* = 68.0<br>*p* < .001|−1.82<br>[−2.50, −1.15]
+row: Doomscrolling<br>scale|25/25|*U* = 105.0<br>*p* < .001|−1.50<br>[−2.13, −0.87]
 :::
 
 In the intervention group, mean Doomscrolling Scale scores fell from 15.24 to 13.96 and mean NSD from 41.54% to 37.36%, whereas the control group stayed at 15.36 and moved from 40.86% to 41.06%. Supplementary comparisons agreed: sessions per day (*U* = 153.5, *p* = .002, *d* = −0.82) and DSI (*U* = 81.0, *p* < .001, *d* = −1.84; intervention mean 60.81 to 56.27, control 60.15 to 60.30). Within the intervention group, all four primary outcomes decreased from Week 1 to Week 2 (all *p* < .001, *d*_z from −0.88 to −1.28).
@@ -148,15 +148,15 @@ Both SMEs met the 4.00 target on the six-area rubric. The software engineering e
 
 :::table
 span: single
-caption: User evaluation results against favorable thresholds (all targets met).
-widths: 1900|1200|800|900
+caption: User evaluation against favorable thresholds (all targets met).
+widths: 2100|1200|700|800
 header: Construct|Mean (SD)|α|Target
-row: Functional Suitability|3.93 (0.50)|0.852|≥ 3.50
-row: Performance Efficiency|4.09 (0.55)|0.859|≥ 3.50
+row: Functional suitability|3.93 (0.50)|0.852|≥ 3.50
+row: Performance efficiency|4.09 (0.55)|0.859|≥ 3.50
 row: Reliability|4.05 (0.50)|0.717|≥ 3.50
-row: SUS Usability|80.95 (14.83)|0.957|≥ 70
-row: TAM Perceived Usefulness|4.12 (0.40)|0.750|≥ 3.50
-row: TAM Perceived Ease of Use|4.09 (0.53)|0.855|≥ 3.50
+row: SUS|80.95 (14.83)|0.957|≥ 70
+row: Usefulness (TAM)|4.12 (0.40)|0.750|≥ 3.50
+row: Ease of use (TAM)|4.09 (0.53)|0.855|≥ 3.50
 :::
 
 # DISCUSSION
@@ -179,7 +179,7 @@ The sample is small (50), male-dominant (78%), recruited by convenience, and obs
 
 # CONCLUSION AND FUTURE WORK
 
-A privacy-preserving, on-device Android system combining accessibility-based monitoring, a Filipino/Taglish-aware VADER pipeline, a Moondream 0.5B fallback, and fuzzy inference was feasible in a two-week pilot with 50 adults. It logged 10,134 sessions with 87.0% sentiment-reliable coverage, showed favorable short-term differences in the intervention group on all four primary outcomes, converged with self-reported doomscrolling at baseline (ρ = 0.76), and met every user and expert acceptability target. These findings are pilot evidence for a non-clinical self-monitoring tool, not proof of long-term efficacy or diagnostic validity.
+A privacy-preserving, on-device Android system combining accessibility-based monitoring, a Filipino/Taglish-aware VADER pipeline, a Moondream 0.5B fallback, and fuzzy inference was feasible in a two-week pilot with 50 adults. It logged 10,134 sessions with 87.0% sentiment-reliable coverage, showed favorable short-term differences in the intervention group on all four primary outcomes, and converged with self-reported doomscrolling at baseline (ρ = 0.76; session duration alone, ρ = 0.92). It also met every user and expert acceptability target. These findings are pilot evidence for a non-clinical self-monitoring tool, not proof of long-term efficacy or diagnostic validity.
 
 Future work should run larger, longer, multi-site randomized trials to separate prompt effects from novelty and monitoring awareness; widen the Filipino/Taglish lexicon with multi-rater review; evaluate parallel text-and-visual scoring for sarcasm and cross-modal mismatches; calibrate membership boundaries with sensitivity analysis and labeled data; and add user controls such as snooze, quiet hours, clearer onboarding, and plainer score explanations.
 

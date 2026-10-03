@@ -537,6 +537,7 @@ def build(template, out_path, paper_md, bib_path, figure_png):
             for tc in tcs:
                 tr.remove(tc)
             for wd, txt in zip(widths, cells):
+                txt = txt.replace("<br>", "\n")
                 tc = copy.deepcopy(tc0)
                 tc.find(q("tcPr")).find(q("tcW")).set(q("w"), str(wd))
                 p = tc.find(q("p"))
@@ -548,6 +549,9 @@ def build(template, out_path, paper_md, bib_path, figure_png):
                 tr.append(tc)
             return tr
 
+        tblW = tbl.find(q("tblPr")).find(q("tblW"))
+        tblW.set(q("w"), str(sum(widths)))
+        tblW.set(q("type"), "dxa")
         tbl.append(mk_row(hdr_proto, header, True))
         for row in props["rows"]:
             tbl.append(mk_row(row_proto, row, False))
@@ -653,6 +657,9 @@ def build(template, out_path, paper_md, bib_path, figure_png):
     last_h2_after_h1 = False
     n_items = len(items)
     refs_pending = False
+    # A full-width figure should close its page. The next paragraph starts
+    # on a new page so body text does not continue underneath the figure.
+    break_before_next = False
 
     def next_kind(i):
         return items[i + 1][0] if i + 1 < n_items else "end"
@@ -665,14 +672,25 @@ def build(template, out_path, paper_md, bib_path, figure_png):
             if val in UNNUM:
                 np_ = el("numPr", children=[el("ilvl", {"val": "0"}), el("numId", {"val": "0"})])
                 add_ppr_child(p, np_)
+            if break_before_next:
+                add_ppr_child(p, el("pageBreakBefore"))
+                break_before_next = False
             new.append(p)
             if val == "REFERENCES":
                 refs_pending = True
         elif kind == "h2":
             idx = P_H2_FIRST if pk == "h1" else P_H2
-            new.append(proto.para(idx, [run(val)]))
+            p = proto.para(idx, [run(val)])
+            if break_before_next:
+                add_ppr_child(p, el("pageBreakBefore"))
+                break_before_next = False
+            new.append(p)
         elif kind == "h3":
-            new.append(proto.para(P_H3, [run(val)]))
+            p = proto.para(P_H3, [run(val)])
+            if break_before_next:
+                add_ppr_child(p, el("pageBreakBefore"))
+                break_before_next = False
+            new.append(p)
         elif kind == "p":
             first_after_heading = pk in ("h1", "h2", "h3")
             after_eq = pk == "eqs"
@@ -688,6 +706,9 @@ def build(template, out_path, paper_md, bib_path, figure_png):
                 p = proto.para(P_BODY, inline_runs(sub_cites(val)), first_line=fl if fl is not None else 360, after=af if af is not None else 0)
                 if fl is None:
                     pass
+            if break_before_next:
+                add_ppr_child(p, el("pageBreakBefore"))
+                break_before_next = False
             new.append(p)
         elif kind == "eqs":
             new.append(eq_table(val, xslt))
@@ -700,6 +721,7 @@ def build(template, out_path, paper_md, bib_path, figure_png):
             cap = caption("Figure", val["caption"])
             add_ppr_child(cap, one_col())
             new.append(cap)
+            break_before_next = True
         elif kind == "table":
             cap = caption("Table", val["caption"])
             if val["span"] == "full":
