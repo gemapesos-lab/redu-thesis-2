@@ -2,14 +2,16 @@ package edu.feutech.redu.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FileUpload
-import androidx.compose.material.icons.outlined.History
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Tune
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,10 +20,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import edu.feutech.redu.R
 import edu.feutech.redu.ReduApp
 import edu.feutech.redu.capture.ReduAccessibilityService
 import edu.feutech.redu.data.AppSettingsEntity
@@ -31,6 +33,7 @@ import edu.feutech.redu.data.ReduDatabase
 import edu.feutech.redu.data.StudyGroup
 import edu.feutech.redu.export.CsvExporter
 import edu.feutech.redu.risk.RiskPersonalization
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
@@ -41,7 +44,6 @@ fun ReduAppScreen(
     onOpenAccessibilitySettings: () -> Unit,
     context: Context,
 ) {
-    val scope = rememberCoroutineScope()
     var accessibilityEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled()) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         accessibilityEnabled = isAccessibilityServiceEnabled()
@@ -58,11 +60,65 @@ fun ReduAppScreen(
     }
     val appData by appDataFlow.collectAsState(initial = AppDataUiState.Loading)
     val ready = appData as? AppDataUiState.Ready
-    if (ready == null) {
-        ReduLoadingScreen()
-        return
+    val splashStartedAt = remember { SystemClock.uptimeMillis() }
+    var splashGone by rememberSaveable { mutableStateOf(false) }
+    var splashDismiss by remember { mutableStateOf(false) }
+    val reducedMotion = remember(context) {
+        Settings.Global.getFloat(
+            context.contentResolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE,
+            1f,
+        ) == 0f
     }
+    LaunchedEffect(ready != null, splashGone) {
+        if (splashGone || ready == null) return@LaunchedEffect
+        delay(
+            splashHoldMillis(
+                elapsedMillis = SystemClock.uptimeMillis() - splashStartedAt,
+                reducedMotion = reducedMotion,
+            ),
+        )
+        splashDismiss = true
+    }
+    Box(Modifier.fillMaxSize()) {
+        if (ready != null) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .then(if (!splashGone) Modifier.clearAndSetSemantics {} else Modifier),
+            ) {
+                ReduAppBody(
+                    ready = ready,
+                    database = database,
+                    isAccessibilityServiceEnabled = isAccessibilityServiceEnabled,
+                    onOpenAccessibilitySettings = onOpenAccessibilitySettings,
+                    context = context,
+                    accessibilityEnabled = accessibilityEnabled,
+                    onAccessibilityEnabledChange = { accessibilityEnabled = it },
+                )
+            }
+        }
+        if (!splashGone) {
+            ReduSplashScreen(
+                dismiss = splashDismiss && ready != null,
+                reducedMotion = reducedMotion,
+                onDismissed = { splashGone = true },
+            )
+        }
+    }
+}
 
+@Composable
+private fun ReduAppBody(
+    ready: AppDataUiState.Ready,
+    database: ReduDatabase,
+    isAccessibilityServiceEnabled: () -> Boolean,
+    onOpenAccessibilitySettings: () -> Unit,
+    context: Context,
+    accessibilityEnabled: Boolean,
+    onAccessibilityEnabledChange: (Boolean) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
     val settings = ready.settings
     val sessions = ready.sessions
     val personalizationRows = ready.personalizationRows
@@ -165,7 +221,7 @@ fun ReduAppScreen(
                     updatedAtMillis = System.currentTimeMillis(),
                 ),
             )
-            accessibilityEnabled = isAccessibilityServiceEnabled()
+            onAccessibilityEnabledChange(isAccessibilityServiceEnabled())
         }
     }
 
@@ -180,11 +236,14 @@ fun ReduAppScreen(
         )
     }
 
+    val homeField = destination == ReduDestination.DASHBOARD
     AdaptiveNavigationScaffold(
         primaryDestinations = primaryDestinations(),
         selectedDestination = destination,
         showNavigation = showMainShell && destination.primary,
         onDestinationSelected = ::selectPrimary,
+        containerColor = if (homeField) HomeField else MaterialTheme.colorScheme.background,
+        topScrim = !homeField,
     ) { padding ->
         when (destination) {
             ReduDestination.DASHBOARD -> DashboardScreen(
@@ -366,14 +425,14 @@ fun ReduAppScreen(
 
 internal enum class ReduDestination(
     val label: String,
-    val icon: ImageVector,
+    @DrawableRes val icon: Int,
     val primary: Boolean,
 ) {
-    DASHBOARD("Today", Icons.Outlined.Home, true),
-    HISTORY("History", Icons.Outlined.History, true),
-    SETTINGS("Settings", Icons.Outlined.Settings, true),
-    SETUP("Setup", Icons.Outlined.Tune, false),
-    EXPORT("Export", Icons.Outlined.FileUpload, false),
+    DASHBOARD("Home", R.drawable.ic_nav_today, true),
+    HISTORY("History", R.drawable.ic_nav_history, true),
+    SETTINGS("Settings", R.drawable.ic_nav_settings, true),
+    SETUP("Setup", R.drawable.ic_nav_settings, false),
+    EXPORT("Export", R.drawable.ic_upload, false),
 }
 
 internal fun primaryDestinations(): List<ReduDestination> = listOf(

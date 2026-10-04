@@ -3,11 +3,13 @@
 package edu.feutech.redu.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -42,15 +44,15 @@ val ManropeFontFamily = FontFamily(
 )
 
 private val ReduDarkColorScheme = darkColorScheme(
-    primary = ReduPalette.SeaGlass,
-    onPrimary = ReduPalette.OnSeaGlass,
-    primaryContainer = ReduPalette.SeaGlassContainer,
-    onPrimaryContainer = ReduPalette.OnSeaGlassContainer,
-    inversePrimary = Color(0xFF286B5B),
-    secondary = ReduPalette.SeaGlass,
-    onSecondary = ReduPalette.OnSeaGlass,
-    secondaryContainer = ReduPalette.SeaGlassContainer,
-    onSecondaryContainer = ReduPalette.OnSeaGlassContainer,
+    primary = ReduPalette.Action,
+    onPrimary = ReduPalette.OnAction,
+    primaryContainer = ReduPalette.ActionContainer,
+    onPrimaryContainer = ReduPalette.OnActionContainer,
+    inversePrimary = Color(0xFFBDBDBD),
+    secondary = ReduPalette.Figure,
+    onSecondary = ReduPalette.FigureInk,
+    secondaryContainer = ReduPalette.Figure.copy(alpha = 0.16f),
+    onSecondaryContainer = ReduPalette.Figure,
     tertiary = ReduPalette.Warning,
     onTertiary = ReduPalette.OnWarning,
     tertiaryContainer = ReduPalette.WarningContainer,
@@ -61,7 +63,7 @@ private val ReduDarkColorScheme = darkColorScheme(
     onSurface = ReduPalette.TextPrimary,
     surfaceVariant = ReduPalette.SurfaceHigh,
     onSurfaceVariant = ReduPalette.TextSecondary,
-    surfaceTint = ReduPalette.SeaGlass,
+    surfaceTint = Color.Transparent,
     inverseSurface = ReduPalette.TextPrimary,
     inverseOnSurface = ReduPalette.Background,
     error = ReduPalette.Error,
@@ -152,15 +154,32 @@ private val ReduTypography = Typography(
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
     ),
+    labelSmall = TextStyle(
+        fontFamily = ManropeFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.sp,
+    ),
 )
 
 private val ReduShapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(6.dp),
-    medium = RoundedCornerShape(8.dp),
-    large = RoundedCornerShape(8.dp),
-    extraLarge = RoundedCornerShape(8.dp),
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(20.dp),
+    large = RoundedCornerShape(24.dp),
+    extraLarge = RoundedCornerShape(28.dp),
 )
+
+internal val ReduPill = RoundedCornerShape(percent = 50)
+
+/** Lucide icons beside text, inside buttons, and in banners. */
+internal val ReduInlineIconSize = 20.dp
+
+/** Lucide icons in the navigation pill. The artwork is the same 24px stroke. */
+internal val ReduNavIconSize = 24.dp
+
+internal val ReduButtonMinHeight = 52.dp
 
 @Composable
 fun ReduTheme(content: @Composable () -> Unit) {
@@ -168,6 +187,7 @@ fun ReduTheme(content: @Composable () -> Unit) {
         colorScheme = ReduDarkColorScheme,
         typography = ReduTypography,
         shapes = ReduShapes,
-        content = content,
-    )
+    ) {
+        CompositionLocalProvider(LocalRippleConfiguration provides null, content = content)
+    }
 }

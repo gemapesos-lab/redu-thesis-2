@@ -8,10 +8,12 @@ import edu.feutech.redu.data.SentimentReliability
 import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.StudyGroup
 import edu.feutech.redu.export.CsvExporter
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAdjusters
 
 enum class PlatformFilter {
     ALL,
@@ -64,7 +66,6 @@ internal enum class SetupStep {
 internal data class ActivityPatternPresentation(
     val label: String,
     val rangeLabel: String,
-    val explanation: String,
     val tone: StatusTone,
 )
 
@@ -82,11 +83,17 @@ internal data class DailyActivityPoint(
     val sessionCount: Int,
 )
 
+internal const val ACTIVITY_HEATMAP_WEEKS = 12
+
+private const val HEAT_LEVEL_15_MIN_MILLIS = 15L * 60L * 1_000L
+private const val HEAT_LEVEL_45_MIN_MILLIS = 45L * 60L * 1_000L
+private const val HEAT_LEVEL_90_MIN_MILLIS = 90L * 60L * 1_000L
+
 internal data class DashboardUiState(
     val date: LocalDate,
     val setupComplete: Boolean,
     val summary: DashboardSummary,
-    val weeklyActivity: List<DailyActivityPoint>,
+    val dailyActivity: List<DailyActivityPoint>,
     val totalSessionCount: Int,
     val reliableSessionCount: Int,
 )
@@ -131,8 +138,7 @@ internal fun dashboardUiState(
         date = date,
         setupComplete = setupComplete,
         summary = dashboardSummary(sessions, nowMillis, zoneId),
-        weeklyActivity = (6L downTo 0L).map { daysAgo ->
-            val pointDate = date.minusDays(daysAgo)
+        dailyActivity = activityDates(date).map { pointDate ->
             val daySessions = sessionsByDate[pointDate].orEmpty()
             DailyActivityPoint(
                 date = pointDate,
@@ -147,6 +153,25 @@ internal fun dashboardUiState(
     )
 }
 
+internal fun activityDates(
+    end: LocalDate,
+    weeks: Int = ACTIVITY_HEATMAP_WEEKS,
+): List<LocalDate> {
+    val start = end.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        .minusWeeks((weeks - 1).toLong())
+    return generateSequence(start) { it.plusDays(1) }
+        .takeWhile { !it.isAfter(end) }
+        .toList()
+}
+
+internal fun activityHeatLevel(activeMillis: Long): Int = when {
+    activeMillis <= 0L -> 0
+    activeMillis < HEAT_LEVEL_15_MIN_MILLIS -> 1
+    activeMillis < HEAT_LEVEL_45_MIN_MILLIS -> 2
+    activeMillis < HEAT_LEVEL_90_MIN_MILLIS -> 3
+    else -> 4
+}
+
 internal fun statusToneFor(riskLevel: RiskLevel): StatusTone =
     when (riskLevel) {
         RiskLevel.SAFE -> StatusTone.NORMAL
@@ -159,19 +184,16 @@ internal fun activityPatternFor(riskLevel: RiskLevel): ActivityPatternPresentati
         RiskLevel.SAFE -> ActivityPatternPresentation(
             label = "Low",
             rangeLabel = "0-33",
-            explanation = "The session stayed in REDU's lower activity-pattern range.",
             tone = StatusTone.NORMAL,
         )
         RiskLevel.WARNING -> ActivityPatternPresentation(
             label = "Elevated",
             rangeLabel = "34-66",
-            explanation = "One or more session signals moved above the lower range.",
             tone = StatusTone.ELEVATED,
         )
         RiskLevel.CRITICAL -> ActivityPatternPresentation(
             label = "High",
             rangeLabel = "67-100",
-            explanation = "Multiple session signals reached REDU's highest range.",
             tone = StatusTone.EXTENDED,
         )
     }

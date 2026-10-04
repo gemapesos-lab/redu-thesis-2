@@ -3,17 +3,27 @@ package edu.feutech.redu.ui.theme
 import androidx.compose.ui.graphics.Color
 
 object ReduPalette {
-    val Background = Color(0xFF0B0E0D)
-    val SurfaceLowest = Color(0xFF0E1210)
-    val SurfaceLow = Color(0xFF101412)
-    val Surface = Color(0xFF121715)
-    val SurfaceHigh = Color(0xFF1A211E)
-    val SurfaceHighest = Color(0xFF222B27)
+    val Background = Color(0xFF0E0C0B)
+    val SurfaceLowest = Color(0xFF141210)
+    val SurfaceLow = Color(0xFF1C1916)
+    val Surface = Color(0xFF24201C)
+    val SurfaceHigh = Color(0xFF2C2824)
+    val SurfaceHighest = Color(0xFF36312C)
 
-    val SeaGlass = Color(0xFF76CDB8)
-    val OnSeaGlass = Color(0xFF08231C)
-    val SeaGlassContainer = Color(0xFF143B32)
-    val OnSeaGlassContainer = Color(0xFFB5EBDC)
+    // Center of the home-card sky, between kHorizon #6483C6 and kZenith #6180C3.
+    val Action = Color(0xFF6382C5)
+    val OnAction = Color(0xFF0E1624)
+    val ActionContainer = Color(0x336382C5)
+    val OnActionContainer = Color(0xFFF4EDE4)
+
+    val Persimmon = Action
+
+    val Sage = Color(0xFF8FB59A)
+    val SageContainer = Color(0xFF1E3328)
+    val OnSageContainer = Color(0xFFD5EDE0)
+
+    val Figure = Color(0xFFF4EDE4)
+    val FigureInk = Color(0xFF2A2420)
 
     val Warning = Color(0xFFE3B76F)
     val OnWarning = Color(0xFF2B1D05)
@@ -25,10 +35,10 @@ object ReduPalette {
     val HighContainer = Color(0xFF42211E)
     val OnHighContainer = Color(0xFFFFDAD5)
 
-    val TextPrimary = Color(0xFFEEF3F0)
-    val TextSecondary = Color(0xFFA7B2AC)
-    val Outline = Color(0xFF68766F)
-    val OutlineVariant = Color(0xFF34423C)
+    val TextPrimary = Color(0xFFFFFFFF)
+    val TextSecondary = Color(0xFFC4B5A8)
+    val Outline = Color(0xFF8A7E74)
+    val OutlineVariant = Color(0xFF3A342F)
 
     val Error = High
     val ErrorContainer = HighContainer
@@ -37,9 +47,9 @@ object ReduPalette {
 }
 
 object ReduStatusPalette {
-    val Normal = ReduPalette.SeaGlass
-    val NormalContainer = ReduPalette.SeaGlassContainer
-    val OnNormalContainer = ReduPalette.OnSeaGlassContainer
+    val Normal = ReduPalette.Sage
+    val NormalContainer = ReduPalette.SageContainer
+    val OnNormalContainer = ReduPalette.OnSageContainer
 
     val Elevated = ReduPalette.Warning
     val ElevatedContainer = ReduPalette.WarningContainer
