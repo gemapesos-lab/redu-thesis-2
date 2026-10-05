@@ -2,6 +2,7 @@ package edu.feutech.redu.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -192,10 +193,9 @@ internal fun SettingsScreen(
                     subtitle = settings?.studyCode?.takeIf { it != "UNSET" }?.let { "Participant $it" } ?: "Participant code not set",
                     onClick = { studyDetailsExpanded = !studyDetailsExpanded },
                     trailing = {
-                        Icon(
-                            painterResource(if (studyDetailsExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down),
+                        ReduExpandIcon(
+                            expanded = studyDetailsExpanded,
                             contentDescription = if (studyDetailsExpanded) "Hide study details" else "Show study details",
-                            modifier = Modifier.size(ReduInlineIconSize),
                         )
                     },
                 )
@@ -217,7 +217,7 @@ internal fun SettingsScreen(
                                     style = MaterialTheme.typography.titleMedium,
                                 )
                             }
-                            IconButton(onClick = { editCodeDialogOpen = true }, modifier = Modifier.size(48.dp)) {
+                            ReduIconButton(onClick = { editCodeDialogOpen = true }, modifier = Modifier.size(48.dp)) {
                                 Icon(painterResource(R.drawable.ic_edit), contentDescription = "Edit participant code")
                             }
                         }
@@ -329,10 +329,9 @@ internal fun SettingsScreen(
                     subtitle = "Study-data reset and developer tools",
                     onClick = { advancedExpanded = !advancedExpanded },
                     trailing = {
-                        Icon(
-                            painterResource(if (advancedExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down),
+                        ReduExpandIcon(
+                            expanded = advancedExpanded,
                             contentDescription = if (advancedExpanded) "Hide advanced controls" else "Show advanced controls",
-                            modifier = Modifier.size(ReduInlineIconSize),
                         )
                     },
                 )
@@ -452,10 +451,15 @@ private fun StudyDateField(
     onValueChange: (LocalDate?) -> Unit,
 ) {
     var dialogOpen by rememberSaveable { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
     Button(
         onClick = { dialogOpen = true },
-        modifier = Modifier.fillMaxWidth().heightIn(min = ReduButtonMinHeight),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = ReduButtonMinHeight)
+            .reduPressScale(interactionSource),
         shape = ReduPill,
+        interactionSource = interactionSource,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
@@ -484,6 +488,7 @@ private fun StudyDateField(
         val pickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
         DatePickerDialog(
             onDismissRequest = { dialogOpen = false },
+            shape = MaterialTheme.shapes.extraLarge,
             confirmButton = {
                 ReduTextButton(
                     text = "Choose",

@@ -28,28 +28,26 @@ import edu.feutech.redu.ui.theme.ReduTheme
 
 private const val ReducedMotionSplashMillis = 400L
 
+/** Covers the first blink (~1.9s) without holding the full glance. */
+internal const val SplashBeatMillis = 2_000L
+
 /**
- * How long the splash should keep the glance on screen.
- * A zero [elapsedMillis] waits one full cycle. Once a cycle has finished, the
- * next boundary is immediate so a slow start does not add another loop.
+ * How long the splash should stay up once content is ready.
+ * A fresh launch waits for [SplashBeatMillis]. If loading already ran past that,
+ * leave immediately.
  */
 internal fun splashHoldMillis(
     elapsedMillis: Long,
     reducedMotion: Boolean,
-    cycleMillis: Long = BlobatarGlanceCycleMillis,
 ): Long {
     val elapsed = elapsedMillis.coerceAtLeast(0L)
-    if (reducedMotion) return (ReducedMotionSplashMillis - elapsed).coerceAtLeast(0L)
-    val cycle = cycleMillis.coerceAtLeast(1L)
-    if (elapsed == 0L) return cycle
-    val intoCycle = elapsed % cycle
-    return if (intoCycle == 0L) 0L else cycle - intoCycle
+    val minimum = if (reducedMotion) ReducedMotionSplashMillis else SplashBeatMillis
+    return (minimum - elapsed).coerceAtLeast(0L)
 }
 
 /**
- * Launch screen for the idle mascot. The glance is the motion with a complete
- * path: the eyes travel through every look and return, and the blink lands
- * inside that same cycle. Sleepy stays on empty states.
+ * Launch screen for the idle mascot. It stays up through the first blink,
+ * then fades into the app. Sleepy stays on empty states.
  */
 @Composable
 internal fun ReduSplashScreen(

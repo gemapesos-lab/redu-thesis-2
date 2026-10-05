@@ -77,6 +77,8 @@ private var activePlayback by mutableStateOf<HalftonePlayback?>(null)
  *
  * The last bitmap is kept so leaving Home and coming back does not flash the
  * flat floor. That floor is only the first frame, and the gap before GL is ready.
+ * The shader clock is kept with that bitmap. A new visit would otherwise start
+ * at zero and snap the ribbon away from the pose still on screen.
  */
 @Composable
 internal fun HomeHalftoneBackdrop(modifier: Modifier = Modifier) {
@@ -172,8 +174,8 @@ internal fun HomeFrostedSection(
                     .homeFrost(
                         playback = playback,
                         placement = placement,
-                        veil = solid.copy(alpha = 0.58f),
-                        scrim = Color.White.copy(alpha = 0.08f),
+                        veil = solid.copy(alpha = 0.46f),
+                        scrim = Color.White.copy(alpha = 0.06f),
                         fallback = solid,
                     ),
             )
@@ -253,6 +255,10 @@ private class HalftoneNode(
 
 private var retainedHalftone: Bitmap? = null
 private var retainedBlur: Bitmap? = null
+
+/** Shader seconds of [retainedHalftone]. Survives leaving the Home tab. */
+@Volatile
+private var retainedHalftoneTime = 0f
 
 private class FrostPlacement {
     var x: Float = 0f
@@ -590,6 +596,7 @@ private class HalftoneRenderer(
     private var transport = FrameTransport.Unset
     private var pending = false
     private var pendingAt = 0L
+    private var pendingTime = 0f
     private var readWidth = 0
     private var readHeight = 0
 
@@ -631,7 +638,7 @@ private class HalftoneRenderer(
                     continue
                 }
                 var lastNanos = 0L
-                var time = 0f
+                var time = retainedHalftoneTime
                 while (gate.running) {
                     val drawable = gate.awaitDrawableSize(hasFrame, stillKey) ?: break
                     if (drawable.resumedFromHold) lastNanos = 0L
@@ -747,6 +754,7 @@ private class HalftoneRenderer(
                         readHeight = bufferHeight
                     }
                     pending = true
+                    pendingTime = drawTime
                     pendingAt = System.nanoTime()
                     gate.pace(frameStart)
                 }
@@ -855,9 +863,11 @@ private class HalftoneRenderer(
         val blurBitmap = blurSlot.obtain(width, height)
         sharpBitmap.setPixels(dots, 0, width, 0, 0, width, height)
         blurBitmap.setPixels(frost, 0, width, 0, 0, width, height)
+        val frameTime = pendingTime
         val delivered = publish.publish({ gate.running }) {
             retainedHalftone = sharpBitmap
             retainedBlur = blurBitmap
+            retainedHalftoneTime = frameTime
             gate.refreshFrames()
         }
         if (!delivered) {
@@ -880,9 +890,11 @@ private class HalftoneRenderer(
         if (stagedBlur == null) stagedBlur = blurStream?.acquireCompleted()
         val dots = stagedSharp ?: return FrameDrain.NotReady
         val frost = stagedBlur ?: return FrameDrain.NotReady
+        val frameTime = pendingTime
         val delivered = publish.publish({ gate.running }) {
             retainedHalftone = dots
             retainedBlur = frost
+            retainedHalftoneTime = frameTime
             gate.refreshFrames()
         }
         stagedSharp = null

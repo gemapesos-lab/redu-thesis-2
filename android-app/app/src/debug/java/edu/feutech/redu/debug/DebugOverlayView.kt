@@ -13,6 +13,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import edu.feutech.redu.R
+import edu.feutech.redu.ui.theme.ReduViewPageRadiusDp
+import edu.feutech.redu.ui.theme.ReduViewPillRadiusDp
 import edu.feutech.redu.ui.theme.applyReduTextStyle
 import edu.feutech.redu.ui.theme.reduDp
 import edu.feutech.redu.ui.theme.reduRippleBackground
@@ -28,7 +30,7 @@ class DebugOverlayView(
     private val surfaceHigh = context.getColor(R.color.redu_surface_high)
     private val textPrimary = context.getColor(R.color.redu_text_primary)
     private val outline = context.getColor(R.color.redu_outline_variant)
-    private val seaGlass = context.getColor(R.color.redu_sea_glass)
+    private val accent = context.getColor(R.color.redu_action)
     private val chipBackgrounds = mutableMapOf<RiskBand, GradientDrawable>()
     private var minimized = true
     private var lastState: DebugOverlayState? = null
@@ -56,13 +58,13 @@ class DebugOverlayView(
     private val positiveTextView = labelText()
     private val unscoredTextView = labelText()
     private val snippetTextView = labelText(color = textPrimary, maxLines = 2)
-    private val statusTextView = labelText(color = seaGlass, sizeSp = 10f, maxLines = 1)
+    private val statusTextView = labelText(color = accent, sizeSp = 10f, maxLines = 1)
     private val captureButton = smallButton("Capture", onCapture)
 
     private val panelView: LinearLayout = LinearLayout(context).apply {
         orientation = LinearLayout.VERTICAL
         setOnTouchListener(onTouch)
-        background = context.reduShape(surface, radiusDp = 8, strokeColor = outline)
+        background = context.reduShape(surface, radiusDp = ReduViewPageRadiusDp)
         setPadding(12.dp, 10.dp, 12.dp, 10.dp)
         addView(
             LinearLayout(context).apply {
@@ -195,12 +197,11 @@ class DebugOverlayView(
             minimumHeight = 30.dp
             minimumWidth = 52.dp
             setPadding(8.dp, 0, 8.dp, 0)
-            applyReduTextStyle(sizeSp = 10f, color = seaGlass, weight = 600)
+            applyReduTextStyle(sizeSp = 10f, color = accent, weight = 600)
             background = context.reduRippleBackground(
                 fillColor = surfaceHigh,
                 rippleColor = Color.argb(42, 118, 205, 184),
-                radiusDp = 6,
-                strokeColor = outline,
+                radiusDp = ReduViewPillRadiusDp,
             )
             stateListAnimator = null
             setOnClickListener { onClick() }
@@ -220,9 +221,8 @@ class DebugOverlayView(
         chipBackgrounds.getOrPut(riskBand) {
             GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
-                cornerRadius = 6.dp.toFloat()
+                cornerRadius = ReduViewPillRadiusDp.dp.toFloat()
                 setColor(riskBand.containerColor)
-                setStroke(1.dp, riskBand.color)
             }
         }
 
@@ -234,7 +234,7 @@ class DebugOverlayView(
         }
 
     private enum class RiskBand(val color: Int, val containerColor: Int) {
-        SAFE(0xFF76CDB8.toInt(), 0xFF143B32.toInt()),
+        SAFE(0xFF8FB59A.toInt(), 0xFF1E3328.toInt()),
         WARNING(0xFFE3B76F.toInt(), 0xFF3D2F17.toInt()),
         CRITICAL(0xFFE5968C.toInt(), 0xFF42211E.toInt()),
     }

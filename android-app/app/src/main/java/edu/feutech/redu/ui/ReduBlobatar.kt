@@ -28,14 +28,27 @@ package edu.feutech.redu.ui
 
 import android.provider.Settings
 import android.view.Choreographer
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.PathParser
@@ -54,6 +67,11 @@ import kotlin.math.sin
 internal enum class BlobatarExpression {
     Idle,
     Sleepy,
+    Happy,
+    Wink,
+    Smug,
+    Unsure,
+    Mad,
 }
 
 /**
@@ -61,12 +79,18 @@ internal enum class BlobatarExpression {
  * Breathe, bob, blink, and glance run together. [BlobatarExpression.Sleepy] is
  * blobatar's sleepy pose (lower lids, body sunk) under that same motion.
  * A zero system animator scale holds the rest pose.
+ *
+ * [reactToPress] lifts and scales while pressed. A tap walks the face from
+ * happy through a wink, smug, and unsure, and ends on mad. The mood cools one
+ * step at a time while the mascot is left alone, so a later tap continues
+ * where it left off. The mascot stays out of the semantics tree.
  */
 @Composable
 internal fun ReduBlobatar(
     expression: BlobatarExpression,
     modifier: Modifier = Modifier,
     animate: Boolean = true,
+    reactToPress: Boolean = false,
 ) {
     val context = LocalContext.current
     val reducedMotion = remember {
@@ -78,17 +102,122 @@ internal fun ReduBlobatar(
     }
     val scrolling = LocalReduListMotion.current.scrolling
     val motion = animate && !reducedMotion
+    val interactionSource = remember { MutableInteractionSource() }
+    var mood by remember { mutableIntStateOf(0) }
+    var pokeSerial by remember { mutableIntStateOf(0) }
+    var reaction by remember { mutableStateOf<BlobatarExpression?>(null) }
+    LaunchedEffect(pokeSerial) {
+        if (pokeSerial == 0) return@LaunchedEffect
+        delay(reactionHoldMillis(reaction))
+        reaction = null
+        if (!reducedMotion) delay(MorphOutMillis)
+        while (mood > 0) {
+            delay(ReactionMemoryMillis)
+            mood -= 1
+        }
+    }
+    val shown = reaction ?: expression
     Spacer(
         modifier
+            .then(
+                if (reactToPress) {
+                    Modifier.clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = {
+                            reaction = ReactionLadder[mood]
+                            mood = (mood + 1).coerceAtMost(ReactionLadder.lastIndex)
+                            pokeSerial += 1
+                        },
+                    )
+                } else {
+                    Modifier
+                },
+            )
             .clearAndSetSemantics {}
             .then(
+                if (reactToPress) {
+                    Modifier.blobatarPressReaction(interactionSource, reducedMotion)
+                } else {
+                    Modifier
+                },
+            )
+            .then(
                 BlobatarElement(
-                    expression = expression,
+                    expression = shown,
                     running = motion && !scrolling,
                     restPose = !motion,
                 ),
             ),
     )
+}
+
+/** blobatar hover reaction, driven by press. Enter 220ms, exit 160ms. */
+private const val BlobatarPressInMillis = 220
+private const val BlobatarPressOutMillis = 160
+
+/** How long a friendly face stays before morphing back to the resting expression. */
+private const val ReactionHoldMillis = 800L
+
+/** Smug and unsure linger a little longer than the friendly faces. */
+private const val ReactionWaryHoldMillis = 1_200L
+
+/** Mad stays up long enough to read as annoyed, not as a flash. */
+private const val ReactionMadHoldMillis = 1_800L
+
+/**
+ * Quiet time, after the face is resting, before the mood cools by one step.
+ * Mad takes four of these to be willing to smile again.
+ */
+private const val ReactionMemoryMillis = 12_000L
+
+private val ReactionLadder = listOf(
+    BlobatarExpression.Happy,
+    BlobatarExpression.Wink,
+    BlobatarExpression.Smug,
+    BlobatarExpression.Unsure,
+    BlobatarExpression.Mad,
+)
+
+private fun reactionHoldMillis(expression: BlobatarExpression?): Long = when (expression) {
+    BlobatarExpression.Mad -> ReactionMadHoldMillis
+    BlobatarExpression.Smug, BlobatarExpression.Unsure -> ReactionWaryHoldMillis
+    else -> ReactionHoldMillis
+}
+
+/** blobatar expression morph: 300ms into a pose, 400ms back to idle or sleepy. */
+private const val MorphInMillis = 300L
+private const val MorphOutMillis = 400L
+private val BlobatarPressEasing = CubicBezierEasing(0.23f, 1f, 0.32f, 1f)
+
+@Composable
+private fun Modifier.blobatarPressReaction(
+    interactionSource: MutableInteractionSource,
+    reducedMotion: Boolean,
+): Modifier {
+    val pressed by interactionSource.collectIsPressedAsState()
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(pressed, reducedMotion) {
+        val target = if (pressed) 1f else 0f
+        if (reducedMotion) {
+            progress.snapTo(target)
+        } else {
+            progress.animateTo(
+                targetValue = target,
+                animationSpec = tween(
+                    durationMillis = if (pressed) BlobatarPressInMillis else BlobatarPressOutMillis,
+                    easing = BlobatarPressEasing,
+                ),
+            )
+        }
+    }
+    val reaction = progress.value
+    return graphicsLayer {
+        val scale = 1f + 0.04f * reaction
+        scaleX = scale
+        scaleY = scale
+        translationY = -1.5f / 100f * min(size.width, size.height) * reaction
+    }
 }
 
 private class BlobatarElement(
@@ -99,8 +228,8 @@ private class BlobatarElement(
     override fun create(): BlobatarNode = BlobatarNode(expression, running, restPose)
 
     override fun update(node: BlobatarNode) {
-        node.expression = expression
         node.setPlayback(running, restPose)
+        node.setExpression(expression)
     }
 
     override fun equals(other: Any?): Boolean =
@@ -113,24 +242,52 @@ private class BlobatarElement(
 }
 
 private class BlobatarNode(
-    var expression: BlobatarExpression,
+    expression: BlobatarExpression,
     private var running: Boolean,
     private var restPose: Boolean,
 ) : Modifier.Node(), DrawModifierNode {
+    private var target = expression
+    private var morphFrom = poseOf(expression)
+    private var morphTo = morphFrom
+    private var morphStartNanos = 0L
+    private var morphDurationNanos = 0L
+    private var morphing = false
     private var elapsedNanos = 0L
     private var originNanos = 0L
     private var posted = false
     private val scratch = DrawScratch()
     private val callback = Choreographer.FrameCallback { now ->
         posted = false
-        if (!isAttached || !running) return@FrameCallback
-        if (originNanos == 0L) originNanos = now - elapsedNanos
-        elapsedNanos = now - originNanos
+        if (!isAttached) return@FrameCallback
+        if (running) {
+            if (originNanos == 0L) originNanos = now - elapsedNanos
+            elapsedNanos = now - originNanos
+        }
+        if (morphing && now - morphStartNanos >= morphDurationNanos) {
+            morphing = false
+            morphFrom = morphTo
+        }
         invalidateDraw()
-        schedule()
+        if (running || morphing) schedule()
+    }
+
+    fun setExpression(next: BlobatarExpression) {
+        if (next == target) return
+        val now = frameNow()
+        morphFrom = displayedPose(now)
+        target = next
+        morphTo = poseOf(next)
+        morphStartNanos = now
+        morphDurationNanos = if (restPose) 0L else morphMillis(next) * 1_000_000L
+        morphing = morphDurationNanos > 0L
+        if (!morphing) morphFrom = morphTo
+        if (!isAttached) return
+        invalidateDraw()
+        if (running || morphing) schedule()
     }
 
     fun setPlayback(running: Boolean, restPose: Boolean) {
+        if (restPose && !this.restPose) snapMorph()
         if (restPose && (elapsedNanos != 0L || originNanos != 0L)) {
             elapsedNanos = 0L
             originNanos = 0L
@@ -138,12 +295,15 @@ private class BlobatarNode(
         }
         this.restPose = restPose
         if (this.running == running) {
-            if (isAttached) invalidateDraw()
+            if (isAttached) {
+                invalidateDraw()
+                if (running || morphing) schedule()
+            }
             return
         }
         this.running = running
-        if (running) {
-            originNanos = 0L
+        if (running || morphing) {
+            if (running) originNanos = 0L
             if (isAttached) schedule()
         } else {
             unschedule()
@@ -151,7 +311,7 @@ private class BlobatarNode(
     }
 
     override fun onAttach() {
-        if (running) schedule()
+        if (running || morphing) schedule()
     }
 
     override fun onDetach() {
@@ -159,13 +319,35 @@ private class BlobatarNode(
     }
 
     override fun ContentDrawScope.draw() {
-        val pose = if (expression == BlobatarExpression.Sleepy) SLEEPY else IDLE
+        val pose = displayedPose(System.nanoTime())
         scratch.frame.fill(SEEDS, elapsedNanos / 1_000_000.0, if (restPose) 0.0 else 1.0, pose.shake)
         drawBlobatar(scratch, pose)
     }
 
+    private fun displayedPose(now: Long): Pose {
+        if (!morphing || morphDurationNanos <= 0L) return morphTo
+        val elapsed = (now - morphStartNanos).coerceAtLeast(0L)
+        if (elapsed >= morphDurationNanos) return morphTo
+        val t = elapsed.toDouble() / morphDurationNanos.toDouble()
+        val eased = if (target == BlobatarExpression.Idle || target == BlobatarExpression.Sleepy) {
+            easeInOut(t)
+        } else {
+            easeMorphIn(t)
+        }
+        return lerpPose(morphFrom, morphTo, eased)
+    }
+
+    private fun snapMorph() {
+        morphing = false
+        morphDurationNanos = 0L
+        morphFrom = poseOf(target)
+        morphTo = morphFrom
+    }
+
+    private fun frameNow(): Long = System.nanoTime()
+
     private fun schedule() {
-        if (posted || !isAttached || !running) return
+        if (posted || !isAttached || (!running && !morphing)) return
         posted = true
         Choreographer.getInstance().postFrameCallback(callback)
     }
@@ -323,6 +505,127 @@ private val SLEEPY = Pose(
     bdy = 1.2,
 )
 
+/** blobatar's `happy` pose. Wide squint, body lifted. Heat is unused. */
+private val HAPPY = Pose(
+    esx = 1.72,
+    esy = 0.3,
+    tilt = 8.0,
+    edy = -1.5,
+    edx = 1.5,
+    esx2 = 0.08,
+    esy2 = 0.05,
+    tilt2 = -16.0,
+    edy2 = 0.0,
+    lock = 1.0,
+    shake = 0.0,
+    rock = 0.0,
+    bdy = -2.2,
+)
+
+/** blobatar's `wink` pose. One eye flattened, the other open. */
+private val WINK = Pose(
+    esx = 1.32,
+    esy = 0.76,
+    tilt = 5.0,
+    edy = -0.6,
+    edx = 0.8,
+    esx2 = 0.26,
+    esy2 = -0.56,
+    tilt2 = -11.0,
+    edy2 = 0.0,
+    lock = 1.0,
+    shake = 0.0,
+    rock = 0.0,
+    bdy = -1.1,
+)
+
+/** blobatar's `smug` pose. Half-lidded eyes tilted together, like a cocked head. */
+private val SMUG = Pose(
+    esx = 1.3,
+    esy = 0.42,
+    tilt = 18.0,
+    edy = -0.5,
+    edx = 0.5,
+    esx2 = 0.06,
+    esy2 = -0.06,
+    tilt2 = -36.0,
+    edy2 = 0.0,
+    lock = 1.0,
+    shake = 0.0,
+    rock = 0.0,
+    bdy = -1.0,
+)
+
+/** blobatar's `unsure` pose. One eye narrowed, the other still open. */
+private val UNSURE = Pose(
+    esx = 0.95,
+    esy = 1.02,
+    tilt = 4.0,
+    edy = -0.2,
+    edx = 0.3,
+    esx2 = 0.24,
+    esy2 = -0.44,
+    tilt2 = -18.0,
+    edy2 = 0.0,
+    lock = 1.0,
+    shake = 0.0,
+    rock = 0.0,
+    bdy = 0.0,
+)
+
+/**
+ * blobatar's `mad` pose. Flat bars in a V, plus the shake channel.
+ * The red heat tint is left off so the body stays the pinned figure color.
+ */
+private val MAD = Pose(
+    esx = 1.85,
+    esy = 0.26,
+    tilt = -33.0,
+    edy = 0.4,
+    edx = 0.6,
+    esx2 = 0.0,
+    esy2 = -0.03,
+    tilt2 = 5.0,
+    edy2 = 0.0,
+    lock = 1.0,
+    shake = 0.55,
+    rock = 0.0,
+    bdy = 0.8,
+)
+
+private fun poseOf(expression: BlobatarExpression): Pose = when (expression) {
+    BlobatarExpression.Idle -> IDLE
+    BlobatarExpression.Sleepy -> SLEEPY
+    BlobatarExpression.Happy -> HAPPY
+    BlobatarExpression.Wink -> WINK
+    BlobatarExpression.Smug -> SMUG
+    BlobatarExpression.Unsure -> UNSURE
+    BlobatarExpression.Mad -> MAD
+}
+
+private fun morphMillis(expression: BlobatarExpression): Long = when (expression) {
+    BlobatarExpression.Idle, BlobatarExpression.Sleepy -> MorphOutMillis
+    else -> MorphInMillis
+}
+
+private fun lerpPose(from: Pose, to: Pose, t: Double) = Pose(
+    esx = lerp(from.esx, to.esx, t),
+    esy = lerp(from.esy, to.esy, t),
+    tilt = lerp(from.tilt, to.tilt, t),
+    edy = lerp(from.edy, to.edy, t),
+    edx = lerp(from.edx, to.edx, t),
+    esx2 = lerp(from.esx2, to.esx2, t),
+    esy2 = lerp(from.esy2, to.esy2, t),
+    tilt2 = lerp(from.tilt2, to.tilt2, t),
+    edy2 = lerp(from.edy2, to.edy2, t),
+    lock = lerp(from.lock, to.lock, t),
+    shake = lerp(from.shake, to.shake, t),
+    rock = lerp(from.rock, to.rock, t),
+    bdy = lerp(from.bdy, to.bdy, t),
+)
+
+private fun lerp(from: Double, to: Double, t: Double): Double = from + (to - from) * t
+
 private data class EyeFrame(val cx: Double, val cy: Double, val rot: Double)
 
 private data class Pose(
@@ -404,6 +707,9 @@ private class Wrap {
 private val easeInOut = bezier(0.42, 0.0, 0.58, 1.0)
 private val easeIn = bezier(0.42, 0.0, 1.0, 1.0)
 private val easeOut = bezier(0.0, 0.0, 0.58, 1.0)
+
+/** blobatar's expression-enter curve: cubic-bezier(0.45, 0.05, 0.5, 1). */
+private val easeMorphIn = bezier(0.45, 0.05, 0.5, 1.0)
 
 private val saccadeStops = arrayOf(
     doubleArrayOf(0.0, 0.0, 0.0),

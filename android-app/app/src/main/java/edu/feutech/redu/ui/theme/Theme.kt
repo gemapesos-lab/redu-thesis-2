@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.feutech.redu.R
@@ -163,12 +164,25 @@ private val ReduTypography = Typography(
     ),
 )
 
+/** In-page surfaces: sections, banners, and the today card. */
+internal val ReduPageRadius = 20.dp
+
+/** Dialogs and sheets. Rounder than [ReduPageRadius] by a clear step. */
+internal val ReduOverlayRadius = 28.dp
+
+/**
+ * Inner corner of a surface inset by [padding] inside a corner of [outer].
+ * Concentric corners share a center, so the inner radius is the outer radius minus the gap.
+ */
+internal fun nestedCornerRadius(outer: Dp, padding: Dp): Dp =
+    (outer - padding).coerceAtLeast(0.dp)
+
 private val ReduShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(20.dp),
-    large = RoundedCornerShape(24.dp),
-    extraLarge = RoundedCornerShape(28.dp),
+    medium = RoundedCornerShape(ReduPageRadius),
+    large = RoundedCornerShape(ReduPageRadius),
+    extraLarge = RoundedCornerShape(ReduOverlayRadius),
 )
 
 internal val ReduPill = RoundedCornerShape(percent = 50)

@@ -8,10 +8,11 @@ import android.graphics.Paint as AndroidPaint
 import android.graphics.RectF
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -60,6 +62,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -83,7 +86,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -101,7 +106,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
@@ -239,17 +249,22 @@ private fun ReduBottomNavigation(
                 shadowElevation = 0.dp,
                 tonalElevation = 0.dp,
             ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    destinations.forEach { destination ->
-                        ReduNavigationItem(
-                            destination = destination,
-                            selected = destination == selectedDestination,
-                            onClick = { onDestinationSelected(destination) },
-                            showLabel = false,
-                        )
+                NavSelectionHost(selectedDestination) { indicator ->
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        destinations.forEach { destination ->
+                            ReduNavigationItem(
+                                destination = destination,
+                                selected = destination == selectedDestination,
+                                onClick = { onDestinationSelected(destination) },
+                                showLabel = false,
+                                onIconSlotPositioned = { position, size ->
+                                    indicator.updateSlot(destination, position, size)
+                                },
+                            )
+                        }
                     }
                 }
             }
@@ -359,40 +374,147 @@ private fun ReduNavigationRail(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 0.dp,
     ) {
-        Column(
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            destinations.forEach { destination ->
-                ReduNavigationItem(
-                    destination = destination,
-                    selected = destination == selectedDestination,
-                    onClick = { onDestinationSelected(destination) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = if (largeText) 92.dp else 76.dp),
-                )
+        NavSelectionHost(selectedDestination) { indicator ->
+            Column(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                destinations.forEach { destination ->
+                    ReduNavigationItem(
+                        destination = destination,
+                        selected = destination == selectedDestination,
+                        onClick = { onDestinationSelected(destination) },
+                        onIconSlotPositioned = { position, size ->
+                            indicator.updateSlot(destination, position, size)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = if (largeText) 92.dp else 76.dp),
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
+private fun NavSelectionHost(
+    selectedDestination: ReduDestination,
+    content: @Composable (NavIndicatorHost) -> Unit,
+) {
+    val indicator = remember { NavIndicatorHost() }
+    SideEffect { indicator.onSelected(selectedDestination) }
+    Box(Modifier.onGloballyPositioned { indicator.updateParent(it.positionInWindow()) }) {
+        NavSelectionPill(spot = indicator.spot)
+        content(indicator)
+    }
+}
+
+@Composable
+private fun NavSelectionPill(spot: IndicatorSpot?) {
+    val reducedMotion = reduReducedMotion()
+    val x = remember { Animatable(spot?.x?.toFloat() ?: 0f) }
+    val y = remember { Animatable(spot?.y?.toFloat() ?: 0f) }
+    var animate by remember { mutableStateOf(false) }
+    LaunchedEffect(spot?.x, spot?.y, reducedMotion) {
+        val current = spot ?: return@LaunchedEffect
+        if (!animate || reducedMotion) {
+            x.snapTo(current.x.toFloat())
+            y.snapTo(current.y.toFloat())
+            animate = true
+        } else {
+            val spec = reduSpatialSpec<Float>()
+            coroutineScope {
+                launch { x.animateTo(current.x.toFloat(), spec) }
+                launch { y.animateTo(current.y.toFloat(), spec) }
+            }
+        }
+    }
+    val current = spot ?: return
+    val drawX = if (animate) x.value else current.x.toFloat()
+    val drawY = if (animate) y.value else current.y.toFloat()
+    val density = LocalDensity.current
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(drawX.roundToInt(), drawY.roundToInt()) }
+            .size(
+                width = with(density) { current.width.toDp() },
+                height = with(density) { current.height.toDp() },
+            )
+            .background(MaterialTheme.colorScheme.primaryContainer, ReduPill),
+    )
+}
+
+private class NavIndicatorHost {
+    private var parentInWindow = Offset.Zero
+    private var parentReady = false
+    private val slots = mutableMapOf<ReduDestination, Slot>()
+    private var selected: ReduDestination? = null
+    var spot by mutableStateOf<IndicatorSpot?>(null)
+        private set
+
+    fun updateParent(origin: Offset) {
+        val changed = !parentReady || parentInWindow != origin
+        parentReady = true
+        parentInWindow = origin
+        if (changed) publish()
+    }
+
+    fun updateSlot(destination: ReduDestination, rootPosition: Offset, size: IntSize) {
+        val next = Slot(rootPosition, size)
+        if (slots[destination] == next) return
+        slots[destination] = next
+        if (destination == selected) publish()
+    }
+
+    fun onSelected(destination: ReduDestination) {
+        if (selected == destination) return
+        selected = destination
+        publish()
+    }
+
+    private fun publish() {
+        if (!parentReady) return
+        val destination = selected ?: return
+        val slot = slots[destination] ?: return
+        val relative = slot.rootPosition - parentInWindow
+        val next = IndicatorSpot(
+            x = relative.x.roundToInt(),
+            y = relative.y.roundToInt(),
+            width = slot.size.width,
+            height = slot.size.height,
+        )
+        if (spot != next) spot = next
+    }
+
+    private data class Slot(val rootPosition: Offset, val size: IntSize)
+}
+
+private data class IndicatorSpot(
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+)
+
+@Composable
 private fun ReduNavigationItem(
     destination: ReduDestination,
     selected: Boolean,
     onClick: () -> Unit,
+    onIconSlotPositioned: (Offset, IntSize) -> Unit,
     modifier: Modifier = Modifier,
     showLabel: Boolean = true,
 ) {
     val contentColor by animateColorAsState(
         targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-        animationSpec = tween(180),
+        animationSpec = reduSettleSpec(reduReducedMotion()),
         label = "navigation color",
     )
+    val interactionSource = remember { MutableInteractionSource() }
     val largeText = LocalDensity.current.fontScale >= 1.5f
     Column(
         modifier = modifier
@@ -401,7 +523,12 @@ private fun ReduNavigationItem(
                 this.selected = selected
                 if (!showLabel) contentDescription = destination.label
             }
-            .clickable(role = Role.Tab, onClick = onClick)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Tab,
+                onClick = onClick,
+            )
             .padding(horizontal = if (largeText) 4.dp else 8.dp, vertical = if (showLabel) 8.dp else 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -410,17 +537,18 @@ private fun ReduNavigationItem(
             modifier = Modifier
                 .width(if (largeText) 64.dp else 56.dp)
                 .height(32.dp)
-                .background(
-                    color = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
-                    shape = ReduPill,
-                ),
+                .onGloballyPositioned { coordinates ->
+                    onIconSlotPositioned(coordinates.positionInWindow(), coordinates.size)
+                },
             contentAlignment = Alignment.Center,
         ) {
             Icon(
                 painter = painterResource(destination.icon),
                 contentDescription = null,
                 tint = contentColor,
-                modifier = Modifier.size(ReduNavIconSize),
+                modifier = Modifier
+                    .size(ReduNavIconSize)
+                    .reduPressScale(interactionSource, pressedScale = ReduIconPressedScale),
             )
         }
         if (showLabel) {
@@ -563,7 +691,7 @@ private fun ReduPageHeader(
         verticalAlignment = Alignment.Top,
     ) {
         if (onBack != null) {
-            IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
+            ReduIconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
                 Icon(painterResource(R.drawable.ic_back), contentDescription = "Back")
             }
         }
@@ -669,6 +797,7 @@ internal fun ReduChip(
     },
     leading: (@Composable () -> Unit)? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick != null) {
         Modifier
             .heightIn(min = 40.dp)
@@ -676,7 +805,13 @@ internal fun ReduChip(
                 role = Role.Button
                 this.selected = selected
             }
-            .clickable(role = Role.Button, onClick = onClick)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .reduPressScale(interactionSource)
     } else {
         Modifier
     }
@@ -818,6 +953,23 @@ internal fun ReduDivider(modifier: Modifier = Modifier) {
 }
 
 @Composable
+internal fun ReduIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.reduPressScale(interactionSource, pressedScale = ReduIconPressedScale),
+        enabled = enabled,
+        interactionSource = interactionSource,
+        content = content,
+    )
+}
+
+@Composable
 internal fun ReduPrimaryButton(
     text: String,
     onClick: () -> Unit,
@@ -825,12 +977,14 @@ internal fun ReduPrimaryButton(
     enabled: Boolean = true,
     @DrawableRes icon: Int? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Button(
         onClick = onClick,
-        modifier = modifier.heightIn(min = ReduButtonMinHeight),
+        modifier = modifier.reduPressScale(interactionSource).heightIn(min = ReduButtonMinHeight),
         enabled = enabled,
         shape = ReduPill,
         contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
+        interactionSource = interactionSource,
     ) {
         if (icon != null) {
             Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ReduInlineIconSize))
@@ -848,13 +1002,15 @@ internal fun ReduTextButton(
     enabled: Boolean = true,
     contentColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     TextButton(
         onClick = onClick,
-        modifier = modifier.heightIn(min = ReduButtonMinHeight),
+        modifier = modifier.reduPressScale(interactionSource).heightIn(min = ReduButtonMinHeight),
         enabled = enabled,
         shape = ReduPill,
         contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
         colors = ButtonDefaults.textButtonColors(contentColor = contentColor),
+        interactionSource = interactionSource,
     ) {
         Text(text, style = MaterialTheme.typography.labelLarge)
     }
@@ -875,7 +1031,7 @@ internal fun ReduTextField(
         modifier = modifier.fillMaxWidth(),
         singleLine = true,
         enabled = enabled,
-        shape = MaterialTheme.shapes.medium,
+        shape = ReduPill,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = ReduPalette.SurfaceHighest,
             unfocusedContainerColor = ReduPalette.SurfaceHighest,
@@ -902,11 +1058,13 @@ internal fun ReduOutlinedButton(
     enabled: Boolean = true,
     destructive: Boolean = false,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Button(
         onClick = onClick,
-        modifier = modifier.heightIn(min = ReduButtonMinHeight),
+        modifier = modifier.reduPressScale(interactionSource).heightIn(min = ReduButtonMinHeight),
         enabled = enabled,
         shape = ReduPill,
+        interactionSource = interactionSource,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
@@ -968,8 +1126,16 @@ internal fun ReduSettingRow(
     trailing: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick != null) {
-        Modifier.clickable(role = Role.Button, onClick = onClick)
+        Modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .reduPressOverlay(interactionSource)
     } else {
         Modifier
     }
@@ -1150,6 +1316,7 @@ internal fun ReduEmptyState(
         ReduBlobatar(
             expression = BlobatarExpression.Sleepy,
             modifier = Modifier.size(120.dp),
+            reactToPress = true,
         )
         Text(title, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
         body?.let {

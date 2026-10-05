@@ -30,8 +30,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -72,9 +72,10 @@ import edu.feutech.redu.data.SentimentReliability
 import edu.feutech.redu.data.SessionEntity
 import edu.feutech.redu.data.StudyGroup
 import edu.feutech.redu.ui.sky.BlurredSkyBackdrop
-import edu.feutech.redu.ui.theme.ReduInlineIconSize
+import edu.feutech.redu.ui.theme.ReduPageRadius
 import edu.feutech.redu.ui.theme.ReduPalette
 import edu.feutech.redu.ui.theme.ReduTheme
+import edu.feutech.redu.ui.theme.nestedCornerRadius
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -143,10 +144,9 @@ internal fun DashboardScreen(
                         title = "Signal details",
                         onClick = { diagnosticsExpanded = !diagnosticsExpanded },
                         trailing = {
-                            Icon(
-                                painterResource(if (diagnosticsExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down),
+                            ReduExpandIcon(
+                                expanded = diagnosticsExpanded,
                                 contentDescription = if (diagnosticsExpanded) "Hide signal details" else "Show signal details",
-                                modifier = Modifier.size(ReduInlineIconSize),
                             )
                         },
                     )
@@ -277,7 +277,7 @@ private fun TodayFacts(
                 ReduInfoRow("Latest pattern", pattern)
             }
             if (summary.latestRiskScore != null) {
-                IconButton(onClick = onOpenScoreInfo, modifier = Modifier.size(48.dp)) {
+                ReduIconButton(onClick = onOpenScoreInfo, modifier = Modifier.size(48.dp)) {
                     Icon(
                         painterResource(R.drawable.ic_info),
                         contentDescription = "What this means",
@@ -311,7 +311,7 @@ private fun WeeklyActivityChart(activity: List<DailyActivityPoint>) {
 
     HomeFrostedSection(Modifier.padding(bottom = 8.dp)) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(WeekCardInset),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
@@ -359,7 +359,7 @@ private fun WeeklySelectedDaySummary(point: DailyActivityPoint) {
             contentDescription = "$dateLabel. $activityLabel"
         },
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shape = MaterialTheme.shapes.small,
+        shape = RoundedCornerShape(nestedCornerRadius(ReduPageRadius, WeekCardInset)),
     ) {
         if (largeText) {
             Column(Modifier.padding(horizontal = 12.dp, vertical = 9.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -379,6 +379,7 @@ private fun WeeklySelectedDaySummary(point: DailyActivityPoint) {
     }
 }
 
+private val WeekCardInset = 16.dp
 private val HeatmapCellGap = 3.dp
 private val HeatmapDayGutter = 14.dp
 private val HeatmapCellShape = RoundedCornerShape(2.dp)
@@ -503,7 +504,7 @@ private fun ActivityHeatLegend() {
             Box(
                 modifier = Modifier
                     .size(12.dp)
-                    .clip(RoundedCornerShape(2.dp))
+                    .clip(HeatmapCellShape)
                     .background(activityHeatColor(level)),
             )
         }
@@ -565,6 +566,7 @@ private fun WeeklyActivityEmptyState() {
             ReduBlobatar(
                 expression = BlobatarExpression.Sleepy,
                 modifier = Modifier.size(120.dp).align(Alignment.CenterHorizontally),
+                reactToPress = true,
             )
             Text("No activity in the last 12 weeks", style = MaterialTheme.typography.titleMedium)
         }
@@ -603,7 +605,7 @@ internal fun HistoryScreen(
         actions = {
             if (sessions.isNotEmpty()) {
                 Box {
-                    IconButton(onClick = { historyMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
+                    ReduIconButton(onClick = { historyMenuExpanded = true }, modifier = Modifier.size(48.dp)) {
                         Icon(painterResource(R.drawable.ic_more), contentDescription = "History actions")
                     }
                     DropdownMenu(
@@ -729,8 +731,18 @@ private fun SessionHistoryRow(
     onClick: () -> Unit,
 ) {
     val presentation = activityPatternFor(session.riskLevel)
+    val interactionSource = remember { MutableInteractionSource() }
     Column(
-        modifier = Modifier.fillMaxWidth().clickable(role = Role.Button, onClick = onClick).animateContentSize()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .reduPressOverlay(interactionSource)
+            .animateContentSize()
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
@@ -748,10 +760,9 @@ private fun SessionHistoryRow(
                 formatReadableDuration(session.rawDurationMillis),
                 style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"),
             )
-            Icon(
-                painterResource(if (expanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down),
+            ReduExpandIcon(
+                expanded = expanded,
                 contentDescription = if (expanded) "Hide session details" else "Show session details",
-                modifier = Modifier.size(ReduInlineIconSize),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -824,7 +835,7 @@ internal fun SetupScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (showBack) {
-                        IconButton(onClick = ::retreat, modifier = Modifier.size(48.dp)) {
+                        ReduIconButton(onClick = ::retreat, modifier = Modifier.size(48.dp)) {
                             Icon(painterResource(R.drawable.ic_back), contentDescription = "Back")
                         }
                     } else {
@@ -1006,8 +1017,18 @@ internal fun PlatformToggleRow(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val label = platform.displayName()
+    val interactionSource = remember { MutableInteractionSource() }
     Row(
-        modifier = Modifier.fillMaxWidth().clickable(enabled = enabled, role = Role.Switch) { onCheckedChange(!checked) }
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                enabled = enabled,
+                role = Role.Switch,
+                onClick = { onCheckedChange(!checked) },
+            )
+            .reduPressOverlay(interactionSource)
             .padding(vertical = 7.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,

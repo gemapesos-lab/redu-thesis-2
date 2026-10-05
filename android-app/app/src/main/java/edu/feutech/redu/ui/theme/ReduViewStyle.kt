@@ -14,6 +14,15 @@ import edu.feutech.redu.R
 internal fun Context.reduDp(value: Int): Int =
     (value * resources.displayMetrics.density).toInt()
 
+/**
+ * Corner radius for a pill control. [android.graphics.drawable.GradientDrawable] clamps a
+ * radius larger than half the shorter side, so this stays a pill when the control grows.
+ */
+internal const val ReduViewPillRadiusDp = 1000
+
+/** In-page surface radius, matching [ReduPageRadius]. */
+internal const val ReduViewPageRadiusDp = 20
+
 internal fun Context.reduTypeface(weight: Int = 400): Typeface {
     val base = ResourcesCompat.getFont(this, R.font.manrope_variable) ?: Typeface.DEFAULT
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -39,7 +48,7 @@ internal fun TextView.applyReduTextStyle(
 
 internal fun Context.reduShape(
     @ColorInt fillColor: Int,
-    radiusDp: Int = 8,
+    radiusDp: Int = ReduViewPageRadiusDp,
     @ColorInt strokeColor: Int? = null,
     strokeWidthDp: Int = 1,
 ): GradientDrawable = GradientDrawable().apply {
@@ -51,7 +60,7 @@ internal fun Context.reduShape(
 internal fun Context.reduRippleBackground(
     @ColorInt fillColor: Int,
     @ColorInt rippleColor: Int,
-    radiusDp: Int = 8,
+    radiusDp: Int = ReduViewPageRadiusDp,
     @ColorInt strokeColor: Int? = null,
 ): RippleDrawable = RippleDrawable(
     ColorStateList.valueOf(rippleColor),

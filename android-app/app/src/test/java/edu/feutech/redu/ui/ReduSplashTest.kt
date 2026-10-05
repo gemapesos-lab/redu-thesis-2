@@ -5,19 +5,19 @@ import org.junit.Test
 
 class ReduSplashTest {
     @Test
-    fun coldStartHoldsOneFullGlance() {
-        assertEquals(BlobatarGlanceCycleMillis, splashHoldMillis(elapsedMillis = 0L, reducedMotion = false))
+    fun coldStartHoldsTheBlinkBeat() {
+        assertEquals(SplashBeatMillis, splashHoldMillis(elapsedMillis = 0L, reducedMotion = false))
     }
 
     @Test
-    fun slowStartFinishesTheGlanceAlreadyInProgress() {
-        assertEquals(1_856L, splashHoldMillis(elapsedMillis = 4_000L, reducedMotion = false))
+    fun readyDuringTheBeatFinishesIt() {
+        assertEquals(1_200L, splashHoldMillis(elapsedMillis = 800L, reducedMotion = false))
     }
 
     @Test
-    fun finishedCycleDoesNotStartAnother() {
-        assertEquals(0L, splashHoldMillis(elapsedMillis = BlobatarGlanceCycleMillis, reducedMotion = false))
-        assertEquals(BlobatarGlanceCycleMillis - 1, splashHoldMillis(elapsedMillis = BlobatarGlanceCycleMillis + 1, reducedMotion = false))
+    fun slowStartLeavesImmediately() {
+        assertEquals(0L, splashHoldMillis(elapsedMillis = SplashBeatMillis, reducedMotion = false))
+        assertEquals(0L, splashHoldMillis(elapsedMillis = SplashBeatMillis + 1, reducedMotion = false))
     }
 
     @Test

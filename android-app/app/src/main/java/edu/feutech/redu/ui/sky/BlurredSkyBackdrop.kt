@@ -77,7 +77,8 @@ private val FallbackBrush = Brush.verticalGradient(
  *
  * The last bitmap is kept so the deck does not fall back to a flat blue fill
  * when the card leaves and re-enters the list. The placeholder below is only
- * the first frame, and the gap before GL is ready.
+ * the first frame, and the gap before GL is ready. The shader clock is kept
+ * with that bitmap so a later visit does not snap the clouds back to the start.
  */
 @Composable
 internal fun BlurredSkyBackdrop(modifier: Modifier = Modifier) {
@@ -231,6 +232,10 @@ private fun DrawScope.drawFallbackSky() {
 
 private var retainedSky: Bitmap? = null
 
+/** Shader seconds of [retainedSky]. Survives leaving the Home tab. */
+@Volatile
+private var retainedSkyTime = 0f
+
 private class SkyPlayback(
     private val appContext: android.content.Context,
     active: Boolean,
@@ -365,6 +370,7 @@ private class SkyRenderer(
     private var transport = FrameTransport.Unset
     private var pending = false
     private var pendingAt = 0L
+    private var pendingTime = 0f
     private var readWidth = 0
     private var readHeight = 0
     private var skyTimeLoc = -1
@@ -408,7 +414,7 @@ private class SkyRenderer(
                     continue
                 }
                 var lastNanos = 0L
-                var time = 0f
+                var time = retainedSkyTime
                 while (gate.running) {
                     val size = gate.awaitDrawableSize(hasFrame, stillKey) ?: break
                     val (bufferWidth, bufferHeight) = skyRenderSize(size.first, size.second)
@@ -500,6 +506,7 @@ private class SkyRenderer(
                         readHeight = bufferHeight
                     }
                     pending = true
+                    pendingTime = time
                     pendingAt = System.nanoTime()
                     gate.pace(frameStart)
                 }
@@ -578,8 +585,10 @@ private class SkyRenderer(
     private fun presentSoftware(pixels: IntArray, width: Int, height: Int): Boolean {
         val bitmap = slot.obtain(width, height)
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+        val frameTime = pendingTime
         val delivered = publish.publish({ gate.running }) {
             retainedSky = bitmap
+            retainedSkyTime = frameTime
             gate.painter?.refresh()
         }
         if (!delivered) {
@@ -599,8 +608,10 @@ private class SkyRenderer(
     private fun drainHardware29(): FrameDrain {
         if (staged == null) staged = stream?.acquireCompleted()
         val bitmap = staged ?: return FrameDrain.NotReady
+        val frameTime = pendingTime
         val delivered = publish.publish({ gate.running }) {
             retainedSky = bitmap
+            retainedSkyTime = frameTime
             gate.painter?.refresh()
         }
         staged = null
