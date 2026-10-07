@@ -1,0 +1,787 @@
+{
+  "method": "Local CTC forced alignment",
+  "model": "PyTorch Wav2Vec2 ASR Base 960h",
+  "audioUploaded": false,
+  "frameSeconds": 0.020003416856492026,
+  "words": [
+    {
+      "text": "Just",
+      "start": 0.12002,
+      "end": 0.34006,
+      "acousticConfidence": 0.9634
+    },
+    {
+      "text": "one",
+      "start": 0.64011,
+      "end": 0.74013,
+      "acousticConfidence": 0.9983
+    },
+    {
+      "text": "more",
+      "start": 0.82014,
+      "end": 1.00017,
+      "acousticConfidence": 0.7835
+    },
+    {
+      "text": "video...",
+      "start": 1.06018,
+      "end": 1.44025,
+      "acousticConfidence": 0.7379
+    },
+    {
+      "text": "Then",
+      "start": 2.18037,
+      "end": 2.3404,
+      "acousticConfidence": 0.9981
+    },
+    {
+      "text": "another.",
+      "start": 2.46042,
+      "end": 2.80048,
+      "acousticConfidence": 0.9993
+    },
+    {
+      "text": "And",
+      "start": 3.70063,
+      "end": 3.84066,
+      "acousticConfidence": 0.9845
+    },
+    {
+      "text": "another...",
+      "start": 4.00068,
+      "end": 4.52077,
+      "acousticConfidence": 0.9803
+    },
+    {
+      "text": "Suddenly,",
+      "start": 5.72098,
+      "end": 6.20106,
+      "acousticConfidence": 0.9734
+    },
+    {
+      "text": "it\u2019s",
+      "start": 6.52111,
+      "end": 6.68114,
+      "acousticConfidence": 0.9667
+    },
+    {
+      "text": "two-oh-seven",
+      "start": 6.86117,
+      "end": 7.56129,
+      "acousticConfidence": 0.8382,
+      "parts": [
+        {
+          "text": "two",
+          "start": 6.86117,
+          "end": 7.06121
+        },
+        {
+          "text": "oh",
+          "start": 7.16122,
+          "end": 7.22123
+        },
+        {
+          "text": "seven",
+          "start": 7.32125,
+          "end": 7.56129
+        }
+      ]
+    },
+    {
+      "text": "A.M.",
+      "start": 7.68131,
+      "end": 7.94136,
+      "acousticConfidence": 0.8232
+    },
+    {
+      "text": "That's",
+      "start": 8.82151,
+      "end": 9.12156,
+      "acousticConfidence": 0.9957
+    },
+    {
+      "text": "doomscrolling.",
+      "start": 9.32159,
+      "end": 10.04172,
+      "acousticConfidence": 0.9672
+    },
+    {
+      "text": "Screen-time",
+      "start": 10.5418,
+      "end": 11.06189,
+      "acousticConfidence": 0.9351,
+      "parts": [
+        {
+          "text": "Screen",
+          "start": 10.5418,
+          "end": 10.80185
+        },
+        {
+          "text": "time",
+          "start": 10.86186,
+          "end": 11.06189
+        }
+      ]
+    },
+    {
+      "text": "limits",
+      "start": 11.1219,
+      "end": 11.40195,
+      "acousticConfidence": 0.9814
+    },
+    {
+      "text": "count",
+      "start": 11.46196,
+      "end": 11.682,
+      "acousticConfidence": 0.9845
+    },
+    {
+      "text": "minutes,",
+      "start": 11.84202,
+      "end": 12.18208,
+      "acousticConfidence": 0.9419
+    },
+    {
+      "text": "NOT",
+      "start": 12.60215,
+      "end": 12.84219,
+      "acousticConfidence": 0.9993
+    },
+    {
+      "text": "what",
+      "start": 12.9022,
+      "end": 13.02222,
+      "acousticConfidence": 0.9966
+    },
+    {
+      "text": "you",
+      "start": 13.06223,
+      "end": 13.14224,
+      "acousticConfidence": 0.9996
+    },
+    {
+      "text": "watch.",
+      "start": 13.22226,
+      "end": 13.4823,
+      "acousticConfidence": 0.997
+    },
+    {
+      "text": "Meet",
+      "start": 14.08241,
+      "end": 14.26244,
+      "acousticConfidence": 0.9026
+    },
+    {
+      "text": "REDU:",
+      "start": 14.42246,
+      "end": 14.70251,
+      "acousticConfidence": 0.8585
+    },
+    {
+      "text": "a",
+      "start": 15.16259,
+      "end": 15.18259,
+      "acousticConfidence": 0.9993
+    },
+    {
+      "text": "privacy-first",
+      "start": 15.26261,
+      "end": 16.02274,
+      "acousticConfidence": 0.9497,
+      "parts": [
+        {
+          "text": "privacy",
+          "start": 15.26261,
+          "end": 15.68268
+        },
+        {
+          "text": "first",
+          "start": 15.76269,
+          "end": 16.02274
+        }
+      ]
+    },
+    {
+      "text": "Android",
+      "start": 16.16276,
+      "end": 16.50282,
+      "acousticConfidence": 0.7482
+    },
+    {
+      "text": "app",
+      "start": 16.60284,
+      "end": 16.68285,
+      "acousticConfidence": 0.6683
+    },
+    {
+      "text": "that",
+      "start": 16.76286,
+      "end": 16.88288,
+      "acousticConfidence": 0.9996
+    },
+    {
+      "text": "notices",
+      "start": 17.02291,
+      "end": 17.46298,
+      "acousticConfidence": 0.9587
+    },
+    {
+      "text": "doomscrolling,",
+      "start": 17.50299,
+      "end": 18.1431,
+      "acousticConfidence": 0.9606
+    },
+    {
+      "text": "and",
+      "start": 18.46315,
+      "end": 18.56317,
+      "acousticConfidence": 0.9971
+    },
+    {
+      "text": "helps",
+      "start": 18.68319,
+      "end": 18.90323,
+      "acousticConfidence": 0.9597
+    },
+    {
+      "text": "you",
+      "start": 18.94324,
+      "end": 19.02325,
+      "acousticConfidence": 0.9995
+    },
+    {
+      "text": "pause.",
+      "start": 19.08326,
+      "end": 19.38331,
+      "acousticConfidence": 0.91
+    },
+    {
+      "text": "Built",
+      "start": 19.94341,
+      "end": 20.14344,
+      "acousticConfidence": 0.9707
+    },
+    {
+      "text": "for",
+      "start": 20.22345,
+      "end": 20.34347,
+      "acousticConfidence": 0.9555
+    },
+    {
+      "text": "adult",
+      "start": 20.40349,
+      "end": 20.68353,
+      "acousticConfidence": 0.9986
+    },
+    {
+      "text": "Filipino",
+      "start": 20.76355,
+      "end": 21.22363,
+      "acousticConfidence": 0.9079
+    },
+    {
+      "text": "Android",
+      "start": 21.38365,
+      "end": 21.6837,
+      "acousticConfidence": 0.7849
+    },
+    {
+      "text": "users",
+      "start": 21.78372,
+      "end": 22.08377,
+      "acousticConfidence": 0.98
+    },
+    {
+      "text": "who",
+      "start": 22.16379,
+      "end": 22.2438,
+      "acousticConfidence": 0.9998
+    },
+    {
+      "text": "watch",
+      "start": 22.32381,
+      "end": 22.52385,
+      "acousticConfidence": 0.9964
+    },
+    {
+      "text": "short-form",
+      "start": 22.62386,
+      "end": 23.02393,
+      "acousticConfidence": 0.9396,
+      "parts": [
+        {
+          "text": "short",
+          "start": 22.62386,
+          "end": 22.8039
+        },
+        {
+          "text": "form",
+          "start": 22.86391,
+          "end": 23.02393
+        }
+      ]
+    },
+    {
+      "text": "video.",
+      "start": 23.10395,
+      "end": 23.404,
+      "acousticConfidence": 0.7856
+    },
+    {
+      "text": "Three",
+      "start": 23.92409,
+      "end": 24.14412,
+      "acousticConfidence": 0.9904
+    },
+    {
+      "text": "signals:",
+      "start": 24.24414,
+      "end": 24.64421,
+      "acousticConfidence": 0.994
+    },
+    {
+      "text": "session",
+      "start": 25.10429,
+      "end": 25.40434,
+      "acousticConfidence": 0.952
+    },
+    {
+      "text": "length,",
+      "start": 25.48435,
+      "end": 25.70439,
+      "acousticConfidence": 0.9887
+    },
+    {
+      "text": "time",
+      "start": 26.02445,
+      "end": 26.24448,
+      "acousticConfidence": 0.9906
+    },
+    {
+      "text": "per",
+      "start": 26.30449,
+      "end": 26.40451,
+      "acousticConfidence": 0.9794
+    },
+    {
+      "text": "video,",
+      "start": 26.46452,
+      "end": 26.76457,
+      "acousticConfidence": 0.7931
+    },
+    {
+      "text": "and",
+      "start": 27.02462,
+      "end": 27.10463,
+      "acousticConfidence": 0.979
+    },
+    {
+      "text": "negative",
+      "start": 27.18464,
+      "end": 27.5047,
+      "acousticConfidence": 0.9679
+    },
+    {
+      "text": "captions.",
+      "start": 27.5247,
+      "end": 28.02479,
+      "acousticConfidence": 0.9494
+    },
+    {
+      "text": "Fuzzy",
+      "start": 28.50487,
+      "end": 28.78492,
+      "acousticConfidence": 0.9984
+    },
+    {
+      "text": "logic",
+      "start": 28.84493,
+      "end": 29.16498,
+      "acousticConfidence": 0.9995
+    },
+    {
+      "text": "combines",
+      "start": 29.245,
+      "end": 29.64506,
+      "acousticConfidence": 0.9997
+    },
+    {
+      "text": "them",
+      "start": 29.72508,
+      "end": 29.82509,
+      "acousticConfidence": 0.9995
+    },
+    {
+      "text": "into",
+      "start": 29.94512,
+      "end": 30.10514,
+      "acousticConfidence": 0.9983
+    },
+    {
+      "text": "a",
+      "start": 30.18516,
+      "end": 30.20516,
+      "acousticConfidence": 0.989
+    },
+    {
+      "text": "doomscrolling",
+      "start": 30.28517,
+      "end": 30.92528,
+      "acousticConfidence": 0.944
+    },
+    {
+      "text": "risk",
+      "start": 31.0053,
+      "end": 31.16532,
+      "acousticConfidence": 0.9377
+    },
+    {
+      "text": "score.",
+      "start": 31.28534,
+      "end": 31.56539,
+      "acousticConfidence": 0.9953
+    },
+    {
+      "text": "When",
+      "start": 32.00547,
+      "end": 32.10548,
+      "acousticConfidence": 0.9396
+    },
+    {
+      "text": "it",
+      "start": 32.16549,
+      "end": 32.2055,
+      "acousticConfidence": 0.9998
+    },
+    {
+      "text": "rises,",
+      "start": 32.28551,
+      "end": 32.66558,
+      "acousticConfidence": 0.9976
+    },
+    {
+      "text": "REDU",
+      "start": 33.06565,
+      "end": 33.28569,
+      "acousticConfidence": 0.8073
+    },
+    {
+      "text": "steps",
+      "start": 33.40571,
+      "end": 33.66575,
+      "acousticConfidence": 0.9948
+    },
+    {
+      "text": "in",
+      "start": 33.74576,
+      "end": 33.78577,
+      "acousticConfidence": 0.9992
+    },
+    {
+      "text": "gently:",
+      "start": 33.90579,
+      "end": 34.26585,
+      "acousticConfidence": 0.9997
+    },
+    {
+      "text": "a",
+      "start": 34.72593,
+      "end": 34.74594,
+      "acousticConfidence": 0.9989
+    },
+    {
+      "text": "reminder,",
+      "start": 34.80595,
+      "end": 35.28603,
+      "acousticConfidence": 0.9986
+    },
+    {
+      "text": "a",
+      "start": 35.6861,
+      "end": 35.7061,
+      "acousticConfidence": 0.9995
+    },
+    {
+      "text": "pause,",
+      "start": 35.78611,
+      "end": 36.12617,
+      "acousticConfidence": 0.9816
+    },
+    {
+      "text": "then",
+      "start": 36.50624,
+      "end": 36.66626,
+      "acousticConfidence": 0.9828
+    },
+    {
+      "text": "a",
+      "start": 36.8663,
+      "end": 36.9063,
+      "acousticConfidence": 0.985
+    },
+    {
+      "text": "breathing",
+      "start": 36.96631,
+      "end": 37.26637,
+      "acousticConfidence": 0.9829
+    },
+    {
+      "text": "break.",
+      "start": 37.30637,
+      "end": 37.4864,
+      "acousticConfidence": 0.9927
+    },
+    {
+      "text": "You",
+      "start": 38.0265,
+      "end": 38.16652,
+      "acousticConfidence": 0.9995
+    },
+    {
+      "text": "stay",
+      "start": 38.34655,
+      "end": 38.54658,
+      "acousticConfidence": 0.9783
+    },
+    {
+      "text": "in",
+      "start": 38.6266,
+      "end": 38.6666,
+      "acousticConfidence": 0.9943
+    },
+    {
+      "text": "control.",
+      "start": 38.74662,
+      "end": 39.16669,
+      "acousticConfidence": 0.9599
+    },
+    {
+      "text": "It",
+      "start": 39.70678,
+      "end": 39.74679,
+      "acousticConfidence": 0.9998
+    },
+    {
+      "text": "all",
+      "start": 39.92682,
+      "end": 40.06684,
+      "acousticConfidence": 0.9416
+    },
+    {
+      "text": "runs",
+      "start": 40.12685,
+      "end": 40.32689,
+      "acousticConfidence": 0.9499
+    },
+    {
+      "text": "on",
+      "start": 40.3869,
+      "end": 40.42691,
+      "acousticConfidence": 0.9994
+    },
+    {
+      "text": "your",
+      "start": 40.46691,
+      "end": 40.58693,
+      "acousticConfidence": 0.9994
+    },
+    {
+      "text": "phone,",
+      "start": 40.64694,
+      "end": 40.90699,
+      "acousticConfidence": 0.9586
+    },
+    {
+      "text": "and",
+      "start": 41.14703,
+      "end": 41.20704,
+      "acousticConfidence": 0.9994
+    },
+    {
+      "text": "raw",
+      "start": 41.30706,
+      "end": 41.42708,
+      "acousticConfidence": 0.9992
+    },
+    {
+      "text": "content",
+      "start": 41.52709,
+      "end": 41.92716,
+      "acousticConfidence": 0.9933
+    },
+    {
+      "text": "is",
+      "start": 42.04718,
+      "end": 42.10719,
+      "acousticConfidence": 0.9994
+    },
+    {
+      "text": "never",
+      "start": 42.28722,
+      "end": 42.50726,
+      "acousticConfidence": 0.9998
+    },
+    {
+      "text": "kept.",
+      "start": 42.56727,
+      "end": 42.82732,
+      "acousticConfidence": 0.9752
+    },
+    {
+      "text": "In",
+      "start": 43.28739,
+      "end": 43.3274,
+      "acousticConfidence": 0.9998
+    },
+    {
+      "text": "a",
+      "start": 43.40741,
+      "end": 43.42742,
+      "acousticConfidence": 0.9946
+    },
+    {
+      "text": "two-week",
+      "start": 43.50743,
+      "end": 43.82749,
+      "acousticConfidence": 0.9112,
+      "parts": [
+        {
+          "text": "two",
+          "start": 43.50743,
+          "end": 43.62745
+        },
+        {
+          "text": "week",
+          "start": 43.66746,
+          "end": 43.82749
+        }
+      ]
+    },
+    {
+      "text": "pilot",
+      "start": 43.8875,
+      "end": 44.20755,
+      "acousticConfidence": 0.9602
+    },
+    {
+      "text": "with",
+      "start": 44.24756,
+      "end": 44.36758,
+      "acousticConfidence": 0.9918
+    },
+    {
+      "text": "fifty",
+      "start": 44.4676,
+      "end": 44.74764,
+      "acousticConfidence": 0.9762
+    },
+    {
+      "text": "Filipino",
+      "start": 44.80765,
+      "end": 45.28774,
+      "acousticConfidence": 0.9376
+    },
+    {
+      "text": "adults,",
+      "start": 45.36775,
+      "end": 45.70781,
+      "acousticConfidence": 0.9402
+    },
+    {
+      "text": "prompted",
+      "start": 45.96785,
+      "end": 46.30791,
+      "acousticConfidence": 0.9981
+    },
+    {
+      "text": "users",
+      "start": 46.42793,
+      "end": 46.68797,
+      "acousticConfidence": 0.9265
+    },
+    {
+      "text": "scrolled",
+      "start": 46.76799,
+      "end": 47.10805,
+      "acousticConfidence": 0.9725
+    },
+    {
+      "text": "less,",
+      "start": 47.16806,
+      "end": 47.4081,
+      "acousticConfidence": 0.9868
+    },
+    {
+      "text": "and",
+      "start": 47.58813,
+      "end": 47.64814,
+      "acousticConfidence": 0.9992
+    },
+    {
+      "text": "saw",
+      "start": 47.70815,
+      "end": 47.82817,
+      "acousticConfidence": 0.9909
+    },
+    {
+      "text": "less",
+      "start": 47.96819,
+      "end": 48.16823,
+      "acousticConfidence": 0.9998
+    },
+    {
+      "text": "negative",
+      "start": 48.24824,
+      "end": 48.52829,
+      "acousticConfidence": 0.9597
+    },
+    {
+      "text": "content.",
+      "start": 48.5883,
+      "end": 48.98837,
+      "acousticConfidence": 0.9985
+    },
+    {
+      "text": "REDU.",
+      "start": 49.44845,
+      "end": 49.72849,
+      "acousticConfidence": 0.8449
+    },
+    {
+      "text": "Notice",
+      "start": 50.30859,
+      "end": 50.58864,
+      "acousticConfidence": 0.9703
+    },
+    {
+      "text": "the",
+      "start": 50.64865,
+      "end": 50.72867,
+      "acousticConfidence": 0.9902
+    },
+    {
+      "text": "scroll.",
+      "start": 50.78868,
+      "end": 51.12873,
+      "acousticConfidence": 0.992
+    },
+    {
+      "text": "Choose",
+      "start": 51.56881,
+      "end": 51.84886,
+      "acousticConfidence": 0.9266
+    },
+    {
+      "text": "the",
+      "start": 51.92887,
+      "end": 52.00888,
+      "acousticConfidence": 0.9997
+    },
+    {
+      "text": "pause.",
+      "start": 52.04889,
+      "end": 52.36895,
+      "acousticConfidence": 0.9614
+    }
+  ]
+}

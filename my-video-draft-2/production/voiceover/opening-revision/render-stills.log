@@ -1,0 +1,36 @@
+
+> redu-avp-draft-2@1.0.0 storyboard:panels
+> node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-storyboard.mjs
+
+out/storyboard.png
+out/panels/01-hook.png
+out/panels/02-problem.png
+out/panels/03-meet.png
+out/panels/04-users.png
+out/panels/05A-signals.png
+out/panels/05B-signals.png
+out/panels/06-score.png
+out/panels/07-prompts.png
+out/panels/08-privacy.png
+out/panels/09-impact.png
+out/panels/10-outro.png
+out/panels/11-credits.png
+out/check/caption-hold-start.png
+out/check/caption-hold-end.png
+out/check/camera-before.png
+out/check/camera-midpoint.png
+out/check/caption-640.png
+out/check/opening-text-only.png
+out/check/then-another.png
+out/check/not-before.png
+out/check/not-blur-lead.png
+out/check/not-onset.png
+out/check/clock-blur-lead.png
+out/check/scroll-motion-blur.png
+out/check/logo-blur-lead.png
+out/check/score-input-flight.png
+out/check/session-onset.png
+out/check/time-per-video-onset.png
+out/check/reminder-onset.png
+out/check/pause-onset.png
+out/check/breathing-onset.png

@@ -1,0 +1,13 @@
+{
+  "sourceSha256": "d3f3204bf4e5771a998452a544daec4f07c1d580cffa82c59651ddb03f26f78c",
+  "sourceDecodedSeconds": 51.06939583333333,
+  "productionSeconds": 53.6,
+  "removedSilenceSeconds": 0,
+  "insertedCaptionHoldSeconds": 0,
+  "insertedOpeningScrollSeconds": 2.5306041666666665,
+  "insertAtSourceSeconds": 3.3467708333333333,
+  "captionToScoreGapSeconds": 0.4277700000000024,
+  "playbackRate": 1,
+  "allSpokenWordsPreserved": true,
+  "allSpokenSamplesPreservedBeforeNormalization": true
+}

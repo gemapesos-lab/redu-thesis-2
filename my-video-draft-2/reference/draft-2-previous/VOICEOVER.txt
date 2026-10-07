@@ -1,0 +1,19 @@
+Just one more video. Suddenly, it’s two-oh-seven AM.
+
+That’s doomscrolling. Screen-time limits count minutes, not what you watch.
+
+Meet REDU, an Android app that helps you pause.
+
+Built for adult Filipino Android users.
+
+Three signals: session length, time per video, and negative captions. It checks Filipino and English text for negative language.
+
+Fuzzy logic combines them into a doomscrolling risk score.
+
+When needed: a reminder, a pause, or a breathing break. You stay in control.
+
+Processed on-device. Raw content isn’t saved.
+
+In a two-week pilot with fifty Filipino adults, prompted users scrolled less and saw less negative content.
+
+REDU. Notice the scroll. Choose the pause.

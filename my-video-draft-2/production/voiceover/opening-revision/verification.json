@@ -1,0 +1,154 @@
+{
+  "export": "out/REDU-AVP-draft-2-opening-revision.mp4",
+  "sha256": "8f055e8d7bc241a82b39cd36fcf02990eadbd8e80cf11f68f02e76b4b2ee6f6c",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "avg_frame_rate": "30/1",
+        "start_time": "0.000000",
+        "duration": "59.000000",
+        "nb_frames": "1770",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "avg_frame_rate": "0/0",
+        "start_time": "0.000000",
+        "duration": "59.008000",
+        "nb_frames": "2768"
+      }
+    ],
+    "format": {
+      "duration": "59.008000",
+      "size": "10973947"
+    }
+  },
+  "actualContainerSeconds": 59.008,
+  "videoFrames": 1770,
+  "fps": 30,
+  "creditsSeconds": 5,
+  "narrationSeconds": 53.6,
+  "narrationPlaybackRate": 1,
+  "captionCloseupSeconds": 0.7,
+  "insertedCaptionHoldSeconds": 0,
+  "originalFilesUnchanged": 96,
+  "voiceAlignmentInExport": [
+    {
+      "scene": "hook",
+      "word": "Just",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96639
+    },
+    {
+      "scene": "problem",
+      "word": "NOT",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97161
+    },
+    {
+      "scene": "meet",
+      "word": "Meet",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.99056
+    },
+    {
+      "scene": "users",
+      "word": "Built",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.95848
+    },
+    {
+      "scene": "signals",
+      "word": "negative",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.95127
+    },
+    {
+      "scene": "score",
+      "word": "Fuzzy",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97467
+    },
+    {
+      "scene": "prompts",
+      "word": "reminder,",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97996
+    },
+    {
+      "scene": "privacy",
+      "word": "It",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.98164
+    },
+    {
+      "scene": "impact",
+      "word": "In",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.9614
+    },
+    {
+      "scene": "outro",
+      "word": "REDU.",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96432
+    },
+    {
+      "scene": "hook",
+      "word": "Then",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96638
+    },
+    {
+      "scene": "hook",
+      "word": "Suddenly,",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.90597
+    }
+  ],
+  "loudnessMeasuredFromExport": {
+    "integratedLUFS": -16.19,
+    "truePeakDBTP": -1.89,
+    "loudnessRangeLU": 5.3
+  },
+  "motionRenderRegression": {
+    "decodedFrames": 1770,
+    "scoreFramesChecked": 105,
+    "scoreMinimumMeanLuminance": 232.166,
+    "unexpectedDarkScoreFrames": 0,
+    "sampling": "12 fractional-frame samples, 180-degree shutter, normal alpha averaging"
+  },
+  "checks": {
+    "measuredCueFrames": "passed",
+    "originalVOHash": "passed",
+    "exportDecodesWithoutErrors": "passed",
+    "scoreNoBlackFrameRegression": "passed",
+    "previousMotionExportUnchanged": "passed"
+  },
+  "visualInspection": {
+    "actualEncodedFrameReview": "out/opening-export-checks/encoded-frame-review.png",
+    "checked": [
+      "text-only opening",
+      "phone entrance on Then another",
+      "scroll motion blur",
+      "digital clock",
+      "Not entrance and spoken cue",
+      "continuous whole-phone zoom",
+      "caption readability at 640px",
+      "score compositing",
+      "credits without Made with Remotion",
+      "final fade"
+    ]
+  }
+}

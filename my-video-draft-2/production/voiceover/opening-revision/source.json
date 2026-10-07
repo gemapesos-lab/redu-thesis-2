@@ -1,0 +1,18 @@
+{
+  "originalPath": "/Users/geanm/Downloads/ElevenLabs_2026-10-06T07_42_53_Lauren - Friendly, Comforting and Soft_pvc_sp100_s50_sb75_v4.mp3",
+  "copiedTo": "public/audio/vo/opening-revision-original.mp3",
+  "sha256": "d3f3204bf4e5771a998452a544daec4f07c1d580cffa82c59651ddb03f26f78c",
+  "sourceDurationSeconds": 51.069375,
+  "model": "ElevenLabs v4",
+  "voice": "Lauren",
+  "newRecording": true,
+  "requestedRevision": {
+    "opening": "Text only Just one more video...; phone and scrolling start on Then another.",
+    "caption": "No inserted hold; natural transition into score.",
+    "credits": "Remove Made with Remotion.",
+    "maxContainerSeconds": 60,
+    "targetVideoSeconds": 59,
+    "creditsSeconds": 5,
+    "keepPlaybackRate": 1
+  }
+}

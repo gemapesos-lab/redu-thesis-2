@@ -1,0 +1,28 @@
+October 6 Lauren recording — integrated opening revision
+
+Supplied source: opening-revision-original.mp3, 51.069 seconds, preserved byte-for-byte.
+Production narration: opening-revision.wav, 53.600 seconds, original speaking speed.
+The only inserted time is 2.531 seconds after “Then another,” used for animated
+scrolling with music and swipe sounds. No speech is cut. No caption pause is added.
+
+Picture:
+- Text-only “Just one more video…” opening.
+- Phone and scrolling enter on the spoken “Then another.”
+- Seven-segment 2:07 AM clock follows its cue.
+- Complete-phone caption zoom stays right; negative-caption card stays left.
+- Natural 0.428-second VO break into “Fuzzy logic.”
+- Original pilot-results screen and restored motion treatment retained.
+- “Made with Remotion” removed from visible credits.
+- Credits 54–59 seconds; 1,770 frames at 30 fps.
+
+Alignment was performed locally. Audio and script were not uploaded.
+Raw CTC alignment and phrase-start refinements are recorded in alignment.json;
+words.json and scene-timings.json map them into the edited take.
+Earlier experimental Whisper outputs are retained for traceability, but are
+not used by the current cue builder. Rebuild from the saved CTC alignment with
+prepare-opening-voiceover.py and build-voice-cues.mjs.
+
+Current export: out/REDU-AVP-draft-2-opening-revision.mp4
+Report: production/voiceover/opening-revision/verification.json
+Previous reviewed version: reference/before-opening-revision/
+First draft: ../my-video, untouched.

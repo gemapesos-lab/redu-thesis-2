@@ -1,0 +1,13 @@
+{
+  "voice_id": "DODLEQrClDo8wCz460ld",
+  "voice_name": "Lauren - Friendly, Comforting and Soft",
+  "model_id": "eleven_v4",
+  "output_format": "mp3_44100_128",
+  "seed": 20261006,
+  "voice_settings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "speed": 1.0
+  },
+  "text": "[soft, slightly weary voice] Just one more video. [quietly realizing] Suddenly, it's two-oh-seven A.M.\n\n[clear, conversational voice] That's doomscrolling. Screen-time limits count minutes, NOT what you watch.\n\n[warm, inviting voice] Meet REDU: a privacy-first Android app that notices doomscrolling, and helps you pause.\n\n[clear, informative voice] Built for adult Filipino Android users who watch short-form video.\n\n[focused, explanatory voice] Three signals: session length, time per video, and negative captions. Fuzzy logic combines them into a doomscrolling risk score.\n\n[gentle, reassuring voice] When it rises, REDU steps in gently: a reminder, a pause, then a breathing break. You stay in control.\n\n[calm, confident voice] It all runs on your phone, and raw content is never kept.\n\n[measured, positive voice] In a two-week pilot with fifty Filipino adults, prompted users scrolled less, and saw less negative content.\n\n[warm, encouraging voice] REDU. Notice the scroll. Choose the pause."
+}

@@ -1,0 +1,123 @@
+{
+  "export": "out/REDU-AVP-draft-2.mp4",
+  "sha256": "41dfdc8b6ab67d4a6221725d31dc7eb2e7be9ec11a4fad169e4fa5c3b4822331",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "avg_frame_rate": "30/1",
+        "start_time": "0.000000",
+        "duration": "59.000000",
+        "nb_frames": "1770",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "avg_frame_rate": "0/0",
+        "start_time": "0.000000",
+        "duration": "59.008000",
+        "nb_frames": "2768"
+      }
+    ],
+    "format": {
+      "duration": "59.008000",
+      "size": "8775769"
+    }
+  },
+  "actualContainerSeconds": 59.008,
+  "videoFrames": 1770,
+  "fps": 30,
+  "creditsSeconds": 5,
+  "narrationSeconds": 53.6,
+  "narrationPlaybackRate": 1,
+  "captionHoldSeconds": 3.1333333333333333,
+  "originalFilesUnchanged": 96,
+  "voiceAlignmentInExport": [
+    {
+      "scene": "hook",
+      "word": "Just",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.98928
+    },
+    {
+      "scene": "problem",
+      "word": "not",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.9537
+    },
+    {
+      "scene": "meet",
+      "word": "Meet",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.98926
+    },
+    {
+      "scene": "users",
+      "word": "Built",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96568
+    },
+    {
+      "scene": "signals",
+      "word": "negative",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96039
+    },
+    {
+      "scene": "score",
+      "word": "Fuzzy",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97753
+    },
+    {
+      "scene": "prompts",
+      "word": "reminder,",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97837
+    },
+    {
+      "scene": "privacy",
+      "word": "It",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97209
+    },
+    {
+      "scene": "impact",
+      "word": "negative",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.92041
+    },
+    {
+      "scene": "outro",
+      "word": "REDU.",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96126
+    }
+  ],
+  "loudnessMeasuredFromExport": {
+    "integratedLUFS": -16.21,
+    "truePeakDBTP": -1.6,
+    "loudnessRangeLU": 4.7
+  },
+  "checks": {
+    "lintAndTypes": "passed",
+    "measuredCueFrames": "passed",
+    "originalVOHash": "passed",
+    "spokenSamplesPreservedBeforeNormalization": "passed",
+    "exportDecodesWithoutErrors": "passed",
+    "finalFrameFade": "visually checked",
+    "captionAt640Width": "visually checked",
+    "notBeforeAndAtCue": "visually checked",
+    "phoneZoomAndPromptCues": "visually checked"
+  }
+}

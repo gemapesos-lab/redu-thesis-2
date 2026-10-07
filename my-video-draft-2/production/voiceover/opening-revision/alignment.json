@@ -1,0 +1,944 @@
+{
+  "method": "Local CTC forced alignment with acoustic phrase-start refinement",
+  "model": "PyTorch Wav2Vec2 ASR Base 960h",
+  "audioUploaded": false,
+  "frameSeconds": 0.02000367215041128,
+  "words": [
+    {
+      "text": "Just",
+      "start": 0.10247,
+      "end": 0.36007,
+      "acousticConfidence": 0.97,
+      "ctcStart": 0.12002,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "one",
+      "start": 0.63012,
+      "end": 0.76014,
+      "acousticConfidence": 0.9543,
+      "ctcStart": 0.66012,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "more",
+      "start": 0.81015,
+      "end": 1.04019,
+      "acousticConfidence": 0.9921,
+      "ctcStart": 0.84015,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "video...",
+      "start": 1.09021,
+      "end": 1.54028,
+      "acousticConfidence": 0.7301,
+      "ctcStart": 1.12021,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Then",
+      "start": 2.32596,
+      "end": 2.44045,
+      "acousticConfidence": 0.9898,
+      "ctcStart": 2.30042,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "another.",
+      "start": 2.51047,
+      "end": 2.92054,
+      "acousticConfidence": 0.9994,
+      "ctcStart": 2.54047,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Suddenly,",
+      "start": 3.56694,
+      "end": 4.16076,
+      "acousticConfidence": 0.9974,
+      "ctcStart": 3.68068,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "it\u2019s",
+      "start": 4.50612,
+      "end": 4.70086,
+      "acousticConfidence": 0.9785,
+      "ctcStart": 4.56084,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "two-oh-seven",
+      "start": 4.91132,
+      "end": 5.66104,
+      "acousticConfidence": 0.7694,
+      "ctcStart": 4.9209,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "A.M.",
+      "start": 5.75106,
+      "end": 6.06111,
+      "acousticConfidence": 0.8402,
+      "ctcStart": 5.78106,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "That's",
+      "start": 6.75463,
+      "end": 7.12131,
+      "acousticConfidence": 0.955,
+      "ctcStart": 6.82125,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "doomscrolling.",
+      "start": 7.29134,
+      "end": 8.00147,
+      "acousticConfidence": 0.9798,
+      "ctcStart": 7.32134,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Screen-time",
+      "start": 8.46973,
+      "end": 9.00165,
+      "acousticConfidence": 0.9199,
+      "ctcStart": 8.52156,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "limits",
+      "start": 9.03166,
+      "end": 9.34171,
+      "acousticConfidence": 0.9588,
+      "ctcStart": 9.06166,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "count",
+      "start": 9.37173,
+      "end": 9.62177,
+      "acousticConfidence": 0.9785,
+      "ctcStart": 9.40173,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "minutes,",
+      "start": 9.7518,
+      "end": 10.12186,
+      "acousticConfidence": 0.9332,
+      "ctcStart": 9.7818,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "NOT",
+      "start": 10.46961,
+      "end": 10.82199,
+      "acousticConfidence": 0.999,
+      "ctcStart": 10.58194,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "what",
+      "start": 10.852,
+      "end": 11.00202,
+      "acousticConfidence": 0.9799,
+      "ctcStart": 10.882,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "you",
+      "start": 11.00202,
+      "end": 11.12204,
+      "acousticConfidence": 0.9957,
+      "ctcStart": 11.02202,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "watch.",
+      "start": 11.17206,
+      "end": 11.48211,
+      "acousticConfidence": 0.9749,
+      "ctcStart": 11.20206,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Meet",
+      "start": 12.03714,
+      "end": 12.24225,
+      "acousticConfidence": 0.837,
+      "ctcStart": 12.08222,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "REDU:",
+      "start": 12.37228,
+      "end": 12.70233,
+      "acousticConfidence": 0.6652,
+      "ctcStart": 12.40228,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "a",
+      "start": 13.18215,
+      "end": 13.26243,
+      "acousticConfidence": 0.9971,
+      "ctcStart": 13.24243,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "privacy-first",
+      "start": 13.26243,
+      "end": 14.10259,
+      "acousticConfidence": 0.9904,
+      "ctcStart": 13.34245,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "Android",
+      "start": 14.23262,
+      "end": 14.58268,
+      "acousticConfidence": 0.6685,
+      "ctcStart": 14.26262,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "app",
+      "start": 14.6527,
+      "end": 14.76271,
+      "acousticConfidence": 0.6769,
+      "ctcStart": 14.6827,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "that",
+      "start": 14.85608,
+      "end": 14.98275,
+      "acousticConfidence": 0.9763,
+      "ctcStart": 14.84272,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "notices",
+      "start": 15.07277,
+      "end": 15.52285,
+      "acousticConfidence": 0.9978,
+      "ctcStart": 15.10277,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "doomscrolling,",
+      "start": 15.55286,
+      "end": 16.22298,
+      "acousticConfidence": 0.9717,
+      "ctcStart": 15.58286,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "and",
+      "start": 16.45757,
+      "end": 16.62305,
+      "acousticConfidence": 0.937,
+      "ctcStart": 16.52303,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "helps",
+      "start": 16.73308,
+      "end": 16.98312,
+      "acousticConfidence": 0.9618,
+      "ctcStart": 16.76308,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "you",
+      "start": 16.99313,
+      "end": 17.10314,
+      "acousticConfidence": 0.9997,
+      "ctcStart": 17.02313,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "pause.",
+      "start": 17.13315,
+      "end": 17.46321,
+      "acousticConfidence": 0.917,
+      "ctcStart": 17.16315,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Built",
+      "start": 17.97268,
+      "end": 18.22335,
+      "acousticConfidence": 0.9479,
+      "ctcStart": 18.02331,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "for",
+      "start": 18.27336,
+      "end": 18.42338,
+      "acousticConfidence": 0.9911,
+      "ctcStart": 18.30336,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "adult",
+      "start": 18.45339,
+      "end": 18.80345,
+      "acousticConfidence": 0.871,
+      "ctcStart": 18.48339,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Filipino",
+      "start": 18.83346,
+      "end": 19.34355,
+      "acousticConfidence": 0.883,
+      "ctcStart": 18.86346,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Android",
+      "start": 19.45358,
+      "end": 19.76363,
+      "acousticConfidence": 0.5789,
+      "ctcStart": 19.48358,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "users",
+      "start": 19.85365,
+      "end": 20.18371,
+      "acousticConfidence": 0.9859,
+      "ctcStart": 19.88365,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "who",
+      "start": 20.25372,
+      "end": 20.36374,
+      "acousticConfidence": 0.9998,
+      "ctcStart": 20.28372,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "watch",
+      "start": 20.39375,
+      "end": 20.64379,
+      "acousticConfidence": 0.9569,
+      "ctcStart": 20.42375,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "short-form",
+      "start": 20.6938,
+      "end": 21.14388,
+      "acousticConfidence": 0.9778,
+      "ctcStart": 20.7238,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "video.",
+      "start": 21.17389,
+      "end": 21.52395,
+      "acousticConfidence": 0.756,
+      "ctcStart": 21.20389,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Three",
+      "start": 21.96474,
+      "end": 22.28409,
+      "acousticConfidence": 0.9908,
+      "ctcStart": 22.04405,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "signals:",
+      "start": 22.35411,
+      "end": 22.80419,
+      "acousticConfidence": 0.9756,
+      "ctcStart": 22.38411,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "session",
+      "start": 23.16996,
+      "end": 23.54432,
+      "acousticConfidence": 0.9853,
+      "ctcStart": 23.24427,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "length,",
+      "start": 23.59434,
+      "end": 23.84438,
+      "acousticConfidence": 0.999,
+      "ctcStart": 23.62434,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "time",
+      "start": 24.1273,
+      "end": 24.36447,
+      "acousticConfidence": 0.9988,
+      "ctcStart": 24.16444,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "per",
+      "start": 24.39448,
+      "end": 24.5245,
+      "acousticConfidence": 0.9812,
+      "ctcStart": 24.42448,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "video,",
+      "start": 24.53451,
+      "end": 24.90457,
+      "acousticConfidence": 0.7558,
+      "ctcStart": 24.56451,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "and",
+      "start": 25.13499,
+      "end": 25.24463,
+      "acousticConfidence": 0.9928,
+      "ctcStart": 25.16462,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "negative",
+      "start": 25.29465,
+      "end": 25.64471,
+      "acousticConfidence": 0.9658,
+      "ctcStart": 25.32465,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "captions.",
+      "start": 25.65472,
+      "end": 26.18481,
+      "acousticConfidence": 0.9896,
+      "ctcStart": 25.68472,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Fuzzy",
+      "start": 26.61258,
+      "end": 26.92494,
+      "acousticConfidence": 0.9703,
+      "ctcStart": 26.66489,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "logic",
+      "start": 26.95495,
+      "end": 27.28501,
+      "acousticConfidence": 0.9995,
+      "ctcStart": 26.98495,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "combines",
+      "start": 27.33502,
+      "end": 27.7851,
+      "acousticConfidence": 0.9991,
+      "ctcStart": 27.36502,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "them",
+      "start": 27.81511,
+      "end": 27.98514,
+      "acousticConfidence": 0.9451,
+      "ctcStart": 27.84511,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "into",
+      "start": 28.07516,
+      "end": 28.24519,
+      "acousticConfidence": 0.9997,
+      "ctcStart": 28.10516,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "a",
+      "start": 28.2952,
+      "end": 28.3452,
+      "acousticConfidence": 0.994,
+      "ctcStart": 28.3252,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "doomscrolling",
+      "start": 28.39522,
+      "end": 29.04533,
+      "acousticConfidence": 0.9953,
+      "ctcStart": 28.42522,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "risk",
+      "start": 29.09535,
+      "end": 29.30538,
+      "acousticConfidence": 0.9428,
+      "ctcStart": 29.12535,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "score.",
+      "start": 29.3754,
+      "end": 29.66545,
+      "acousticConfidence": 0.9944,
+      "ctcStart": 29.4054,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "When",
+      "start": 30.07642,
+      "end": 30.18554,
+      "acousticConfidence": 0.9616,
+      "ctcStart": 30.06552,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "it",
+      "start": 30.18554,
+      "end": 30.26556,
+      "acousticConfidence": 0.9997,
+      "ctcStart": 30.22555,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "rises,",
+      "start": 30.31557,
+      "end": 30.72564,
+      "acousticConfidence": 0.9907,
+      "ctcStart": 30.34557,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "REDU",
+      "start": 31.09088,
+      "end": 31.38576,
+      "acousticConfidence": 0.781,
+      "ctcStart": 31.12571,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "steps",
+      "start": 31.45578,
+      "end": 31.76583,
+      "acousticConfidence": 0.9683,
+      "ctcStart": 31.48578,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "in",
+      "start": 31.81585,
+      "end": 31.88585,
+      "acousticConfidence": 0.9991,
+      "ctcStart": 31.84585,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "gently:",
+      "start": 31.97588,
+      "end": 32.38595,
+      "acousticConfidence": 0.9657,
+      "ctcStart": 32.00588,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "a",
+      "start": 32.82601,
+      "end": 32.88604,
+      "acousticConfidence": 0.9986,
+      "ctcStart": 32.86603,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "reminder,",
+      "start": 32.88604,
+      "end": 33.44614,
+      "acousticConfidence": 0.9632,
+      "ctcStart": 32.94605,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "a",
+      "start": 33.78093,
+      "end": 33.86622,
+      "acousticConfidence": 0.9994,
+      "ctcStart": 33.84621,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "pause,",
+      "start": 33.86622,
+      "end": 34.28629,
+      "acousticConfidence": 0.932,
+      "ctcStart": 33.92623,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "then",
+      "start": 34.69134,
+      "end": 34.82639,
+      "acousticConfidence": 0.9961,
+      "ctcStart": 34.68637,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "a",
+      "start": 35.07644,
+      "end": 35.12645,
+      "acousticConfidence": 0.9983,
+      "ctcStart": 35.10644,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "breathing",
+      "start": 35.15646,
+      "end": 35.48651,
+      "acousticConfidence": 0.9791,
+      "ctcStart": 35.18646,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "break.",
+      "start": 35.49652,
+      "end": 35.72656,
+      "acousticConfidence": 0.9898,
+      "ctcStart": 35.52652,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "You",
+      "start": 36.19998,
+      "end": 36.42669,
+      "acousticConfidence": 0.9983,
+      "ctcStart": 36.26666,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "stay",
+      "start": 36.59672,
+      "end": 36.82676,
+      "acousticConfidence": 0.9613,
+      "ctcStart": 36.62672,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "in",
+      "start": 36.85677,
+      "end": 36.92678,
+      "acousticConfidence": 0.9532,
+      "ctcStart": 36.88677,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "control.",
+      "start": 36.97679,
+      "end": 37.44687,
+      "acousticConfidence": 0.9597,
+      "ctcStart": 37.00679,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "It",
+      "start": 37.90238,
+      "end": 37.98697,
+      "acousticConfidence": 0.9997,
+      "ctcStart": 37.94697,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "all",
+      "start": 38.15701,
+      "end": 38.32704,
+      "acousticConfidence": 0.9802,
+      "ctcStart": 38.18701,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "runs",
+      "start": 38.35705,
+      "end": 38.58708,
+      "acousticConfidence": 0.9956,
+      "ctcStart": 38.38705,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "on",
+      "start": 38.6371,
+      "end": 38.70711,
+      "acousticConfidence": 0.9995,
+      "ctcStart": 38.6671,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "your",
+      "start": 38.71711,
+      "end": 38.86713,
+      "acousticConfidence": 0.9742,
+      "ctcStart": 38.74711,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "phone,",
+      "start": 38.87714,
+      "end": 39.16719,
+      "acousticConfidence": 0.892,
+      "ctcStart": 38.90714,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "and",
+      "start": 39.38032,
+      "end": 39.48725,
+      "acousticConfidence": 0.9871,
+      "ctcStart": 39.40723,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "raw",
+      "start": 39.48725,
+      "end": 39.68729,
+      "acousticConfidence": 0.9887,
+      "ctcStart": 39.54726,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "content",
+      "start": 39.7573,
+      "end": 40.16737,
+      "acousticConfidence": 0.9998,
+      "ctcStart": 39.7873,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "is",
+      "start": 40.2574,
+      "end": 40.34741,
+      "acousticConfidence": 0.9796,
+      "ctcStart": 40.2874,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "never",
+      "start": 40.49744,
+      "end": 40.74748,
+      "acousticConfidence": 0.9987,
+      "ctcStart": 40.52744,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "kept.",
+      "start": 40.77749,
+      "end": 41.04754,
+      "acousticConfidence": 0.9903,
+      "ctcStart": 40.80749,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "In",
+      "start": 41.47054,
+      "end": 41.54763,
+      "acousticConfidence": 0.9997,
+      "ctcStart": 41.50762,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "a",
+      "start": 41.54763,
+      "end": 41.64765,
+      "acousticConfidence": 0.9641,
+      "ctcStart": 41.60764,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "two-week",
+      "start": 41.67766,
+      "end": 42.00771,
+      "acousticConfidence": 0.9798,
+      "ctcStart": 41.70766,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "pilot",
+      "start": 42.05773,
+      "end": 42.42779,
+      "acousticConfidence": 0.9917,
+      "ctcStart": 42.08773,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "with",
+      "start": 42.4378,
+      "end": 42.58782,
+      "acousticConfidence": 0.9971,
+      "ctcStart": 42.4678,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "fifty",
+      "start": 42.67784,
+      "end": 42.98789,
+      "acousticConfidence": 0.9648,
+      "ctcStart": 42.70784,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Filipino",
+      "start": 43.0179,
+      "end": 43.52799,
+      "acousticConfidence": 0.8881,
+      "ctcStart": 43.0479,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "adults,",
+      "start": 43.57801,
+      "end": 43.94807,
+      "acousticConfidence": 0.99,
+      "ctcStart": 43.60801,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "prompted",
+      "start": 44.2224,
+      "end": 44.56818,
+      "acousticConfidence": 0.978,
+      "ctcStart": 44.24812,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "users",
+      "start": 44.6582,
+      "end": 44.94825,
+      "acousticConfidence": 0.9393,
+      "ctcStart": 44.6882,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "scrolled",
+      "start": 44.99827,
+      "end": 45.34832,
+      "acousticConfidence": 0.9765,
+      "ctcStart": 45.02827,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "less,",
+      "start": 45.37834,
+      "end": 45.64838,
+      "acousticConfidence": 0.9661,
+      "ctcStart": 45.40834,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "and",
+      "start": 45.85842,
+      "end": 45.98844,
+      "acousticConfidence": 0.9264,
+      "ctcStart": 45.88842,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "saw",
+      "start": 46.07846,
+      "end": 46.24849,
+      "acousticConfidence": 0.9919,
+      "ctcStart": 46.10846,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "less",
+      "start": 46.33851,
+      "end": 46.52854,
+      "acousticConfidence": 0.999,
+      "ctcStart": 46.36851,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "negative",
+      "start": 46.57856,
+      "end": 46.88861,
+      "acousticConfidence": 0.9957,
+      "ctcStart": 46.60856,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "content.",
+      "start": 46.89861,
+      "end": 47.34869,
+      "acousticConfidence": 0.9981,
+      "ctcStart": 46.92861,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "REDU.",
+      "start": 47.79447,
+      "end": 48.12884,
+      "acousticConfidence": 0.726,
+      "ctcStart": 47.84878,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "Notice",
+      "start": 48.62741,
+      "end": 48.98899,
+      "acousticConfidence": 0.9769,
+      "ctcStart": 48.70894,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "the",
+      "start": 49.03901,
+      "end": 49.14902,
+      "acousticConfidence": 0.9991,
+      "ctcStart": 49.06901,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "scroll.",
+      "start": 49.15903,
+      "end": 49.52909,
+      "acousticConfidence": 0.9434,
+      "ctcStart": 49.18903,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "Choose",
+      "start": 49.96474,
+      "end": 50.26923,
+      "acousticConfidence": 0.9554,
+      "ctcStart": 50.00918,
+      "onsetRefinement": "measured silence end"
+    },
+    {
+      "text": "the",
+      "start": 50.29924,
+      "end": 50.40925,
+      "acousticConfidence": 0.9995,
+      "ctcStart": 50.32924,
+      "onsetRefinement": "30ms consonant attack allowance"
+    },
+    {
+      "text": "pause.",
+      "start": 50.41926,
+      "end": 50.76932,
+      "acousticConfidence": 0.9581,
+      "ctcStart": 50.44926,
+      "onsetRefinement": "30ms consonant attack allowance"
+    }
+  ]
+}

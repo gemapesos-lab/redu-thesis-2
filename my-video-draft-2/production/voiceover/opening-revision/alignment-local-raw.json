@@ -1,0 +1,3475 @@
+{
+  "text": " Just one more video... Then another. Suddenly, it\u2019s two-oh-seven A.M. That's doomscrolling. Screen-time limits count minutes, NOT what you watch. Meet REDU: a privacy-first Android app that notices doomscrolling, and helps you pause. Built for adult Filipino Android users who watch short-form video. Three signals: session length, time per video, and negative captions. Fuzzy logic combines them into a doomscrolling risk score. When it rises, REDU steps in gently: a reminder, a pause, then a breathing break. You stay in control. It all runs on your phone, and raw content is never kept. In a two-week pilot with fifty Filipino adults, prompted users scrolled less, and saw less negative content. REDU. Notice the scroll. Choose the pause.",
+  "segments": [
+    {
+      "start": 0.14,
+      "end": 6.22,
+      "text": " Just one more video... Then another. Suddenly, it\u2019s two-oh-seven A.M.",
+      "seek": null,
+      "tokens": [
+        2329,
+        530,
+        517,
+        2008,
+        986,
+        3244,
+        1194,
+        13,
+        24975,
+        11,
+        340,
+        447,
+        247,
+        82,
+        734,
+        12,
+        1219,
+        12,
+        26548,
+        317,
+        13,
+        44,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " Just",
+          "start": 0.14,
+          "end": 0.38,
+          "probability": 0.026422446593642235,
+          "tokens": [
+            2329
+          ]
+        },
+        {
+          "word": " one",
+          "start": 0.58,
+          "end": 0.76,
+          "probability": 0.9925369620323181,
+          "tokens": [
+            530
+          ]
+        },
+        {
+          "word": " more",
+          "start": 0.76,
+          "end": 0.98,
+          "probability": 0.9993343949317932,
+          "tokens": [
+            517
+          ]
+        },
+        {
+          "word": " video...",
+          "start": 0.98,
+          "end": 1.68,
+          "probability": 0.6220347806811333,
+          "tokens": [
+            2008,
+            986
+          ]
+        },
+        {
+          "word": " Then",
+          "start": 2.32,
+          "end": 2.42,
+          "probability": 0.21551640331745148,
+          "tokens": [
+            3244
+          ]
+        },
+        {
+          "word": " another.",
+          "start": 2.42,
+          "end": 3.12,
+          "probability": 0.5625977516174316,
+          "tokens": [
+            1194,
+            13
+          ]
+        },
+        {
+          "word": " Suddenly,",
+          "start": 3.18,
+          "end": 4.04,
+          "probability": 0.7357508689165115,
+          "tokens": [
+            24975,
+            11
+          ]
+        },
+        {
+          "word": " it\u2019s",
+          "start": 4.04,
+          "end": 4.9,
+          "probability": 0.45613650648058757,
+          "tokens": [
+            340,
+            447,
+            247,
+            82
+          ]
+        },
+        {
+          "word": " two-oh-seven",
+          "start": 4.92,
+          "end": 5.56,
+          "probability": 0.6751072645187378,
+          "tokens": [
+            734,
+            12,
+            1219,
+            12,
+            26548
+          ]
+        },
+        {
+          "word": " A.M.",
+          "start": 5.56,
+          "end": 6.22,
+          "probability": 0.7320727296173573,
+          "tokens": [
+            317,
+            13,
+            44,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 6.72,
+      "end": 11.62,
+      "text": " That's doomscrolling. Screen-time limits count minutes, NOT what you watch.",
+      "seek": null,
+      "tokens": [
+        1320,
+        338,
+        27666,
+        1416,
+        18886,
+        13,
+        15216,
+        12,
+        2435,
+        7095,
+        954,
+        2431,
+        11,
+        5626,
+        644,
+        345,
+        2342,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " That's",
+          "start": 6.72,
+          "end": 7.06,
+          "probability": 0.6011321246623993,
+          "tokens": [
+            1320,
+            338
+          ]
+        },
+        {
+          "word": " doomscrolling.",
+          "start": 7.06,
+          "end": 7.98,
+          "probability": 0.6471414119005203,
+          "tokens": [
+            27666,
+            1416,
+            18886,
+            13
+          ]
+        },
+        {
+          "word": " Screen-time",
+          "start": 8.5,
+          "end": 8.94,
+          "probability": 0.7353702286879221,
+          "tokens": [
+            15216,
+            12,
+            2435
+          ]
+        },
+        {
+          "word": " limits",
+          "start": 8.94,
+          "end": 9.16,
+          "probability": 0.9981039762496948,
+          "tokens": [
+            7095
+          ]
+        },
+        {
+          "word": " count",
+          "start": 9.16,
+          "end": 9.54,
+          "probability": 0.9986347556114197,
+          "tokens": [
+            954
+          ]
+        },
+        {
+          "word": " minutes,",
+          "start": 9.54,
+          "end": 10.02,
+          "probability": 0.8843701183795929,
+          "tokens": [
+            2431,
+            11
+          ]
+        },
+        {
+          "word": " NOT",
+          "start": 10.46,
+          "end": 10.72,
+          "probability": 0.012371678836643696,
+          "tokens": [
+            5626
+          ]
+        },
+        {
+          "word": " what",
+          "start": 10.72,
+          "end": 10.94,
+          "probability": 0.9963775277137756,
+          "tokens": [
+            644
+          ]
+        },
+        {
+          "word": " you",
+          "start": 10.94,
+          "end": 11.04,
+          "probability": 0.9989042282104492,
+          "tokens": [
+            345
+          ]
+        },
+        {
+          "word": " watch.",
+          "start": 11.04,
+          "end": 11.62,
+          "probability": 0.9897167682647705,
+          "tokens": [
+            2342,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 12.02,
+      "end": 17.52,
+      "text": " Meet REDU: a privacy-first Android app that notices doomscrolling, and helps you pause.",
+      "seek": null,
+      "tokens": [
+        21167,
+        23848,
+        52,
+        25,
+        257,
+        6782,
+        12,
+        11085,
+        5565,
+        598,
+        326,
+        19748,
+        27666,
+        1416,
+        18886,
+        11,
+        290,
+        5419,
+        345,
+        14985,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " Meet",
+          "start": 12.02,
+          "end": 12.26,
+          "probability": 0.8122342228889465,
+          "tokens": [
+            21167
+          ]
+        },
+        {
+          "word": " REDU:",
+          "start": 12.26,
+          "end": 12.76,
+          "probability": 0.1943015292117328,
+          "tokens": [
+            23848,
+            52,
+            25
+          ]
+        },
+        {
+          "word": " a",
+          "start": 13.32,
+          "end": 13.42,
+          "probability": 0.6636440753936768,
+          "tokens": [
+            257
+          ]
+        },
+        {
+          "word": " privacy-first",
+          "start": 13.42,
+          "end": 14.04,
+          "probability": 0.9504680832227071,
+          "tokens": [
+            6782,
+            12,
+            11085
+          ]
+        },
+        {
+          "word": " Android",
+          "start": 14.04,
+          "end": 14.38,
+          "probability": 0.9810441136360168,
+          "tokens": [
+            5565
+          ]
+        },
+        {
+          "word": " app",
+          "start": 14.38,
+          "end": 14.64,
+          "probability": 0.9938125610351562,
+          "tokens": [
+            598
+          ]
+        },
+        {
+          "word": " that",
+          "start": 14.64,
+          "end": 14.98,
+          "probability": 0.9920862317085266,
+          "tokens": [
+            326
+          ]
+        },
+        {
+          "word": " notices",
+          "start": 14.98,
+          "end": 15.4,
+          "probability": 0.9978405237197876,
+          "tokens": [
+            19748
+          ]
+        },
+        {
+          "word": " doomscrolling,",
+          "start": 15.4,
+          "end": 16.26,
+          "probability": 0.7677248902618885,
+          "tokens": [
+            27666,
+            1416,
+            18886,
+            11
+          ]
+        },
+        {
+          "word": " and",
+          "start": 16.44,
+          "end": 16.62,
+          "probability": 0.9890608787536621,
+          "tokens": [
+            290
+          ]
+        },
+        {
+          "word": " helps",
+          "start": 16.62,
+          "end": 16.7,
+          "probability": 0.9973996877670288,
+          "tokens": [
+            5419
+          ]
+        },
+        {
+          "word": " you",
+          "start": 16.98,
+          "end": 17.1,
+          "probability": 0.9987033605575562,
+          "tokens": [
+            345
+          ]
+        },
+        {
+          "word": " pause.",
+          "start": 17.1,
+          "end": 17.52,
+          "probability": 0.9537140130996704,
+          "tokens": [
+            14985,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 18.1,
+      "end": 21.58,
+      "text": " Built for adult Filipino Android users who watch short-form video.",
+      "seek": null,
+      "tokens": [
+        28477,
+        329,
+        4044,
+        35289,
+        5565,
+        2985,
+        508,
+        2342,
+        1790,
+        12,
+        687,
+        2008,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " Built",
+          "start": 18.1,
+          "end": 18.2,
+          "probability": 0.8408158421516418,
+          "tokens": [
+            28477
+          ]
+        },
+        {
+          "word": " for",
+          "start": 18.24,
+          "end": 18.34,
+          "probability": 0.9975413084030151,
+          "tokens": [
+            329
+          ]
+        },
+        {
+          "word": " adult",
+          "start": 18.34,
+          "end": 18.72,
+          "probability": 0.9851240515708923,
+          "tokens": [
+            4044
+          ]
+        },
+        {
+          "word": " Filipino",
+          "start": 18.72,
+          "end": 19.1,
+          "probability": 0.9761147499084473,
+          "tokens": [
+            35289
+          ]
+        },
+        {
+          "word": " Android",
+          "start": 19.14,
+          "end": 19.54,
+          "probability": 0.9883732199668884,
+          "tokens": [
+            5565
+          ]
+        },
+        {
+          "word": " users",
+          "start": 19.54,
+          "end": 19.78,
+          "probability": 0.9983066320419312,
+          "tokens": [
+            2985
+          ]
+        },
+        {
+          "word": " who",
+          "start": 19.78,
+          "end": 20.3,
+          "probability": 0.9872264266014099,
+          "tokens": [
+            508
+          ]
+        },
+        {
+          "word": " watch",
+          "start": 20.32,
+          "end": 20.62,
+          "probability": 0.9979485869407654,
+          "tokens": [
+            2342
+          ]
+        },
+        {
+          "word": " short-form",
+          "start": 20.62,
+          "end": 21.12,
+          "probability": 0.9190176924069723,
+          "tokens": [
+            1790,
+            12,
+            687
+          ]
+        },
+        {
+          "word": " video.",
+          "start": 21.12,
+          "end": 21.58,
+          "probability": 0.9392099976539612,
+          "tokens": [
+            2008,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 22.08,
+      "end": 26.22,
+      "text": " Three signals: session length, time per video, and negative captions.",
+      "seek": null,
+      "tokens": [
+        7683,
+        10425,
+        25,
+        6246,
+        4129,
+        11,
+        640,
+        583,
+        2008,
+        11,
+        290,
+        4633,
+        3144,
+        507,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " Three",
+          "start": 22.08,
+          "end": 22.3,
+          "probability": 0.8826874494552612,
+          "tokens": [
+            7683
+          ]
+        },
+        {
+          "word": " signals:",
+          "start": 22.3,
+          "end": 22.76,
+          "probability": 0.4868325473053119,
+          "tokens": [
+            10425,
+            25
+          ]
+        },
+        {
+          "word": " session",
+          "start": 23.28,
+          "end": 23.52,
+          "probability": 0.6025763154029846,
+          "tokens": [
+            6246
+          ]
+        },
+        {
+          "word": " length,",
+          "start": 23.52,
+          "end": 23.84,
+          "probability": 0.9704878926277161,
+          "tokens": [
+            4129,
+            11
+          ]
+        },
+        {
+          "word": " time",
+          "start": 24.16,
+          "end": 24.36,
+          "probability": 0.9975115060806274,
+          "tokens": [
+            640
+          ]
+        },
+        {
+          "word": " per",
+          "start": 24.36,
+          "end": 24.4,
+          "probability": 0.9510884881019592,
+          "tokens": [
+            583
+          ]
+        },
+        {
+          "word": " video,",
+          "start": 24.4,
+          "end": 24.96,
+          "probability": 0.9616422355175018,
+          "tokens": [
+            2008,
+            11
+          ]
+        },
+        {
+          "word": " and",
+          "start": 24.96,
+          "end": 25.28,
+          "probability": 0.9975506663322449,
+          "tokens": [
+            290
+          ]
+        },
+        {
+          "word": " negative",
+          "start": 25.28,
+          "end": 25.46,
+          "probability": 0.9978245496749878,
+          "tokens": [
+            4633
+          ]
+        },
+        {
+          "word": " captions.",
+          "start": 25.46,
+          "end": 26.22,
+          "probability": 0.9886079430580139,
+          "tokens": [
+            3144,
+            507,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 26.68,
+      "end": 29.64,
+      "text": " Fuzzy logic combines them into a doomscrolling risk score.",
+      "seek": null,
+      "tokens": [
+        376,
+        4715,
+        88,
+        9156,
+        21001,
+        606,
+        656,
+        257,
+        27666,
+        1416,
+        18886,
+        2526,
+        4776,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " Fuzzy",
+          "start": 26.68,
+          "end": 26.84,
+          "probability": 0.9848650296529134,
+          "tokens": [
+            376,
+            4715,
+            88
+          ]
+        },
+        {
+          "word": " logic",
+          "start": 26.84,
+          "end": 26.96,
+          "probability": 0.4480911195278168,
+          "tokens": [
+            9156
+          ]
+        },
+        {
+          "word": " combines",
+          "start": 26.96,
+          "end": 27.32,
+          "probability": 0.9975390434265137,
+          "tokens": [
+            21001
+          ]
+        },
+        {
+          "word": " them",
+          "start": 27.32,
+          "end": 27.92,
+          "probability": 0.0002092222130158916,
+          "tokens": [
+            606
+          ]
+        },
+        {
+          "word": " into",
+          "start": 27.92,
+          "end": 28.26,
+          "probability": 0.9909325838088989,
+          "tokens": [
+            656
+          ]
+        },
+        {
+          "word": " a",
+          "start": 28.26,
+          "end": 28.36,
+          "probability": 0.9967243075370789,
+          "tokens": [
+            257
+          ]
+        },
+        {
+          "word": " doomscrolling",
+          "start": 28.36,
+          "end": 28.92,
+          "probability": 0.6871230006217957,
+          "tokens": [
+            27666,
+            1416,
+            18886
+          ]
+        },
+        {
+          "word": " risk",
+          "start": 28.92,
+          "end": 29.22,
+          "probability": 0.9757004380226135,
+          "tokens": [
+            2526
+          ]
+        },
+        {
+          "word": " score.",
+          "start": 29.22,
+          "end": 29.64,
+          "probability": 0.9837821424007416,
+          "tokens": [
+            4776,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 30.16,
+      "end": 37.42,
+      "text": " When it rises, REDU steps in gently: a reminder, a pause, then a breathing break. You stay in control.",
+      "seek": null,
+      "tokens": [
+        1649,
+        340,
+        16736,
+        11,
+        23848,
+        52,
+        4831,
+        287,
+        15165,
+        25,
+        257,
+        15438,
+        11,
+        257,
+        14985,
+        11,
+        788,
+        257,
+        12704,
+        2270,
+        13,
+        921,
+        2652,
+        287,
+        1630,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " When",
+          "start": 30.16,
+          "end": 30.18,
+          "probability": 0.34210842847824097,
+          "tokens": [
+            1649
+          ]
+        },
+        {
+          "word": " it",
+          "start": 30.18,
+          "end": 30.36,
+          "probability": 0.9975513815879822,
+          "tokens": [
+            340
+          ]
+        },
+        {
+          "word": " rises,",
+          "start": 30.36,
+          "end": 30.76,
+          "probability": 0.9680801331996918,
+          "tokens": [
+            16736,
+            11
+          ]
+        },
+        {
+          "word": " REDU",
+          "start": 31.06,
+          "end": 31.3,
+          "probability": 0.2980075730010867,
+          "tokens": [
+            23848,
+            52
+          ]
+        },
+        {
+          "word": " steps",
+          "start": 31.3,
+          "end": 31.48,
+          "probability": 0.9855353832244873,
+          "tokens": [
+            4831
+          ]
+        },
+        {
+          "word": " in",
+          "start": 31.7,
+          "end": 31.8,
+          "probability": 0.9989346861839294,
+          "tokens": [
+            287
+          ]
+        },
+        {
+          "word": " gently:",
+          "start": 31.8,
+          "end": 32.24,
+          "probability": 0.49894241538362394,
+          "tokens": [
+            15165,
+            25
+          ]
+        },
+        {
+          "word": " a",
+          "start": 32.8,
+          "end": 32.92,
+          "probability": 0.7540454864501953,
+          "tokens": [
+            257
+          ]
+        },
+        {
+          "word": " reminder,",
+          "start": 32.92,
+          "end": 33.32,
+          "probability": 0.9524716436862946,
+          "tokens": [
+            15438,
+            11
+          ]
+        },
+        {
+          "word": " a",
+          "start": 33.32,
+          "end": 33.88,
+          "probability": 0.987975001335144,
+          "tokens": [
+            257
+          ]
+        },
+        {
+          "word": " pause,",
+          "start": 33.88,
+          "end": 34.34,
+          "probability": 0.9677619934082031,
+          "tokens": [
+            14985,
+            11
+          ]
+        },
+        {
+          "word": " then",
+          "start": 34.34,
+          "end": 34.84,
+          "probability": 0.9934752583503723,
+          "tokens": [
+            788
+          ]
+        },
+        {
+          "word": " a",
+          "start": 34.84,
+          "end": 35.04,
+          "probability": 0.9559923410415649,
+          "tokens": [
+            257
+          ]
+        },
+        {
+          "word": " breathing",
+          "start": 35.24,
+          "end": 35.42,
+          "probability": 0.9915750622749329,
+          "tokens": [
+            12704
+          ]
+        },
+        {
+          "word": " break.",
+          "start": 35.42,
+          "end": 35.7,
+          "probability": 0.9483038783073425,
+          "tokens": [
+            2270,
+            13
+          ]
+        },
+        {
+          "word": " You",
+          "start": 36.22,
+          "end": 36.38,
+          "probability": 0.8314624428749084,
+          "tokens": [
+            921
+          ]
+        },
+        {
+          "word": " stay",
+          "start": 36.38,
+          "end": 36.6,
+          "probability": 0.988338053226471,
+          "tokens": [
+            2652
+          ]
+        },
+        {
+          "word": " in",
+          "start": 36.6,
+          "end": 36.88,
+          "probability": 0.9984261989593506,
+          "tokens": [
+            287
+          ]
+        },
+        {
+          "word": " control.",
+          "start": 36.88,
+          "end": 37.42,
+          "probability": 0.9353848099708557,
+          "tokens": [
+            1630,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 37.9,
+      "end": 40.78,
+      "text": " It all runs on your phone, and raw content is never kept.",
+      "seek": null,
+      "tokens": [
+        632,
+        477,
+        4539,
+        319,
+        534,
+        3072,
+        11,
+        290,
+        8246,
+        2695,
+        318,
+        1239,
+        4030,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " It",
+          "start": 37.9,
+          "end": 38.02,
+          "probability": 0.8934383392333984,
+          "tokens": [
+            632
+          ]
+        },
+        {
+          "word": " all",
+          "start": 38.02,
+          "end": 38.24,
+          "probability": 0.9986547231674194,
+          "tokens": [
+            477
+          ]
+        },
+        {
+          "word": " runs",
+          "start": 38.24,
+          "end": 38.42,
+          "probability": 0.9985999464988708,
+          "tokens": [
+            4539
+          ]
+        },
+        {
+          "word": " on",
+          "start": 38.42,
+          "end": 38.6,
+          "probability": 0.9989483952522278,
+          "tokens": [
+            319
+          ]
+        },
+        {
+          "word": " your",
+          "start": 38.6,
+          "end": 38.78,
+          "probability": 0.9991425275802612,
+          "tokens": [
+            534
+          ]
+        },
+        {
+          "word": " phone,",
+          "start": 38.78,
+          "end": 39.24,
+          "probability": 0.8350945115089417,
+          "tokens": [
+            3072,
+            11
+          ]
+        },
+        {
+          "word": " and",
+          "start": 39.24,
+          "end": 39.48,
+          "probability": 0.9965729713439941,
+          "tokens": [
+            290
+          ]
+        },
+        {
+          "word": " raw",
+          "start": 39.48,
+          "end": 39.7,
+          "probability": 0.9598569869995117,
+          "tokens": [
+            8246
+          ]
+        },
+        {
+          "word": " content",
+          "start": 39.7,
+          "end": 40.1,
+          "probability": 0.9990737438201904,
+          "tokens": [
+            2695
+          ]
+        },
+        {
+          "word": " is",
+          "start": 40.1,
+          "end": 40.28,
+          "probability": 0.9985468983650208,
+          "tokens": [
+            318
+          ]
+        },
+        {
+          "word": " never",
+          "start": 40.28,
+          "end": 40.64,
+          "probability": 0.9960708618164062,
+          "tokens": [
+            1239
+          ]
+        },
+        {
+          "word": " kept.",
+          "start": 40.64,
+          "end": 40.78,
+          "probability": 0.9857327938079834,
+          "tokens": [
+            4030,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 41.48,
+      "end": 47.36,
+      "text": " In a two-week pilot with fifty Filipino adults, prompted users scrolled less, and saw less negative content.",
+      "seek": null,
+      "tokens": [
+        554,
+        257,
+        734,
+        12,
+        10464,
+        8022,
+        351,
+        15334,
+        35289,
+        6490,
+        11,
+        12053,
+        2985,
+        629,
+        8375,
+        1342,
+        11,
+        290,
+        2497,
+        1342,
+        4633,
+        2695,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " In",
+          "start": 41.48,
+          "end": 41.56,
+          "probability": 0.9755452275276184,
+          "tokens": [
+            554
+          ]
+        },
+        {
+          "word": " a",
+          "start": 41.56,
+          "end": 41.58,
+          "probability": 0.99834144115448,
+          "tokens": [
+            257
+          ]
+        },
+        {
+          "word": " two-week",
+          "start": 41.58,
+          "end": 42.06,
+          "probability": 0.8895500898361206,
+          "tokens": [
+            734,
+            12,
+            10464
+          ]
+        },
+        {
+          "word": " pilot",
+          "start": 42.06,
+          "end": 42.08,
+          "probability": 0.988635778427124,
+          "tokens": [
+            8022
+          ]
+        },
+        {
+          "word": " with",
+          "start": 42.1,
+          "end": 42.54,
+          "probability": 0.9820370078086853,
+          "tokens": [
+            351
+          ]
+        },
+        {
+          "word": " fifty",
+          "start": 42.54,
+          "end": 42.96,
+          "probability": 0.053188569843769073,
+          "tokens": [
+            15334
+          ]
+        },
+        {
+          "word": " Filipino",
+          "start": 42.96,
+          "end": 43.42,
+          "probability": 0.9818030595779419,
+          "tokens": [
+            35289
+          ]
+        },
+        {
+          "word": " adults,",
+          "start": 43.42,
+          "end": 43.92,
+          "probability": 0.9766048789024353,
+          "tokens": [
+            6490,
+            11
+          ]
+        },
+        {
+          "word": " prompted",
+          "start": 44.26,
+          "end": 44.54,
+          "probability": 0.9368675351142883,
+          "tokens": [
+            12053
+          ]
+        },
+        {
+          "word": " users",
+          "start": 44.54,
+          "end": 44.84,
+          "probability": 0.9991766810417175,
+          "tokens": [
+            2985
+          ]
+        },
+        {
+          "word": " scrolled",
+          "start": 44.84,
+          "end": 45.28,
+          "probability": 0.9970980584621429,
+          "tokens": [
+            629,
+            8375
+          ]
+        },
+        {
+          "word": " less,",
+          "start": 45.28,
+          "end": 45.58,
+          "probability": 0.556183535605669,
+          "tokens": [
+            1342,
+            11
+          ]
+        },
+        {
+          "word": " and",
+          "start": 45.82,
+          "end": 46.02,
+          "probability": 0.9937507510185242,
+          "tokens": [
+            290
+          ]
+        },
+        {
+          "word": " saw",
+          "start": 46.02,
+          "end": 46.28,
+          "probability": 0.9987331032752991,
+          "tokens": [
+            2497
+          ]
+        },
+        {
+          "word": " less",
+          "start": 46.28,
+          "end": 46.48,
+          "probability": 0.9973228573799133,
+          "tokens": [
+            1342
+          ]
+        },
+        {
+          "word": " negative",
+          "start": 46.48,
+          "end": 46.74,
+          "probability": 0.9921263456344604,
+          "tokens": [
+            4633
+          ]
+        },
+        {
+          "word": " content.",
+          "start": 46.74,
+          "end": 47.36,
+          "probability": 0.9787694215774536,
+          "tokens": [
+            2695,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "start": 47.84,
+      "end": 50.64,
+      "text": " REDU. Notice the scroll. Choose the pause.",
+      "seek": null,
+      "tokens": [
+        23848,
+        52,
+        13,
+        17641,
+        262,
+        10743,
+        13,
+        17489,
+        262,
+        14985,
+        13
+      ],
+      "temperature": null,
+      "avg_logprob": null,
+      "compression_ratio": null,
+      "no_speech_prob": null,
+      "words": [
+        {
+          "word": " REDU.",
+          "start": 47.84,
+          "end": 48.2,
+          "probability": 0.6126587986946106,
+          "tokens": [
+            23848,
+            52,
+            13
+          ]
+        },
+        {
+          "word": " Notice",
+          "start": 48.64,
+          "end": 48.92,
+          "probability": 0.8751628398895264,
+          "tokens": [
+            17641
+          ]
+        },
+        {
+          "word": " the",
+          "start": 48.92,
+          "end": 49.16,
+          "probability": 0.9978475570678711,
+          "tokens": [
+            262
+          ]
+        },
+        {
+          "word": " scroll.",
+          "start": 49.16,
+          "end": 49.6,
+          "probability": 0.9266695976257324,
+          "tokens": [
+            10743,
+            13
+          ]
+        },
+        {
+          "word": " Choose",
+          "start": 49.98,
+          "end": 50.18,
+          "probability": 0.8243510127067566,
+          "tokens": [
+            17489
+          ]
+        },
+        {
+          "word": " the",
+          "start": 50.18,
+          "end": 50.38,
+          "probability": 0.9969768524169922,
+          "tokens": [
+            262
+          ]
+        },
+        {
+          "word": " pause.",
+          "start": 50.38,
+          "end": 50.64,
+          "probability": 0.9831931889057159,
+          "tokens": [
+            14985,
+            13
+          ]
+        }
+      ]
+    }
+  ],
+  "language": "en",
+  "ori_dict": {
+    "text": " Just one more video... Then another. Suddenly, it\u2019s two-oh-seven A.M. That's doomscrolling. Screen-time limits count minutes, NOT what you watch. Meet REDU: a privacy-first Android app that notices doomscrolling, and helps you pause. Built for adult Filipino Android users who watch short-form video. Three signals: session length, time per video, and negative captions. Fuzzy logic combines them into a doomscrolling risk score. When it rises, REDU steps in gently: a reminder, a pause, then a breathing break. You stay in control. It all runs on your phone, and raw content is never kept. In a two-week pilot with fifty Filipino adults, prompted users scrolled less, and saw less negative content. REDU. Notice the scroll. Choose the pause.",
+    "segments": [
+      {
+        "start": 0.14,
+        "end": 6.22,
+        "text": " Just one more video... Then another. Suddenly, it\u2019s two-oh-seven A.M.",
+        "seek": null,
+        "tokens": [
+          2329,
+          530,
+          517,
+          2008,
+          986,
+          3244,
+          1194,
+          13,
+          24975,
+          11,
+          340,
+          447,
+          247,
+          82,
+          734,
+          12,
+          1219,
+          12,
+          26548,
+          317,
+          13,
+          44,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " Just",
+            "start": 0.14,
+            "end": 0.38,
+            "probability": 0.026422446593642235,
+            "tokens": [
+              2329
+            ]
+          },
+          {
+            "word": " one",
+            "start": 0.58,
+            "end": 0.76,
+            "probability": 0.9925369620323181,
+            "tokens": [
+              530
+            ]
+          },
+          {
+            "word": " more",
+            "start": 0.76,
+            "end": 0.98,
+            "probability": 0.9993343949317932,
+            "tokens": [
+              517
+            ]
+          },
+          {
+            "word": " video...",
+            "start": 0.98,
+            "end": 1.68,
+            "probability": 0.6220347806811333,
+            "tokens": [
+              2008,
+              986
+            ]
+          },
+          {
+            "word": " Then",
+            "start": 2.32,
+            "end": 2.42,
+            "probability": 0.21551640331745148,
+            "tokens": [
+              3244
+            ]
+          },
+          {
+            "word": " another.",
+            "start": 2.42,
+            "end": 3.12,
+            "probability": 0.5625977516174316,
+            "tokens": [
+              1194,
+              13
+            ]
+          },
+          {
+            "word": " Suddenly,",
+            "start": 3.18,
+            "end": 4.04,
+            "probability": 0.7357508689165115,
+            "tokens": [
+              24975,
+              11
+            ]
+          },
+          {
+            "word": " it\u2019s",
+            "start": 4.04,
+            "end": 4.9,
+            "probability": 0.45613650648058757,
+            "tokens": [
+              340,
+              447,
+              247,
+              82
+            ]
+          },
+          {
+            "word": " two-oh-seven",
+            "start": 4.92,
+            "end": 5.56,
+            "probability": 0.6751072645187378,
+            "tokens": [
+              734,
+              12,
+              1219,
+              12,
+              26548
+            ]
+          },
+          {
+            "word": " A.M.",
+            "start": 5.56,
+            "end": 6.22,
+            "probability": 0.7320727296173573,
+            "tokens": [
+              317,
+              13,
+              44,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 6.72,
+        "end": 11.62,
+        "text": " That's doomscrolling. Screen-time limits count minutes, NOT what you watch.",
+        "seek": null,
+        "tokens": [
+          1320,
+          338,
+          27666,
+          1416,
+          18886,
+          13,
+          15216,
+          12,
+          2435,
+          7095,
+          954,
+          2431,
+          11,
+          5626,
+          644,
+          345,
+          2342,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " That's",
+            "start": 6.72,
+            "end": 7.06,
+            "probability": 0.6011321246623993,
+            "tokens": [
+              1320,
+              338
+            ]
+          },
+          {
+            "word": " doomscrolling.",
+            "start": 7.06,
+            "end": 7.98,
+            "probability": 0.6471414119005203,
+            "tokens": [
+              27666,
+              1416,
+              18886,
+              13
+            ]
+          },
+          {
+            "word": " Screen-time",
+            "start": 8.5,
+            "end": 8.94,
+            "probability": 0.7353702286879221,
+            "tokens": [
+              15216,
+              12,
+              2435
+            ]
+          },
+          {
+            "word": " limits",
+            "start": 8.94,
+            "end": 9.16,
+            "probability": 0.9981039762496948,
+            "tokens": [
+              7095
+            ]
+          },
+          {
+            "word": " count",
+            "start": 9.16,
+            "end": 9.54,
+            "probability": 0.9986347556114197,
+            "tokens": [
+              954
+            ]
+          },
+          {
+            "word": " minutes,",
+            "start": 9.54,
+            "end": 10.02,
+            "probability": 0.8843701183795929,
+            "tokens": [
+              2431,
+              11
+            ]
+          },
+          {
+            "word": " NOT",
+            "start": 10.46,
+            "end": 10.72,
+            "probability": 0.012371678836643696,
+            "tokens": [
+              5626
+            ]
+          },
+          {
+            "word": " what",
+            "start": 10.72,
+            "end": 10.94,
+            "probability": 0.9963775277137756,
+            "tokens": [
+              644
+            ]
+          },
+          {
+            "word": " you",
+            "start": 10.94,
+            "end": 11.04,
+            "probability": 0.9989042282104492,
+            "tokens": [
+              345
+            ]
+          },
+          {
+            "word": " watch.",
+            "start": 11.04,
+            "end": 11.62,
+            "probability": 0.9897167682647705,
+            "tokens": [
+              2342,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 12.02,
+        "end": 17.52,
+        "text": " Meet REDU: a privacy-first Android app that notices doomscrolling, and helps you pause.",
+        "seek": null,
+        "tokens": [
+          21167,
+          23848,
+          52,
+          25,
+          257,
+          6782,
+          12,
+          11085,
+          5565,
+          598,
+          326,
+          19748,
+          27666,
+          1416,
+          18886,
+          11,
+          290,
+          5419,
+          345,
+          14985,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " Meet",
+            "start": 12.02,
+            "end": 12.26,
+            "probability": 0.8122342228889465,
+            "tokens": [
+              21167
+            ]
+          },
+          {
+            "word": " REDU:",
+            "start": 12.26,
+            "end": 12.76,
+            "probability": 0.1943015292117328,
+            "tokens": [
+              23848,
+              52,
+              25
+            ]
+          },
+          {
+            "word": " a",
+            "start": 13.32,
+            "end": 13.42,
+            "probability": 0.6636440753936768,
+            "tokens": [
+              257
+            ]
+          },
+          {
+            "word": " privacy-first",
+            "start": 13.42,
+            "end": 14.04,
+            "probability": 0.9504680832227071,
+            "tokens": [
+              6782,
+              12,
+              11085
+            ]
+          },
+          {
+            "word": " Android",
+            "start": 14.04,
+            "end": 14.38,
+            "probability": 0.9810441136360168,
+            "tokens": [
+              5565
+            ]
+          },
+          {
+            "word": " app",
+            "start": 14.38,
+            "end": 14.64,
+            "probability": 0.9938125610351562,
+            "tokens": [
+              598
+            ]
+          },
+          {
+            "word": " that",
+            "start": 14.64,
+            "end": 14.98,
+            "probability": 0.9920862317085266,
+            "tokens": [
+              326
+            ]
+          },
+          {
+            "word": " notices",
+            "start": 14.98,
+            "end": 15.4,
+            "probability": 0.9978405237197876,
+            "tokens": [
+              19748
+            ]
+          },
+          {
+            "word": " doomscrolling,",
+            "start": 15.4,
+            "end": 16.26,
+            "probability": 0.7677248902618885,
+            "tokens": [
+              27666,
+              1416,
+              18886,
+              11
+            ]
+          },
+          {
+            "word": " and",
+            "start": 16.44,
+            "end": 16.62,
+            "probability": 0.9890608787536621,
+            "tokens": [
+              290
+            ]
+          },
+          {
+            "word": " helps",
+            "start": 16.62,
+            "end": 16.7,
+            "probability": 0.9973996877670288,
+            "tokens": [
+              5419
+            ]
+          },
+          {
+            "word": " you",
+            "start": 16.98,
+            "end": 17.1,
+            "probability": 0.9987033605575562,
+            "tokens": [
+              345
+            ]
+          },
+          {
+            "word": " pause.",
+            "start": 17.1,
+            "end": 17.52,
+            "probability": 0.9537140130996704,
+            "tokens": [
+              14985,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 18.1,
+        "end": 21.58,
+        "text": " Built for adult Filipino Android users who watch short-form video.",
+        "seek": null,
+        "tokens": [
+          28477,
+          329,
+          4044,
+          35289,
+          5565,
+          2985,
+          508,
+          2342,
+          1790,
+          12,
+          687,
+          2008,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " Built",
+            "start": 18.1,
+            "end": 18.2,
+            "probability": 0.8408158421516418,
+            "tokens": [
+              28477
+            ]
+          },
+          {
+            "word": " for",
+            "start": 18.24,
+            "end": 18.34,
+            "probability": 0.9975413084030151,
+            "tokens": [
+              329
+            ]
+          },
+          {
+            "word": " adult",
+            "start": 18.34,
+            "end": 18.72,
+            "probability": 0.9851240515708923,
+            "tokens": [
+              4044
+            ]
+          },
+          {
+            "word": " Filipino",
+            "start": 18.72,
+            "end": 19.1,
+            "probability": 0.9761147499084473,
+            "tokens": [
+              35289
+            ]
+          },
+          {
+            "word": " Android",
+            "start": 19.14,
+            "end": 19.54,
+            "probability": 0.9883732199668884,
+            "tokens": [
+              5565
+            ]
+          },
+          {
+            "word": " users",
+            "start": 19.54,
+            "end": 19.78,
+            "probability": 0.9983066320419312,
+            "tokens": [
+              2985
+            ]
+          },
+          {
+            "word": " who",
+            "start": 19.78,
+            "end": 20.3,
+            "probability": 0.9872264266014099,
+            "tokens": [
+              508
+            ]
+          },
+          {
+            "word": " watch",
+            "start": 20.32,
+            "end": 20.62,
+            "probability": 0.9979485869407654,
+            "tokens": [
+              2342
+            ]
+          },
+          {
+            "word": " short-form",
+            "start": 20.62,
+            "end": 21.12,
+            "probability": 0.9190176924069723,
+            "tokens": [
+              1790,
+              12,
+              687
+            ]
+          },
+          {
+            "word": " video.",
+            "start": 21.12,
+            "end": 21.58,
+            "probability": 0.9392099976539612,
+            "tokens": [
+              2008,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 22.08,
+        "end": 26.22,
+        "text": " Three signals: session length, time per video, and negative captions.",
+        "seek": null,
+        "tokens": [
+          7683,
+          10425,
+          25,
+          6246,
+          4129,
+          11,
+          640,
+          583,
+          2008,
+          11,
+          290,
+          4633,
+          3144,
+          507,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " Three",
+            "start": 22.08,
+            "end": 22.3,
+            "probability": 0.8826874494552612,
+            "tokens": [
+              7683
+            ]
+          },
+          {
+            "word": " signals:",
+            "start": 22.3,
+            "end": 22.76,
+            "probability": 0.4868325473053119,
+            "tokens": [
+              10425,
+              25
+            ]
+          },
+          {
+            "word": " session",
+            "start": 23.28,
+            "end": 23.52,
+            "probability": 0.6025763154029846,
+            "tokens": [
+              6246
+            ]
+          },
+          {
+            "word": " length,",
+            "start": 23.52,
+            "end": 23.84,
+            "probability": 0.9704878926277161,
+            "tokens": [
+              4129,
+              11
+            ]
+          },
+          {
+            "word": " time",
+            "start": 24.16,
+            "end": 24.36,
+            "probability": 0.9975115060806274,
+            "tokens": [
+              640
+            ]
+          },
+          {
+            "word": " per",
+            "start": 24.36,
+            "end": 24.4,
+            "probability": 0.9510884881019592,
+            "tokens": [
+              583
+            ]
+          },
+          {
+            "word": " video,",
+            "start": 24.4,
+            "end": 24.96,
+            "probability": 0.9616422355175018,
+            "tokens": [
+              2008,
+              11
+            ]
+          },
+          {
+            "word": " and",
+            "start": 24.96,
+            "end": 25.28,
+            "probability": 0.9975506663322449,
+            "tokens": [
+              290
+            ]
+          },
+          {
+            "word": " negative",
+            "start": 25.28,
+            "end": 25.46,
+            "probability": 0.9978245496749878,
+            "tokens": [
+              4633
+            ]
+          },
+          {
+            "word": " captions.",
+            "start": 25.46,
+            "end": 26.22,
+            "probability": 0.9886079430580139,
+            "tokens": [
+              3144,
+              507,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 26.68,
+        "end": 29.64,
+        "text": " Fuzzy logic combines them into a doomscrolling risk score.",
+        "seek": null,
+        "tokens": [
+          376,
+          4715,
+          88,
+          9156,
+          21001,
+          606,
+          656,
+          257,
+          27666,
+          1416,
+          18886,
+          2526,
+          4776,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " Fuzzy",
+            "start": 26.68,
+            "end": 26.84,
+            "probability": 0.9848650296529134,
+            "tokens": [
+              376,
+              4715,
+              88
+            ]
+          },
+          {
+            "word": " logic",
+            "start": 26.84,
+            "end": 26.96,
+            "probability": 0.4480911195278168,
+            "tokens": [
+              9156
+            ]
+          },
+          {
+            "word": " combines",
+            "start": 26.96,
+            "end": 27.32,
+            "probability": 0.9975390434265137,
+            "tokens": [
+              21001
+            ]
+          },
+          {
+            "word": " them",
+            "start": 27.32,
+            "end": 27.92,
+            "probability": 0.0002092222130158916,
+            "tokens": [
+              606
+            ]
+          },
+          {
+            "word": " into",
+            "start": 27.92,
+            "end": 28.26,
+            "probability": 0.9909325838088989,
+            "tokens": [
+              656
+            ]
+          },
+          {
+            "word": " a",
+            "start": 28.26,
+            "end": 28.36,
+            "probability": 0.9967243075370789,
+            "tokens": [
+              257
+            ]
+          },
+          {
+            "word": " doomscrolling",
+            "start": 28.36,
+            "end": 28.92,
+            "probability": 0.6871230006217957,
+            "tokens": [
+              27666,
+              1416,
+              18886
+            ]
+          },
+          {
+            "word": " risk",
+            "start": 28.92,
+            "end": 29.22,
+            "probability": 0.9757004380226135,
+            "tokens": [
+              2526
+            ]
+          },
+          {
+            "word": " score.",
+            "start": 29.22,
+            "end": 29.64,
+            "probability": 0.9837821424007416,
+            "tokens": [
+              4776,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 30.16,
+        "end": 37.42,
+        "text": " When it rises, REDU steps in gently: a reminder, a pause, then a breathing break. You stay in control.",
+        "seek": null,
+        "tokens": [
+          1649,
+          340,
+          16736,
+          11,
+          23848,
+          52,
+          4831,
+          287,
+          15165,
+          25,
+          257,
+          15438,
+          11,
+          257,
+          14985,
+          11,
+          788,
+          257,
+          12704,
+          2270,
+          13,
+          921,
+          2652,
+          287,
+          1630,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " When",
+            "start": 30.16,
+            "end": 30.18,
+            "probability": 0.34210842847824097,
+            "tokens": [
+              1649
+            ]
+          },
+          {
+            "word": " it",
+            "start": 30.18,
+            "end": 30.36,
+            "probability": 0.9975513815879822,
+            "tokens": [
+              340
+            ]
+          },
+          {
+            "word": " rises,",
+            "start": 30.36,
+            "end": 30.76,
+            "probability": 0.9680801331996918,
+            "tokens": [
+              16736,
+              11
+            ]
+          },
+          {
+            "word": " REDU",
+            "start": 31.06,
+            "end": 31.3,
+            "probability": 0.2980075730010867,
+            "tokens": [
+              23848,
+              52
+            ]
+          },
+          {
+            "word": " steps",
+            "start": 31.3,
+            "end": 31.48,
+            "probability": 0.9855353832244873,
+            "tokens": [
+              4831
+            ]
+          },
+          {
+            "word": " in",
+            "start": 31.7,
+            "end": 31.8,
+            "probability": 0.9989346861839294,
+            "tokens": [
+              287
+            ]
+          },
+          {
+            "word": " gently:",
+            "start": 31.8,
+            "end": 32.24,
+            "probability": 0.49894241538362394,
+            "tokens": [
+              15165,
+              25
+            ]
+          },
+          {
+            "word": " a",
+            "start": 32.8,
+            "end": 32.92,
+            "probability": 0.7540454864501953,
+            "tokens": [
+              257
+            ]
+          },
+          {
+            "word": " reminder,",
+            "start": 32.92,
+            "end": 33.32,
+            "probability": 0.9524716436862946,
+            "tokens": [
+              15438,
+              11
+            ]
+          },
+          {
+            "word": " a",
+            "start": 33.32,
+            "end": 33.88,
+            "probability": 0.987975001335144,
+            "tokens": [
+              257
+            ]
+          },
+          {
+            "word": " pause,",
+            "start": 33.88,
+            "end": 34.34,
+            "probability": 0.9677619934082031,
+            "tokens": [
+              14985,
+              11
+            ]
+          },
+          {
+            "word": " then",
+            "start": 34.34,
+            "end": 34.84,
+            "probability": 0.9934752583503723,
+            "tokens": [
+              788
+            ]
+          },
+          {
+            "word": " a",
+            "start": 34.84,
+            "end": 35.04,
+            "probability": 0.9559923410415649,
+            "tokens": [
+              257
+            ]
+          },
+          {
+            "word": " breathing",
+            "start": 35.24,
+            "end": 35.42,
+            "probability": 0.9915750622749329,
+            "tokens": [
+              12704
+            ]
+          },
+          {
+            "word": " break.",
+            "start": 35.42,
+            "end": 35.7,
+            "probability": 0.9483038783073425,
+            "tokens": [
+              2270,
+              13
+            ]
+          },
+          {
+            "word": " You",
+            "start": 36.22,
+            "end": 36.38,
+            "probability": 0.8314624428749084,
+            "tokens": [
+              921
+            ]
+          },
+          {
+            "word": " stay",
+            "start": 36.38,
+            "end": 36.6,
+            "probability": 0.988338053226471,
+            "tokens": [
+              2652
+            ]
+          },
+          {
+            "word": " in",
+            "start": 36.6,
+            "end": 36.88,
+            "probability": 0.9984261989593506,
+            "tokens": [
+              287
+            ]
+          },
+          {
+            "word": " control.",
+            "start": 36.88,
+            "end": 37.42,
+            "probability": 0.9353848099708557,
+            "tokens": [
+              1630,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 37.9,
+        "end": 40.78,
+        "text": " It all runs on your phone, and raw content is never kept.",
+        "seek": null,
+        "tokens": [
+          632,
+          477,
+          4539,
+          319,
+          534,
+          3072,
+          11,
+          290,
+          8246,
+          2695,
+          318,
+          1239,
+          4030,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " It",
+            "start": 37.9,
+            "end": 38.02,
+            "probability": 0.8934383392333984,
+            "tokens": [
+              632
+            ]
+          },
+          {
+            "word": " all",
+            "start": 38.02,
+            "end": 38.24,
+            "probability": 0.9986547231674194,
+            "tokens": [
+              477
+            ]
+          },
+          {
+            "word": " runs",
+            "start": 38.24,
+            "end": 38.42,
+            "probability": 0.9985999464988708,
+            "tokens": [
+              4539
+            ]
+          },
+          {
+            "word": " on",
+            "start": 38.42,
+            "end": 38.6,
+            "probability": 0.9989483952522278,
+            "tokens": [
+              319
+            ]
+          },
+          {
+            "word": " your",
+            "start": 38.6,
+            "end": 38.78,
+            "probability": 0.9991425275802612,
+            "tokens": [
+              534
+            ]
+          },
+          {
+            "word": " phone,",
+            "start": 38.78,
+            "end": 39.24,
+            "probability": 0.8350945115089417,
+            "tokens": [
+              3072,
+              11
+            ]
+          },
+          {
+            "word": " and",
+            "start": 39.24,
+            "end": 39.48,
+            "probability": 0.9965729713439941,
+            "tokens": [
+              290
+            ]
+          },
+          {
+            "word": " raw",
+            "start": 39.48,
+            "end": 39.7,
+            "probability": 0.9598569869995117,
+            "tokens": [
+              8246
+            ]
+          },
+          {
+            "word": " content",
+            "start": 39.7,
+            "end": 40.1,
+            "probability": 0.9990737438201904,
+            "tokens": [
+              2695
+            ]
+          },
+          {
+            "word": " is",
+            "start": 40.1,
+            "end": 40.28,
+            "probability": 0.9985468983650208,
+            "tokens": [
+              318
+            ]
+          },
+          {
+            "word": " never",
+            "start": 40.28,
+            "end": 40.64,
+            "probability": 0.9960708618164062,
+            "tokens": [
+              1239
+            ]
+          },
+          {
+            "word": " kept.",
+            "start": 40.64,
+            "end": 40.78,
+            "probability": 0.9857327938079834,
+            "tokens": [
+              4030,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 41.48,
+        "end": 47.36,
+        "text": " In a two-week pilot with fifty Filipino adults, prompted users scrolled less, and saw less negative content.",
+        "seek": null,
+        "tokens": [
+          554,
+          257,
+          734,
+          12,
+          10464,
+          8022,
+          351,
+          15334,
+          35289,
+          6490,
+          11,
+          12053,
+          2985,
+          629,
+          8375,
+          1342,
+          11,
+          290,
+          2497,
+          1342,
+          4633,
+          2695,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " In",
+            "start": 41.48,
+            "end": 41.56,
+            "probability": 0.9755452275276184,
+            "tokens": [
+              554
+            ]
+          },
+          {
+            "word": " a",
+            "start": 41.56,
+            "end": 41.58,
+            "probability": 0.99834144115448,
+            "tokens": [
+              257
+            ]
+          },
+          {
+            "word": " two-week",
+            "start": 41.58,
+            "end": 42.06,
+            "probability": 0.8895500898361206,
+            "tokens": [
+              734,
+              12,
+              10464
+            ]
+          },
+          {
+            "word": " pilot",
+            "start": 42.06,
+            "end": 42.08,
+            "probability": 0.988635778427124,
+            "tokens": [
+              8022
+            ]
+          },
+          {
+            "word": " with",
+            "start": 42.1,
+            "end": 42.54,
+            "probability": 0.9820370078086853,
+            "tokens": [
+              351
+            ]
+          },
+          {
+            "word": " fifty",
+            "start": 42.54,
+            "end": 42.96,
+            "probability": 0.053188569843769073,
+            "tokens": [
+              15334
+            ]
+          },
+          {
+            "word": " Filipino",
+            "start": 42.96,
+            "end": 43.42,
+            "probability": 0.9818030595779419,
+            "tokens": [
+              35289
+            ]
+          },
+          {
+            "word": " adults,",
+            "start": 43.42,
+            "end": 43.92,
+            "probability": 0.9766048789024353,
+            "tokens": [
+              6490,
+              11
+            ]
+          },
+          {
+            "word": " prompted",
+            "start": 44.26,
+            "end": 44.54,
+            "probability": 0.9368675351142883,
+            "tokens": [
+              12053
+            ]
+          },
+          {
+            "word": " users",
+            "start": 44.54,
+            "end": 44.84,
+            "probability": 0.9991766810417175,
+            "tokens": [
+              2985
+            ]
+          },
+          {
+            "word": " scrolled",
+            "start": 44.84,
+            "end": 45.28,
+            "probability": 0.9970980584621429,
+            "tokens": [
+              629,
+              8375
+            ]
+          },
+          {
+            "word": " less,",
+            "start": 45.28,
+            "end": 45.58,
+            "probability": 0.556183535605669,
+            "tokens": [
+              1342,
+              11
+            ]
+          },
+          {
+            "word": " and",
+            "start": 45.82,
+            "end": 46.02,
+            "probability": 0.9937507510185242,
+            "tokens": [
+              290
+            ]
+          },
+          {
+            "word": " saw",
+            "start": 46.02,
+            "end": 46.28,
+            "probability": 0.9987331032752991,
+            "tokens": [
+              2497
+            ]
+          },
+          {
+            "word": " less",
+            "start": 46.28,
+            "end": 46.48,
+            "probability": 0.9973228573799133,
+            "tokens": [
+              1342
+            ]
+          },
+          {
+            "word": " negative",
+            "start": 46.48,
+            "end": 46.74,
+            "probability": 0.9921263456344604,
+            "tokens": [
+              4633
+            ]
+          },
+          {
+            "word": " content.",
+            "start": 46.74,
+            "end": 47.36,
+            "probability": 0.9787694215774536,
+            "tokens": [
+              2695,
+              13
+            ]
+          }
+        ]
+      },
+      {
+        "start": 47.84,
+        "end": 50.64,
+        "text": " REDU. Notice the scroll. Choose the pause.",
+        "seek": null,
+        "tokens": [
+          23848,
+          52,
+          13,
+          17641,
+          262,
+          10743,
+          13,
+          17489,
+          262,
+          14985,
+          13
+        ],
+        "temperature": null,
+        "avg_logprob": null,
+        "compression_ratio": null,
+        "no_speech_prob": null,
+        "words": [
+          {
+            "word": " REDU.",
+            "start": 47.84,
+            "end": 48.2,
+            "probability": 0.6126587986946106,
+            "tokens": [
+              23848,
+              52,
+              13
+            ]
+          },
+          {
+            "word": " Notice",
+            "start": 48.64,
+            "end": 48.92,
+            "probability": 0.8751628398895264,
+            "tokens": [
+              17641
+            ]
+          },
+          {
+            "word": " the",
+            "start": 48.92,
+            "end": 49.16,
+            "probability": 0.9978475570678711,
+            "tokens": [
+              262
+            ]
+          },
+          {
+            "word": " scroll.",
+            "start": 49.16,
+            "end": 49.6,
+            "probability": 0.9266695976257324,
+            "tokens": [
+              10743,
+              13
+            ]
+          },
+          {
+            "word": " Choose",
+            "start": 49.98,
+            "end": 50.18,
+            "probability": 0.8243510127067566,
+            "tokens": [
+              17489
+            ]
+          },
+          {
+            "word": " the",
+            "start": 50.18,
+            "end": 50.38,
+            "probability": 0.9969768524169922,
+            "tokens": [
+              262
+            ]
+          },
+          {
+            "word": " pause.",
+            "start": 50.38,
+            "end": 50.64,
+            "probability": 0.9831931889057159,
+            "tokens": [
+              14985,
+              13
+            ]
+          }
+        ]
+      }
+    ],
+    "language": null,
+    "ori_dict": {},
+    "regroup_history": "",
+    "nonspeech_sections": [
+      {
+        "start": 0.0,
+        "end": 0.12
+      },
+      {
+        "start": 0.34,
+        "end": 0.58
+      },
+      {
+        "start": 1.12,
+        "end": 1.16
+      },
+      {
+        "start": 1.68,
+        "end": 2.34
+      },
+      {
+        "start": 3.12,
+        "end": 3.64
+      },
+      {
+        "start": 4.32,
+        "end": 4.92
+      },
+      {
+        "start": 5.08,
+        "end": 5.12
+      },
+      {
+        "start": 5.42,
+        "end": 5.44
+      },
+      {
+        "start": 6.22,
+        "end": 6.72
+      },
+      {
+        "start": 7.08,
+        "end": 7.32
+      },
+      {
+        "start": 7.6,
+        "end": 7.66
+      },
+      {
+        "start": 7.98,
+        "end": 8.5
+      },
+      {
+        "start": 9.34,
+        "end": 9.42
+      },
+      {
+        "start": 10.02,
+        "end": 10.46
+      },
+      {
+        "start": 10.82,
+        "end": 10.9
+      },
+      {
+        "start": 11.36,
+        "end": 11.46
+      },
+      {
+        "start": 11.62,
+        "end": 12.02
+      },
+      {
+        "start": 12.3,
+        "end": 12.34
+      },
+      {
+        "start": 12.76,
+        "end": 13.36
+      },
+      {
+        "start": 13.84,
+        "end": 13.86
+      },
+      {
+        "start": 14.78,
+        "end": 14.86
+      },
+      {
+        "start": 15.88,
+        "end": 15.92
+      },
+      {
+        "start": 16.26,
+        "end": 16.44
+      },
+      {
+        "start": 16.68,
+        "end": 16.98
+      },
+      {
+        "start": 17.52,
+        "end": 17.96
+      },
+      {
+        "start": 18.24,
+        "end": 18.34
+      },
+      {
+        "start": 18.82,
+        "end": 18.88
+      },
+      {
+        "start": 19.1,
+        "end": 19.14
+      },
+      {
+        "start": 20.22,
+        "end": 20.32
+      },
+      {
+        "start": 20.9,
+        "end": 21.02
+      },
+      {
+        "start": 21.58,
+        "end": 22.08
+      },
+      {
+        "start": 22.38,
+        "end": 22.4
+      },
+      {
+        "start": 22.76,
+        "end": 23.28
+      },
+      {
+        "start": 23.84,
+        "end": 24.16
+      },
+      {
+        "start": 25.04,
+        "end": 25.12
+      },
+      {
+        "start": 25.66,
+        "end": 25.72
+      },
+      {
+        "start": 26.22,
+        "end": 26.68
+      },
+      {
+        "start": 27.34,
+        "end": 27.38
+      },
+      {
+        "start": 27.82,
+        "end": 27.86
+      },
+      {
+        "start": 28.7,
+        "end": 28.78
+      },
+      {
+        "start": 29.28,
+        "end": 29.36
+      },
+      {
+        "start": 29.44,
+        "end": 29.48
+      },
+      {
+        "start": 29.64,
+        "end": 30.06
+      },
+      {
+        "start": 30.76,
+        "end": 31.06
+      },
+      {
+        "start": 31.48,
+        "end": 31.78
+      },
+      {
+        "start": 32.24,
+        "end": 32.8
+      },
+      {
+        "start": 33.6,
+        "end": 33.98
+      },
+      {
+        "start": 34.42,
+        "end": 34.7
+      },
+      {
+        "start": 35.0,
+        "end": 35.24
+      },
+      {
+        "start": 35.7,
+        "end": 36.22
+      },
+      {
+        "start": 36.62,
+        "end": 36.66
+      },
+      {
+        "start": 37.42,
+        "end": 37.88
+      },
+      {
+        "start": 38.04,
+        "end": 38.1
+      },
+      {
+        "start": 38.88,
+        "end": 38.94
+      },
+      {
+        "start": 39.26,
+        "end": 39.38
+      },
+      {
+        "start": 39.76,
+        "end": 39.78
+      },
+      {
+        "start": 40.78,
+        "end": 41.46
+      },
+      {
+        "start": 42.02,
+        "end": 42.1
+      },
+      {
+        "start": 42.62,
+        "end": 42.7
+      },
+      {
+        "start": 42.86,
+        "end": 42.9
+      },
+      {
+        "start": 43.3,
+        "end": 43.34
+      },
+      {
+        "start": 43.92,
+        "end": 44.26
+      },
+      {
+        "start": 45.1,
+        "end": 45.12
+      },
+      {
+        "start": 45.36,
+        "end": 45.4
+      },
+      {
+        "start": 45.58,
+        "end": 45.82
+      },
+      {
+        "start": 46.08,
+        "end": 46.14
+      },
+      {
+        "start": 46.54,
+        "end": 46.56
+      },
+      {
+        "start": 47.36,
+        "end": 47.8
+      },
+      {
+        "start": 48.2,
+        "end": 48.64
+      },
+      {
+        "start": 49.0,
+        "end": 49.06
+      },
+      {
+        "start": 49.6,
+        "end": 49.98
+      },
+      {
+        "start": 50.3,
+        "end": 50.32
+      },
+      {
+        "start": 50.44,
+        "end": 50.48
+      },
+      {
+        "start": 50.64,
+        "end": 51.08
+      }
+    ]
+  },
+  "regroup_history": "",
+  "nonspeech_sections": [
+    {
+      "start": 0.0,
+      "end": 0.12
+    },
+    {
+      "start": 0.34,
+      "end": 0.58
+    },
+    {
+      "start": 1.12,
+      "end": 1.16
+    },
+    {
+      "start": 1.68,
+      "end": 2.34
+    },
+    {
+      "start": 3.12,
+      "end": 3.64
+    },
+    {
+      "start": 4.32,
+      "end": 4.92
+    },
+    {
+      "start": 5.08,
+      "end": 5.12
+    },
+    {
+      "start": 5.42,
+      "end": 5.44
+    },
+    {
+      "start": 6.22,
+      "end": 6.72
+    },
+    {
+      "start": 7.08,
+      "end": 7.32
+    },
+    {
+      "start": 7.6,
+      "end": 7.66
+    },
+    {
+      "start": 7.98,
+      "end": 8.5
+    },
+    {
+      "start": 9.34,
+      "end": 9.42
+    },
+    {
+      "start": 10.02,
+      "end": 10.46
+    },
+    {
+      "start": 10.82,
+      "end": 10.9
+    },
+    {
+      "start": 11.36,
+      "end": 11.46
+    },
+    {
+      "start": 11.62,
+      "end": 12.02
+    },
+    {
+      "start": 12.3,
+      "end": 12.34
+    },
+    {
+      "start": 12.76,
+      "end": 13.36
+    },
+    {
+      "start": 13.84,
+      "end": 13.86
+    },
+    {
+      "start": 14.78,
+      "end": 14.86
+    },
+    {
+      "start": 15.88,
+      "end": 15.92
+    },
+    {
+      "start": 16.26,
+      "end": 16.44
+    },
+    {
+      "start": 16.68,
+      "end": 16.98
+    },
+    {
+      "start": 17.52,
+      "end": 17.96
+    },
+    {
+      "start": 18.24,
+      "end": 18.34
+    },
+    {
+      "start": 18.82,
+      "end": 18.88
+    },
+    {
+      "start": 19.1,
+      "end": 19.14
+    },
+    {
+      "start": 20.22,
+      "end": 20.32
+    },
+    {
+      "start": 20.9,
+      "end": 21.02
+    },
+    {
+      "start": 21.58,
+      "end": 22.08
+    },
+    {
+      "start": 22.38,
+      "end": 22.4
+    },
+    {
+      "start": 22.76,
+      "end": 23.28
+    },
+    {
+      "start": 23.84,
+      "end": 24.16
+    },
+    {
+      "start": 25.04,
+      "end": 25.12
+    },
+    {
+      "start": 25.66,
+      "end": 25.72
+    },
+    {
+      "start": 26.22,
+      "end": 26.68
+    },
+    {
+      "start": 27.34,
+      "end": 27.38
+    },
+    {
+      "start": 27.82,
+      "end": 27.86
+    },
+    {
+      "start": 28.7,
+      "end": 28.78
+    },
+    {
+      "start": 29.28,
+      "end": 29.36
+    },
+    {
+      "start": 29.44,
+      "end": 29.48
+    },
+    {
+      "start": 29.64,
+      "end": 30.06
+    },
+    {
+      "start": 30.76,
+      "end": 31.06
+    },
+    {
+      "start": 31.48,
+      "end": 31.78
+    },
+    {
+      "start": 32.24,
+      "end": 32.8
+    },
+    {
+      "start": 33.6,
+      "end": 33.98
+    },
+    {
+      "start": 34.42,
+      "end": 34.7
+    },
+    {
+      "start": 35.0,
+      "end": 35.24
+    },
+    {
+      "start": 35.7,
+      "end": 36.22
+    },
+    {
+      "start": 36.62,
+      "end": 36.66
+    },
+    {
+      "start": 37.42,
+      "end": 37.88
+    },
+    {
+      "start": 38.04,
+      "end": 38.1
+    },
+    {
+      "start": 38.88,
+      "end": 38.94
+    },
+    {
+      "start": 39.26,
+      "end": 39.38
+    },
+    {
+      "start": 39.76,
+      "end": 39.78
+    },
+    {
+      "start": 40.78,
+      "end": 41.46
+    },
+    {
+      "start": 42.02,
+      "end": 42.1
+    },
+    {
+      "start": 42.62,
+      "end": 42.7
+    },
+    {
+      "start": 42.86,
+      "end": 42.9
+    },
+    {
+      "start": 43.3,
+      "end": 43.34
+    },
+    {
+      "start": 43.92,
+      "end": 44.26
+    },
+    {
+      "start": 45.1,
+      "end": 45.12
+    },
+    {
+      "start": 45.36,
+      "end": 45.4
+    },
+    {
+      "start": 45.58,
+      "end": 45.82
+    },
+    {
+      "start": 46.08,
+      "end": 46.14
+    },
+    {
+      "start": 46.54,
+      "end": 46.56
+    },
+    {
+      "start": 47.36,
+      "end": 47.8
+    },
+    {
+      "start": 48.2,
+      "end": 48.64
+    },
+    {
+      "start": 49.0,
+      "end": 49.06
+    },
+    {
+      "start": 49.6,
+      "end": 49.98
+    },
+    {
+      "start": 50.3,
+      "end": 50.32
+    },
+    {
+      "start": 50.44,
+      "end": 50.48
+    },
+    {
+      "start": 50.64,
+      "end": 51.08
+    }
+  ]
+}
