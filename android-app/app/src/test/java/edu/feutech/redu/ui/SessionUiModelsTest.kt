@@ -9,6 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
 
@@ -96,7 +97,7 @@ class SessionUiModelsTest {
     }
 
     @Test
-    fun dashboardUiStateBuildsSevenDayActivitySeries() {
+    fun dashboardUiStateBuildsTwelveWeekActivitySeries() {
         val zone = ZoneId.of("UTC")
         val now = Instant.parse("2026-07-11T12:00:00Z").toEpochMilli()
         val sessions = listOf(
@@ -126,12 +127,18 @@ class SessionUiModelsTest {
         )
 
         assertEquals("2026-07-11", state.date.toString())
-        assertEquals(7, state.weeklyActivity.size)
-        assertEquals("2026-07-05", state.weeklyActivity.first().date.toString())
-        assertEquals(30_000L, state.weeklyActivity[5].activeMillis)
-        assertEquals(1, state.weeklyActivity[5].sessionCount)
-        assertEquals(180_000L, state.weeklyActivity.last().activeMillis)
-        assertEquals(2, state.weeklyActivity.last().sessionCount)
+        assertEquals(83, state.dailyActivity.size)
+        assertEquals("2026-04-20", state.dailyActivity.first().date.toString())
+        assertEquals(DayOfWeek.MONDAY, state.dailyActivity.first().date.dayOfWeek)
+        assertEquals("2026-07-11", state.dailyActivity.last().date.toString())
+        val july4 = state.dailyActivity.single { it.date.toString() == "2026-07-04" }
+        assertEquals(10_000L, july4.activeMillis)
+        assertEquals(1, july4.sessionCount)
+        val july10 = state.dailyActivity.single { it.date.toString() == "2026-07-10" }
+        assertEquals(30_000L, july10.activeMillis)
+        assertEquals(1, july10.sessionCount)
+        assertEquals(180_000L, state.dailyActivity.last().activeMillis)
+        assertEquals(2, state.dailyActivity.last().sessionCount)
     }
 
     @Test
@@ -139,10 +146,29 @@ class SessionUiModelsTest {
         val state = dashboardUiState(
             sessions = emptyList(),
             setupComplete = false,
+            nowMillis = Instant.parse("2026-07-13T12:00:00Z").toEpochMilli(),
+            zoneId = ZoneId.of("UTC"),
         )
 
-        assertEquals(7, state.weeklyActivity.size)
-        assertTrue(state.weeklyActivity.all { it.activeMillis == 0L && it.sessionCount == 0 })
+        assertEquals(78, state.dailyActivity.size)
+        assertEquals("2026-04-27", state.dailyActivity.first().date.toString())
+        assertEquals("2026-07-13", state.dailyActivity.last().date.toString())
+        assertTrue(state.dailyActivity.all { it.activeMillis == 0L && it.sessionCount == 0 })
+    }
+
+    @Test
+    fun activityHeatLevelUsesFixedDurationBuckets() {
+        val minute = 60L * 1_000L
+        assertEquals(0, activityHeatLevel(0L))
+        assertEquals(0, activityHeatLevel(-1L))
+        assertEquals(1, activityHeatLevel(1L))
+        assertEquals(1, activityHeatLevel(15L * minute - 1L))
+        assertEquals(2, activityHeatLevel(15L * minute))
+        assertEquals(2, activityHeatLevel(45L * minute - 1L))
+        assertEquals(3, activityHeatLevel(45L * minute))
+        assertEquals(3, activityHeatLevel(90L * minute - 1L))
+        assertEquals(4, activityHeatLevel(90L * minute))
+        assertEquals(4, activityHeatLevel(3L * 60L * minute))
     }
 
     @Test

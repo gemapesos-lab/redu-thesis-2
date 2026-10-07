@@ -1,0 +1,24 @@
+October 7 take — 3D polish
+
+Supplied source: 3d-polish-original.mp3, 52.689 seconds, preserved byte-for-byte
+(sha256 0c10f732…9e33942). The file name omits the voice; its pitch and timbre
+match the October 6 Lauren take, so the narration credit stays Lauren.
+Production narration: 3d-polish.wav, 53.589 seconds, original speaking speed.
+Added silence, inside existing pauses only:
+- 0.6 s after "And another…" (the take's own pause, 1.07 s, becomes 1.67 s),
+  filled by the accelerating scroll and the score dropping to room tone;
+- 0.3 s after "adults," so the stat tiles clear before the results.
+No speech or silence is removed. Every aligned spoken sample is verified unchanged.
+
+Alignment ran locally with the CTC aligner (scripts/align-ctc-voiceover.py 3d-polish);
+hyphenated words keep part timings, which puts "seven" at 7.92 s for the clock flip.
+Rebuild: prepare-3d-polish-voiceover.py, then build-voice-cues.mjs.
+
+Picture: every scene rebuilt with CSS 3D objects and a scene camera; text appears
+as whole phrases on measured words, never overlapping (checked by check-storyboard.mjs).
+Sound: 44 synthesized effects and the retimed original score (scripts/music.mjs).
+
+Export: out/REDU-AVP-draft-2-3d-polish.mp4
+Report: production/voiceover/3d-polish/verification.json
+Previous reviewed cut: reference/before-3d-polish/ and out/REDU-AVP-draft-2-opening-revision.mp4
+First draft: ../my-video, untouched.

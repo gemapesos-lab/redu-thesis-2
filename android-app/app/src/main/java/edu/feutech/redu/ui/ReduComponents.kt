@@ -1,14 +1,18 @@
 package edu.feutech.redu.ui
 
+import android.graphics.Bitmap
+import android.graphics.BlurMaskFilter
+import android.graphics.Canvas as AndroidCanvas
+import android.graphics.Color as AndroidColor
+import android.graphics.Paint as AndroidPaint
+import android.graphics.RectF
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -20,12 +24,15 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -35,48 +42,88 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ImageShader
+import androidx.compose.ui.graphics.Shader
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
+import edu.feutech.redu.R
+import edu.feutech.redu.ui.theme.ReduButtonMinHeight
+import edu.feutech.redu.ui.theme.ReduInlineIconSize
+import edu.feutech.redu.ui.theme.ReduNavIconSize
 import edu.feutech.redu.ui.theme.ReduPalette
+import edu.feutech.redu.ui.theme.ReduPill
 import edu.feutech.redu.ui.theme.ReduStatusPalette
 
 @Composable
@@ -85,37 +132,77 @@ internal fun AdaptiveNavigationScaffold(
     selectedDestination: ReduDestination,
     showNavigation: Boolean,
     onDestinationSelected: (ReduDestination) -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    topScrim: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val expanded = maxWidth >= 600.dp
-        Row(modifier = Modifier.fillMaxSize()) {
-            if (expanded && showNavigation) {
-                ReduNavigationRail(
+        val showFloatingNav = !expanded && showNavigation
+        var floatingNavHeight by remember { mutableStateOf(0.dp) }
+        val density = LocalDensity.current
+        val hazeState = rememberHazeState()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(if (showFloatingNav) Modifier.hazeSource(hazeState) else Modifier),
+            ) {
+                if (expanded && showNavigation) {
+                    ReduNavigationRail(
+                        destinations = primaryDestinations,
+                        selectedDestination = selectedDestination,
+                        onDestinationSelected = onDestinationSelected,
+                    )
+                }
+
+                Scaffold(
+                    modifier = Modifier.weight(1f),
+                    containerColor = containerColor,
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    contentWindowInsets = WindowInsets.safeDrawing.only(
+                        WindowInsetsSides.Top + WindowInsetsSides.Horizontal,
+                    ),
+                ) { insets ->
+                    val layoutDirection = LocalLayoutDirection.current
+                    content(
+                        PaddingValues(
+                            start = insets.calculateStartPadding(layoutDirection),
+                            top = insets.calculateTopPadding(),
+                            end = insets.calculateEndPadding(layoutDirection),
+                            bottom = if (showFloatingNav) floatingNavHeight else insets.calculateBottomPadding(),
+                        ),
+                    )
+                }
+            }
+            if (topScrim) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .height(36.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                0f to ReduPalette.Background,
+                                1f to Color.Transparent,
+                            ),
+                        ),
+                )
+            }
+            if (showFloatingNav) {
+                ReduBottomNavigation(
                     destinations = primaryDestinations,
                     selectedDestination = selectedDestination,
                     onDestinationSelected = onDestinationSelected,
+                    hazeState = hazeState,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .onSizeChanged { size ->
+                            val height = with(density) { size.height.toDp() }
+                            if (floatingNavHeight != height) floatingNavHeight = height
+                        },
                 )
             }
-
-            Scaffold(
-                modifier = Modifier.weight(1f),
-                containerColor = MaterialTheme.colorScheme.background,
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                contentWindowInsets = WindowInsets.safeDrawing.only(
-                    WindowInsetsSides.Top + WindowInsetsSides.Horizontal,
-                ),
-                bottomBar = {
-                    if (!expanded && showNavigation) {
-                        ReduBottomNavigation(
-                            destinations = primaryDestinations,
-                            selectedDestination = selectedDestination,
-                            onDestinationSelected = onDestinationSelected,
-                        )
-                    }
-                },
-                content = content,
-            )
         }
     }
 }
@@ -125,28 +212,152 @@ private fun ReduBottomNavigation(
     destinations: List<ReduDestination>,
     selectedDestination: ReduDestination,
     onDestinationSelected: (ReduDestination) -> Unit,
+    hazeState: HazeState,
+    modifier: Modifier = Modifier,
 ) {
-    val largeText = LocalDensity.current.fontScale >= 1.5f
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        tonalElevation = 0.dp,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .heightIn(min = if (largeText) 88.dp else 72.dp),
-        ) {
-            destinations.forEach { destination ->
-                ReduNavigationItem(
-                    destination = destination,
-                    selected = destination == selectedDestination,
-                    onClick = { onDestinationSelected(destination) },
-                    modifier = Modifier.weight(1f),
-                )
+    val container = MaterialTheme.colorScheme.surfaceContainer
+    val surround = 40.dp
+    Layout(
+        modifier = modifier
+            .navigationBarsPadding()
+            .padding(bottom = 10.dp),
+        content = {
+            NavSurroundBlur(hazeState = hazeState, spread = surround)
+            Surface(
+                modifier = Modifier
+                    .shadow(
+                        elevation = 28.dp,
+                        shape = ReduPill,
+                        clip = false,
+                        ambientColor = Color.Black.copy(alpha = 0.78f),
+                        spotColor = Color.Black.copy(alpha = 0.62f),
+                    )
+                    .clip(ReduPill)
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeStyle(
+                            backgroundColor = container,
+                            tint = HazeTint(container.copy(alpha = 0.5f)),
+                            blurRadius = 48.dp,
+                            noiseFactor = 0.1f,
+                            fallbackTint = HazeTint(container.copy(alpha = 0.94f)),
+                        ),
+                    ),
+                color = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                shape = ReduPill,
+                shadowElevation = 0.dp,
+                tonalElevation = 0.dp,
+            ) {
+                NavSelectionHost(selectedDestination) { indicator ->
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        destinations.forEach { destination ->
+                            ReduNavigationItem(
+                                destination = destination,
+                                selected = destination == selectedDestination,
+                                onClick = { onDestinationSelected(destination) },
+                                showLabel = false,
+                                onIconSlotPositioned = { position, size ->
+                                    indicator.updateSlot(destination, position, size)
+                                },
+                            )
+                        }
+                    }
+                }
             }
+        },
+    ) { measurables, constraints ->
+        val pill = measurables[1].measure(constraints.copy(minWidth = 0, minHeight = 0))
+        val spreadPx = surround.roundToPx()
+        val surroundBlur = measurables[0].measure(
+            Constraints.fixed(
+                width = pill.width + spreadPx * 2,
+                height = pill.height + spreadPx * 2,
+            ),
+        )
+        // Report the pill size so content can scroll under the surrounding blur.
+        layout(pill.width, pill.height) {
+            surroundBlur.place(-spreadPx, -spreadPx)
+            pill.place(0, 0)
         }
     }
+}
+
+@Composable
+private fun NavSurroundBlur(
+    hazeState: HazeState,
+    spread: Dp,
+) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
+            .clearAndSetSemantics {},
+    ) {
+        if (maxWidth > 0.dp && maxHeight > 0.dp) {
+            val mask = rememberCapsuleHaloMask(
+                width = maxWidth,
+                height = maxHeight,
+                spread = spread,
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeStyle(
+                            backgroundColor = Color.Transparent,
+                            tint = HazeTint(Color.Black.copy(alpha = 0.16f)),
+                            blurRadius = 48.dp,
+                            noiseFactor = 0.06f,
+                            fallbackTint = HazeTint(Color.Transparent),
+                        ),
+                    ) {
+                        this.mask = mask
+                    },
+            )
+        }
+    }
+}
+
+@Composable
+private fun rememberCapsuleHaloMask(
+    width: Dp,
+    height: Dp,
+    spread: Dp,
+): Brush {
+    val density = LocalDensity.current
+    return remember(width, height, spread, density.density, density.fontScale) {
+        val widthPx = with(density) { width.roundToPx() }.coerceAtLeast(1)
+        val heightPx = with(density) { height.roundToPx() }.coerceAtLeast(1)
+        val spreadPx = with(density) { spread.roundToPx() }.coerceAtLeast(1)
+        ImageMaskBrush(capsuleHaloMask(widthPx, heightPx, spreadPx))
+    }
+}
+
+private class ImageMaskBrush(private val image: ImageBitmap) : ShaderBrush() {
+    override fun createShader(size: Size): Shader = ImageShader(image, TileMode.Clamp, TileMode.Clamp)
+}
+
+@Suppress("DEPRECATION")
+private fun capsuleHaloMask(widthPx: Int, heightPx: Int, spreadPx: Int): ImageBitmap {
+    val bitmap = Bitmap.createBitmap(widthPx, heightPx, Bitmap.Config.ARGB_8888)
+    val canvas = AndroidCanvas(bitmap)
+    val paint = AndroidPaint(AndroidPaint.ANTI_ALIAS_FLAG).apply {
+        color = AndroidColor.BLACK
+        maskFilter = BlurMaskFilter(spreadPx * 0.7f, BlurMaskFilter.Blur.NORMAL)
+    }
+    val rect = RectF(
+        spreadPx.toFloat(),
+        spreadPx.toFloat(),
+        (widthPx - spreadPx).toFloat(),
+        (heightPx - spreadPx).toFloat(),
+    )
+    val radius = rect.height() / 2f
+    canvas.drawRoundRect(rect, radius, radius, paint)
+    return bitmap.asImageBitmap()
 }
 
 @Composable
@@ -163,73 +374,207 @@ private fun ReduNavigationRail(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 0.dp,
     ) {
-        Column(
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            destinations.forEach { destination ->
-                ReduNavigationItem(
-                    destination = destination,
-                    selected = destination == selectedDestination,
-                    onClick = { onDestinationSelected(destination) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = if (largeText) 92.dp else 76.dp),
-                )
+        NavSelectionHost(selectedDestination) { indicator ->
+            Column(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                destinations.forEach { destination ->
+                    ReduNavigationItem(
+                        destination = destination,
+                        selected = destination == selectedDestination,
+                        onClick = { onDestinationSelected(destination) },
+                        onIconSlotPositioned = { position, size ->
+                            indicator.updateSlot(destination, position, size)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = if (largeText) 92.dp else 76.dp),
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
+private fun NavSelectionHost(
+    selectedDestination: ReduDestination,
+    content: @Composable (NavIndicatorHost) -> Unit,
+) {
+    val indicator = remember { NavIndicatorHost() }
+    SideEffect { indicator.onSelected(selectedDestination) }
+    Box(Modifier.onGloballyPositioned { indicator.updateParent(it.positionInWindow()) }) {
+        NavSelectionPill(spot = indicator.spot)
+        content(indicator)
+    }
+}
+
+@Composable
+private fun NavSelectionPill(spot: IndicatorSpot?) {
+    val reducedMotion = reduReducedMotion()
+    val x = remember { Animatable(spot?.x?.toFloat() ?: 0f) }
+    val y = remember { Animatable(spot?.y?.toFloat() ?: 0f) }
+    var animate by remember { mutableStateOf(false) }
+    LaunchedEffect(spot?.x, spot?.y, reducedMotion) {
+        val current = spot ?: return@LaunchedEffect
+        if (!animate || reducedMotion) {
+            x.snapTo(current.x.toFloat())
+            y.snapTo(current.y.toFloat())
+            animate = true
+        } else {
+            val spec = reduSpatialSpec<Float>()
+            coroutineScope {
+                launch { x.animateTo(current.x.toFloat(), spec) }
+                launch { y.animateTo(current.y.toFloat(), spec) }
+            }
+        }
+    }
+    val current = spot ?: return
+    val drawX = if (animate) x.value else current.x.toFloat()
+    val drawY = if (animate) y.value else current.y.toFloat()
+    val density = LocalDensity.current
+    Box(
+        modifier = Modifier
+            .offset { IntOffset(drawX.roundToInt(), drawY.roundToInt()) }
+            .size(
+                width = with(density) { current.width.toDp() },
+                height = with(density) { current.height.toDp() },
+            )
+            .background(MaterialTheme.colorScheme.primaryContainer, ReduPill),
+    )
+}
+
+private class NavIndicatorHost {
+    private var parentInWindow = Offset.Zero
+    private var parentReady = false
+    private val slots = mutableMapOf<ReduDestination, Slot>()
+    private var selected: ReduDestination? = null
+    var spot by mutableStateOf<IndicatorSpot?>(null)
+        private set
+
+    fun updateParent(origin: Offset) {
+        val changed = !parentReady || parentInWindow != origin
+        parentReady = true
+        parentInWindow = origin
+        if (changed) publish()
+    }
+
+    fun updateSlot(destination: ReduDestination, rootPosition: Offset, size: IntSize) {
+        val next = Slot(rootPosition, size)
+        if (slots[destination] == next) return
+        slots[destination] = next
+        if (destination == selected) publish()
+    }
+
+    fun onSelected(destination: ReduDestination) {
+        if (selected == destination) return
+        selected = destination
+        publish()
+    }
+
+    private fun publish() {
+        if (!parentReady) return
+        val destination = selected ?: return
+        val slot = slots[destination] ?: return
+        val relative = slot.rootPosition - parentInWindow
+        val next = IndicatorSpot(
+            x = relative.x.roundToInt(),
+            y = relative.y.roundToInt(),
+            width = slot.size.width,
+            height = slot.size.height,
+        )
+        if (spot != next) spot = next
+    }
+
+    private data class Slot(val rootPosition: Offset, val size: IntSize)
+}
+
+private data class IndicatorSpot(
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+)
+
+@Composable
 private fun ReduNavigationItem(
     destination: ReduDestination,
     selected: Boolean,
     onClick: () -> Unit,
+    onIconSlotPositioned: (Offset, IntSize) -> Unit,
     modifier: Modifier = Modifier,
+    showLabel: Boolean = true,
 ) {
     val contentColor by animateColorAsState(
         targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-        animationSpec = tween(180),
+        animationSpec = reduSettleSpec(reduReducedMotion()),
         label = "navigation color",
     )
+    val interactionSource = remember { MutableInteractionSource() }
     val largeText = LocalDensity.current.fontScale >= 1.5f
     Column(
         modifier = modifier
             .semantics {
                 role = Role.Tab
                 this.selected = selected
+                if (!showLabel) contentDescription = destination.label
             }
-            .clickable(role = Role.Tab, onClick = onClick)
-            .padding(horizontal = if (largeText) 4.dp else 8.dp, vertical = 8.dp),
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Tab,
+                onClick = onClick,
+            )
+            .padding(horizontal = if (largeText) 4.dp else 8.dp, vertical = if (showLabel) 8.dp else 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Box(
-            modifier = Modifier.height(3.dp).width(24.dp).background(
-                color = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                shape = RoundedCornerShape(2.dp),
-            ),
-        )
-        Spacer(Modifier.height(7.dp))
-        Icon(
-            imageVector = destination.icon,
-            contentDescription = null,
-            tint = contentColor,
-            modifier = Modifier.size(24.dp),
-        )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text = destination.label,
-            style = if (largeText) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
-            color = contentColor,
-            maxLines = 1,
-        )
+            modifier = Modifier
+                .width(if (largeText) 64.dp else 56.dp)
+                .height(32.dp)
+                .onGloballyPositioned { coordinates ->
+                    onIconSlotPositioned(coordinates.positionInWindow(), coordinates.size)
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(destination.icon),
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier
+                    .size(ReduNavIconSize)
+                    .reduPressScale(interactionSource, pressedScale = ReduIconPressedScale),
+            )
+        }
+        if (showLabel) {
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = destination.label,
+                style = if (largeText) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelMedium,
+                color = contentColor,
+                maxLines = 1,
+            )
+        }
     }
 }
+
+internal class ReduListMotion {
+    var scrolling by mutableStateOf(false)
+        private set
+
+    fun update(value: Boolean) {
+        scrolling = value
+    }
+}
+
+private val IdleListMotion = ReduListMotion()
+
+internal val LocalReduListMotion = compositionLocalOf { IdleListMotion }
 
 @Composable
 internal fun ReduScreen(
@@ -237,29 +582,98 @@ internal fun ReduScreen(
     title: String,
     subtitle: String? = null,
     onBack: (() -> Unit)? = null,
+    wash: Boolean = true,
+    quietTitle: Boolean = false,
+    pinHeader: Boolean = false,
+    backdrop: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: LazyListScope.() -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    val motion = remember { ReduListMotion() }
+    LaunchedEffect(listState, motion) {
+        snapshotFlow { listState.isScrollInProgress }.collect(motion::update)
+    }
+    val layoutDirection = LocalLayoutDirection.current
+    val topPadding = padding.calculateTopPadding()
+    val startPadding = padding.calculateStartPadding(layoutDirection)
+    val endPadding = padding.calculateEndPadding(layoutDirection)
+    val bottomPadding = padding.calculateBottomPadding()
     Box(
-        modifier = Modifier.fillMaxSize().padding(padding),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().widthIn(max = 760.dp),
-            contentPadding = PaddingValues(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 40.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp),
-        ) {
-            item {
-                ReduPageHeader(
-                    title = title,
-                    subtitle = subtitle,
-                    onBack = onBack,
-                    actions = actions,
-                )
+        CompositionLocalProvider(LocalReduListMotion provides motion) {
+            backdrop?.invoke()
+            if (wash) {
+                ReduHeroWash()
             }
-            content()
+            if (pinHeader) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .widthIn(max = 760.dp)
+                        .padding(start = startPadding, top = topPadding, end = endPadding),
+                ) {
+                    ReduPageHeader(
+                        title = title,
+                        subtitle = subtitle,
+                        onBack = onBack,
+                        quietTitle = quietTitle,
+                        actions = actions,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, top = 20.dp, end = 20.dp),
+                    )
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        state = listState,
+                        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 40.dp + bottomPadding),
+                        verticalArrangement = Arrangement.spacedBy(0.dp),
+                    ) {
+                        content()
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .widthIn(max = 760.dp)
+                        .padding(start = startPadding, top = topPadding, end = endPadding),
+                    state = listState,
+                    contentPadding = PaddingValues(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 40.dp + bottomPadding),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                ) {
+                    item {
+                        ReduPageHeader(
+                            title = title,
+                            subtitle = subtitle,
+                            onBack = onBack,
+                            quietTitle = quietTitle,
+                            actions = actions,
+                        )
+                    }
+                    content()
+                }
+            }
         }
     }
+}
+
+@Composable
+internal fun ReduHeroWash(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(220.dp)
+            .background(
+                Brush.verticalGradient(
+                    0f to ReduPalette.Figure.copy(alpha = 0.16f),
+                    0.42f to ReduPalette.Figure.copy(alpha = 0.05f),
+                    1f to Color.Transparent,
+                ),
+            ),
+    )
 }
 
 @Composable
@@ -267,16 +681,18 @@ private fun ReduPageHeader(
     title: String,
     subtitle: String?,
     onBack: (() -> Unit)?,
+    quietTitle: Boolean,
     actions: @Composable RowScope.() -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(bottom = 28.dp),
+        modifier = modifier.fillMaxWidth().padding(bottom = if (quietTitle) 16.dp else 28.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top,
     ) {
         if (onBack != null) {
-            IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
-                Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "Back")
+            ReduIconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
+                Icon(painterResource(R.drawable.ic_back), contentDescription = "Back")
             }
         }
         Column(
@@ -284,11 +700,10 @@ private fun ReduPageHeader(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(
-                text = "REDU",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
+                text = title,
+                style = if (quietTitle) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.headlineSmall,
+                color = if (quietTitle) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             )
-            Text(text = title, style = MaterialTheme.typography.headlineSmall)
             subtitle?.let { ReduSecondaryText(it) }
         }
         Row(content = actions)
@@ -299,14 +714,17 @@ private fun ReduPageHeader(
 internal fun ReduSectionHeader(
     title: String,
     subtitle: String? = null,
+    quiet: Boolean = false,
     trailing: (@Composable () -> Unit)? = null,
 ) {
     val stackTrailing = trailing != null && LocalDensity.current.fontScale >= 1.3f
-    val modifier = Modifier.fillMaxWidth().padding(top = 28.dp, bottom = 12.dp)
+    val modifier = Modifier.fillMaxWidth().padding(top = if (quiet) 22.dp else 28.dp, bottom = if (quiet) 8.dp else 12.dp)
+    val titleStyle = if (quiet) MaterialTheme.typography.labelLarge else MaterialTheme.typography.titleMedium
+    val titleColor = if (quiet) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
 
     if (stackTrailing) {
         Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
+            Text(title, style = titleStyle, color = titleColor)
             subtitle?.let { ReduSecondaryText(it) }
             trailing()
         }
@@ -317,7 +735,7 @@ internal fun ReduSectionHeader(
             verticalAlignment = Alignment.Bottom,
         ) {
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(title, style = titleStyle, color = titleColor)
                 subtitle?.let { ReduSecondaryText(it) }
             }
             trailing?.invoke()
@@ -353,6 +771,7 @@ internal fun ReduSection(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         shape = MaterialTheme.shapes.medium,
         tonalElevation = 0.dp,
     ) {
@@ -361,31 +780,82 @@ internal fun ReduSection(
 }
 
 @Composable
-internal fun ReduStatusLabel(label: String, tone: StatusTone) {
-    val (container, content) = statusColors(tone)
+internal fun ReduChip(
+    label: String,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+    onClick: (() -> Unit)? = null,
+    containerColor: Color = if (selected) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    },
+    contentColor: Color = if (selected) {
+        MaterialTheme.colorScheme.onPrimary
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    },
+    leading: (@Composable () -> Unit)? = null,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val clickableModifier = if (onClick != null) {
+        Modifier
+            .heightIn(min = 40.dp)
+            .semantics {
+                role = Role.Button
+                this.selected = selected
+            }
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .reduPressScale(interactionSource)
+    } else {
+        Modifier
+    }
     Surface(
-        color = container,
-        contentColor = content,
-        shape = MaterialTheme.shapes.small,
+        modifier = modifier.then(clickableModifier),
+        color = containerColor,
+        contentColor = contentColor,
+        shape = ReduPill,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
+            modifier = Modifier.padding(horizontal = if (onClick != null) 14.dp else 10.dp, vertical = if (onClick != null) 8.dp else 5.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(Modifier.size(6.dp).background(statusIndicatorColor(tone), CircleShape))
-            Text(label, style = MaterialTheme.typography.labelMedium)
+            leading?.invoke()
+            Text(
+                label,
+                style = if (onClick != null) MaterialTheme.typography.labelLarge else MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+            )
         }
     }
 }
 
 @Composable
+internal fun ReduStatusLabel(label: String, tone: StatusTone) {
+    val (container, content) = statusColors(tone)
+    ReduChip(
+        label = label,
+        containerColor = container,
+        contentColor = content,
+        leading = {
+            Box(Modifier.size(6.dp).background(statusIndicatorColor(tone), CircleShape))
+        },
+    )
+}
+
+@Composable
 internal fun ReduAttentionBanner(
     title: String,
-    body: String,
     actionLabel: String,
     onAction: () -> Unit,
     modifier: Modifier = Modifier,
+    body: String? = null,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -393,22 +863,37 @@ internal fun ReduAttentionBanner(
         contentColor = ReduStatusPalette.OnAttentionContainer,
         shape = MaterialTheme.shapes.medium,
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            Icon(Icons.Outlined.Info, contentDescription = null, modifier = Modifier.size(22.dp))
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(title, style = MaterialTheme.typography.titleSmall)
-                Text(body, style = MaterialTheme.typography.bodyMedium)
-                TextButton(
-                    onClick = onAction,
-                    contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp),
-                    colors = ButtonDefaults.textButtonColors(contentColor = ReduStatusPalette.OnAttentionContainer),
-                ) {
-                    Text(actionLabel)
+        val largeText = LocalDensity.current.fontScale >= 1.3f
+        val action = @Composable {
+            ReduTextButton(
+                text = actionLabel,
+                onClick = onAction,
+                contentColor = ReduStatusPalette.OnAttentionContainer,
+            )
+        }
+        if (largeText) {
+            Column(Modifier.padding(horizontal = 14.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
+                    Icon(painterResource(R.drawable.ic_info), contentDescription = null, modifier = Modifier.size(ReduInlineIconSize))
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(title, style = MaterialTheme.typography.titleSmall)
+                        body?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+                    }
                 }
+                action()
+            }
+        } else {
+            Row(
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(painterResource(R.drawable.ic_info), contentDescription = null, modifier = Modifier.size(ReduInlineIconSize))
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(title, style = MaterialTheme.typography.titleSmall)
+                    body?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+                }
+                action()
             }
         }
     }
@@ -468,26 +953,101 @@ internal fun ReduDivider(modifier: Modifier = Modifier) {
 }
 
 @Composable
+internal fun ReduIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.reduPressScale(interactionSource, pressedScale = ReduIconPressedScale),
+        enabled = enabled,
+        interactionSource = interactionSource,
+        content = content,
+    )
+}
+
+@Composable
 internal fun ReduPrimaryButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    icon: ImageVector? = null,
+    @DrawableRes icon: Int? = null,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     Button(
         onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
+        modifier = modifier.reduPressScale(interactionSource).heightIn(min = ReduButtonMinHeight),
         enabled = enabled,
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
+        shape = ReduPill,
+        contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
+        interactionSource = interactionSource,
     ) {
         if (icon != null) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(ReduInlineIconSize))
             Spacer(Modifier.width(8.dp))
         }
-        Text(text)
+        Text(text, style = MaterialTheme.typography.labelLarge)
     }
+}
+
+@Composable
+internal fun ReduTextButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    TextButton(
+        onClick = onClick,
+        modifier = modifier.reduPressScale(interactionSource).heightIn(min = ReduButtonMinHeight),
+        enabled = enabled,
+        shape = ReduPill,
+        contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
+        colors = ButtonDefaults.textButtonColors(contentColor = contentColor),
+        interactionSource = interactionSource,
+    ) {
+        Text(text, style = MaterialTheme.typography.labelLarge)
+    }
+}
+
+@Composable
+internal fun ReduTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = modifier.fillMaxWidth(),
+        singleLine = true,
+        enabled = enabled,
+        shape = ReduPill,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = ReduPalette.SurfaceHighest,
+            unfocusedContainerColor = ReduPalette.SurfaceHighest,
+            disabledContainerColor = ReduPalette.Surface,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            cursorColor = ReduPalette.Figure,
+            focusedLabelColor = ReduPalette.TextSecondary,
+            unfocusedLabelColor = ReduPalette.TextSecondary,
+            disabledLabelColor = ReduPalette.TextSecondary,
+            focusedTextColor = ReduPalette.TextPrimary,
+            unfocusedTextColor = ReduPalette.TextPrimary,
+            disabledTextColor = ReduPalette.TextSecondary,
+        ),
+    )
 }
 
 @Composable
@@ -498,17 +1058,37 @@ internal fun ReduOutlinedButton(
     enabled: Boolean = true,
     destructive: Boolean = false,
 ) {
-    OutlinedButton(
+    val interactionSource = remember { MutableInteractionSource() }
+    Button(
         onClick = onClick,
-        modifier = modifier.heightIn(min = 48.dp),
+        modifier = modifier.reduPressScale(interactionSource).heightIn(min = ReduButtonMinHeight),
         enabled = enabled,
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = if (destructive) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+        shape = ReduPill,
+        interactionSource = interactionSource,
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            focusedElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            disabledElevation = 0.dp,
+        ),
+        contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (destructive) {
+                MaterialTheme.colorScheme.errorContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHighest
+            },
+            contentColor = if (destructive) {
+                MaterialTheme.colorScheme.onErrorContainer
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
     ) {
-        Text(text)
+        Text(text, style = MaterialTheme.typography.labelLarge)
     }
 }
 
@@ -528,12 +1108,12 @@ internal fun ReduSwitch(
             stateDescription = if (checked) "On" else "Off"
         },
         colors = SwitchDefaults.colors(
-            checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
-            checkedTrackColor = MaterialTheme.colorScheme.primary,
-            checkedBorderColor = MaterialTheme.colorScheme.primary,
+            checkedThumbColor = ReduPalette.OnAction,
+            checkedTrackColor = ReduPalette.Action,
+            checkedBorderColor = ReduPalette.Action,
             uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
             uncheckedTrackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-            uncheckedBorderColor = MaterialTheme.colorScheme.outline,
+            uncheckedBorderColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
     )
 }
@@ -546,8 +1126,16 @@ internal fun ReduSettingRow(
     trailing: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
     val clickableModifier = if (onClick != null) {
-        Modifier.clickable(role = Role.Button, onClick = onClick)
+        Modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            )
+            .reduPressOverlay(interactionSource)
     } else {
         Modifier
     }
@@ -575,8 +1163,9 @@ internal fun ReduSettingRow(
             when {
                 trailing != null -> trailing()
                 onClick != null -> Icon(
-                    Icons.Outlined.ChevronRight,
+                    painterResource(R.drawable.ic_chevron_right),
                     contentDescription = null,
+                    modifier = Modifier.size(ReduInlineIconSize),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -585,9 +1174,37 @@ internal fun ReduSettingRow(
 }
 
 @Composable
+internal fun ReduLinearProgress(
+    modifier: Modifier = Modifier,
+    progress: (() -> Float)? = null,
+) {
+    val barModifier = modifier.fillMaxWidth().height(6.dp)
+    val color = MaterialTheme.colorScheme.primary
+    val trackColor = MaterialTheme.colorScheme.surfaceContainerHighest
+    if (progress == null) {
+        LinearProgressIndicator(
+            modifier = barModifier,
+            color = color,
+            trackColor = trackColor,
+            strokeCap = StrokeCap.Round,
+        )
+    } else {
+        LinearProgressIndicator(
+            progress = progress,
+            modifier = barModifier,
+            color = color,
+            trackColor = trackColor,
+            strokeCap = StrokeCap.Round,
+        )
+    }
+}
+
+@Composable
 internal fun ActivityPatternMeter(
     score: Double,
     modifier: Modifier = Modifier,
+    ringColor: Color = MaterialTheme.colorScheme.background,
+    onLight: Boolean = false,
 ) {
     val normalized = score.coerceIn(0.0, 100.0).toFloat()
     val markerColor = when {
@@ -595,7 +1212,9 @@ internal fun ActivityPatternMeter(
         normalized < 66.67f -> ReduStatusPalette.Elevated
         else -> ReduStatusPalette.Extended
     }
-    val markerOutline = MaterialTheme.colorScheme.background
+    val lowTrack = if (onLight) ReduPalette.Sage else ReduPalette.SageContainer
+    val midTrack = if (onLight) ReduPalette.Warning else ReduPalette.WarningContainer
+    val highTrack = if (onLight) ReduPalette.High else ReduPalette.HighContainer
     Canvas(
         modifier = modifier.fillMaxWidth().height(18.dp).semantics {
             contentDescription = "Activity pattern score ${normalized.toInt()} out of 100"
@@ -607,26 +1226,26 @@ internal fun ActivityPatternMeter(
         val gap = 3.dp.toPx()
         val segmentWidth = (size.width - gap * 2f) / 3f
         drawRoundRect(
-            color = ReduPalette.SeaGlassContainer,
+            color = lowTrack,
             topLeft = Offset(0f, trackTop),
             size = androidx.compose.ui.geometry.Size(segmentWidth, trackHeight),
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(trackHeight / 2f),
         )
         drawRoundRect(
-            color = ReduPalette.WarningContainer,
+            color = midTrack,
             topLeft = Offset(segmentWidth + gap, trackTop),
             size = androidx.compose.ui.geometry.Size(segmentWidth, trackHeight),
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(trackHeight / 2f),
         )
         drawRoundRect(
-            color = ReduPalette.HighContainer,
+            color = highTrack,
             topLeft = Offset((segmentWidth + gap) * 2f, trackTop),
             size = androidx.compose.ui.geometry.Size(segmentWidth, trackHeight),
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(trackHeight / 2f),
         )
         val markerX = (normalized / 100f) * size.width
         drawCircle(
-            color = markerOutline,
+            color = ringColor,
             radius = 7.dp.toPx(),
             center = Offset(markerX.coerceIn(7.dp.toPx(), size.width - 7.dp.toPx()), size.height / 2f),
         )
@@ -639,79 +1258,80 @@ internal fun ActivityPatternMeter(
 }
 
 @Composable
+internal fun ActivityScoreRing(
+    score: Double,
+    modifier: Modifier = Modifier,
+) {
+    val normalized = score.coerceIn(0.0, 100.0).toFloat()
+    val arcColor = when {
+        normalized < 33.33f -> ReduStatusPalette.Normal
+        normalized < 66.67f -> ReduStatusPalette.Elevated
+        else -> ReduStatusPalette.Extended
+    }
+    Box(
+        modifier = modifier.size(76.dp).semantics {
+            contentDescription = "Activity pattern score ${normalized.toInt()} out of 100"
+            progressBarRangeInfo = ProgressBarRangeInfo(normalized, 0f..100f)
+        },
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(Modifier.fillMaxSize().padding(4.dp)) {
+            val stroke = Stroke(width = 5.dp.toPx(), cap = StrokeCap.Round)
+            drawArc(
+                color = ReduPalette.SurfaceHighest,
+                startAngle = -90f,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = stroke,
+            )
+            if (normalized > 0f) {
+                drawArc(
+                    color = arcColor,
+                    startAngle = -90f,
+                    sweepAngle = 360f * (normalized / 100f),
+                    useCenter = false,
+                    style = stroke,
+                )
+            }
+        }
+        Text(
+            text = normalized.toInt().toString(),
+            style = MaterialTheme.typography.titleMedium.copy(fontFeatureSettings = "tnum"),
+        )
+    }
+}
+
+@Composable
 internal fun ReduEmptyState(
     title: String,
-    body: String,
-    icon: ImageVector? = null,
+    body: String? = null,
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 32.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (icon != null) {
-            Surface(
-                modifier = Modifier.size(56.dp),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp),
-                    )
-                }
-            }
-        } else {
-            Box(Modifier.width(36.dp).height(3.dp).background(MaterialTheme.colorScheme.primary, RoundedCornerShape(2.dp)))
+        ReduBlobatar(
+            expression = BlobatarExpression.Sleepy,
+            modifier = Modifier.size(120.dp),
+            reactToPress = true,
+        )
+        Text(title, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
+        body?.let {
+            Text(
+                text = it,
+                modifier = Modifier.widthIn(max = 420.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
         }
-        Text(title, style = MaterialTheme.typography.titleLarge)
-        ReduSecondaryText(body, Modifier.widthIn(max = 520.dp))
         if (actionLabel != null && onAction != null) {
-            TextButton(onClick = onAction, contentPadding = PaddingValues(horizontal = 0.dp, vertical = 8.dp)) {
-                Text(actionLabel)
-            }
+            ReduPrimaryButton(text = actionLabel, onClick = onAction)
         }
     }
-}
-
-@Composable
-internal fun ReduLoadingScreen() {
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        contentWindowInsets = WindowInsets.safeDrawing,
-    ) { padding ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 20.dp, vertical = 24.dp).widthIn(max = 760.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            SkeletonBar(widthFraction = 0.14f, height = 12.dp)
-            SkeletonBar(widthFraction = 0.34f, height = 34.dp)
-            SkeletonBar(widthFraction = 0.48f, height = 16.dp)
-            Spacer(Modifier.height(12.dp))
-            SkeletonBar(widthFraction = 1f, height = 150.dp)
-            SkeletonBar(widthFraction = 0.28f, height = 20.dp)
-            SkeletonBar(widthFraction = 1f, height = 170.dp)
-        }
-    }
-}
-
-@Composable
-private fun SkeletonBar(widthFraction: Float, height: androidx.compose.ui.unit.Dp) {
-    val transition = rememberInfiniteTransition(label = "loading")
-    val alpha by transition.animateFloat(
-        initialValue = 0.42f,
-        targetValue = 0.72f,
-        animationSpec = infiniteRepeatable(animation = tween(800), repeatMode = RepeatMode.Reverse),
-        label = "loading alpha",
-    )
-    Box(
-        modifier = Modifier.fillMaxWidth(widthFraction).height(height).clip(MaterialTheme.shapes.small)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = alpha)),
-    )
 }
 
 @Composable

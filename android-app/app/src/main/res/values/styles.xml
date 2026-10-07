@@ -2,11 +2,11 @@
     <style name="Theme.REDU.Base" parent="android:style/Theme.Material.NoActionBar">
         <item name="android:fontFamily">@font/manrope_variable</item>
         <item name="android:windowBackground">@color/redu_background</item>
-        <item name="android:statusBarColor">@color/redu_background</item>
-        <item name="android:navigationBarColor">@color/redu_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:colorAccent">@color/redu_sea_glass</item>
+        <item name="android:colorAccent">@color/redu_action</item>
     </style>
 
     <style name="Theme.REDU" parent="Theme.REDU.Base" />

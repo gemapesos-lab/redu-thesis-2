@@ -1,0 +1,891 @@
+[
+  {
+    "id": "hook",
+    "start": 0.10247,
+    "end": 8.591714166666666,
+    "words": [
+      {
+        "word": "Just",
+        "sourceStart": 0.10247,
+        "sourceEnd": 0.36007,
+        "start": 0.10247,
+        "end": 0.36007
+      },
+      {
+        "word": "one",
+        "sourceStart": 0.63012,
+        "sourceEnd": 0.76014,
+        "start": 0.63012,
+        "end": 0.76014
+      },
+      {
+        "word": "more",
+        "sourceStart": 0.81015,
+        "sourceEnd": 1.04019,
+        "start": 0.81015,
+        "end": 1.04019
+      },
+      {
+        "word": "video...",
+        "sourceStart": 1.09021,
+        "sourceEnd": 1.54028,
+        "start": 1.09021,
+        "end": 1.54028
+      },
+      {
+        "word": "Then",
+        "sourceStart": 2.32596,
+        "sourceEnd": 2.44045,
+        "start": 2.32596,
+        "end": 2.44045
+      },
+      {
+        "word": "another.",
+        "sourceStart": 2.51047,
+        "sourceEnd": 2.92054,
+        "start": 2.51047,
+        "end": 2.92054
+      },
+      {
+        "word": "Suddenly,",
+        "sourceStart": 3.56694,
+        "sourceEnd": 4.16076,
+        "start": 6.097544166666667,
+        "end": 6.691364166666666
+      },
+      {
+        "word": "it\u2019s",
+        "sourceStart": 4.50612,
+        "sourceEnd": 4.70086,
+        "start": 7.036724166666667,
+        "end": 7.231464166666666
+      },
+      {
+        "word": "two-oh-seven",
+        "sourceStart": 4.91132,
+        "sourceEnd": 5.66104,
+        "start": 7.4419241666666665,
+        "end": 8.191644166666666
+      },
+      {
+        "word": "A.M.",
+        "sourceStart": 5.75106,
+        "sourceEnd": 6.06111,
+        "start": 8.281664166666665,
+        "end": 8.591714166666666
+      }
+    ]
+  },
+  {
+    "id": "problem",
+    "start": 9.285234166666665,
+    "end": 14.012714166666667,
+    "words": [
+      {
+        "word": "That's",
+        "sourceStart": 6.75463,
+        "sourceEnd": 7.12131,
+        "start": 9.285234166666665,
+        "end": 9.651914166666668
+      },
+      {
+        "word": "doomscrolling.",
+        "sourceStart": 7.29134,
+        "sourceEnd": 8.00147,
+        "start": 9.821944166666666,
+        "end": 10.532074166666666
+      },
+      {
+        "word": "Screen-time",
+        "sourceStart": 8.46973,
+        "sourceEnd": 9.00165,
+        "start": 11.000334166666667,
+        "end": 11.532254166666666
+      },
+      {
+        "word": "limits",
+        "sourceStart": 9.03166,
+        "sourceEnd": 9.34171,
+        "start": 11.562264166666667,
+        "end": 11.872314166666667
+      },
+      {
+        "word": "count",
+        "sourceStart": 9.37173,
+        "sourceEnd": 9.62177,
+        "start": 11.902334166666666,
+        "end": 12.152374166666666
+      },
+      {
+        "word": "minutes,",
+        "sourceStart": 9.7518,
+        "sourceEnd": 10.12186,
+        "start": 12.282404166666666,
+        "end": 12.652464166666666
+      },
+      {
+        "word": "NOT",
+        "sourceStart": 10.46961,
+        "sourceEnd": 10.82199,
+        "start": 13.000214166666666,
+        "end": 13.352594166666666
+      },
+      {
+        "word": "what",
+        "sourceStart": 10.852,
+        "sourceEnd": 11.00202,
+        "start": 13.382604166666667,
+        "end": 13.532624166666666
+      },
+      {
+        "word": "you",
+        "sourceStart": 11.00202,
+        "sourceEnd": 11.12204,
+        "start": 13.532624166666666,
+        "end": 13.652644166666667
+      },
+      {
+        "word": "watch.",
+        "sourceStart": 11.17206,
+        "sourceEnd": 11.48211,
+        "start": 13.702664166666667,
+        "end": 14.012714166666667
+      }
+    ]
+  },
+  {
+    "id": "meet",
+    "start": 14.567744166666667,
+    "end": 19.993814166666667,
+    "words": [
+      {
+        "word": "Meet",
+        "sourceStart": 12.03714,
+        "sourceEnd": 12.24225,
+        "start": 14.567744166666667,
+        "end": 14.772854166666667
+      },
+      {
+        "word": "REDU:",
+        "sourceStart": 12.37228,
+        "sourceEnd": 12.70233,
+        "start": 14.902884166666666,
+        "end": 15.232934166666666
+      },
+      {
+        "word": "a",
+        "sourceStart": 13.18215,
+        "sourceEnd": 13.26243,
+        "start": 15.712754166666667,
+        "end": 15.793034166666667
+      },
+      {
+        "word": "privacy-first",
+        "sourceStart": 13.26243,
+        "sourceEnd": 14.10259,
+        "start": 15.793034166666667,
+        "end": 16.633194166666666
+      },
+      {
+        "word": "Android",
+        "sourceStart": 14.23262,
+        "sourceEnd": 14.58268,
+        "start": 16.763224166666667,
+        "end": 17.113284166666666
+      },
+      {
+        "word": "app",
+        "sourceStart": 14.6527,
+        "sourceEnd": 14.76271,
+        "start": 17.183304166666666,
+        "end": 17.29331416666667
+      },
+      {
+        "word": "that",
+        "sourceStart": 14.85608,
+        "sourceEnd": 14.98275,
+        "start": 17.38668416666667,
+        "end": 17.513354166666666
+      },
+      {
+        "word": "notices",
+        "sourceStart": 15.07277,
+        "sourceEnd": 15.52285,
+        "start": 17.60337416666667,
+        "end": 18.05345416666667
+      },
+      {
+        "word": "doomscrolling,",
+        "sourceStart": 15.55286,
+        "sourceEnd": 16.22298,
+        "start": 18.083464166666666,
+        "end": 18.753584166666666
+      },
+      {
+        "word": "and",
+        "sourceStart": 16.45757,
+        "sourceEnd": 16.62305,
+        "start": 18.988174166666667,
+        "end": 19.153654166666666
+      },
+      {
+        "word": "helps",
+        "sourceStart": 16.73308,
+        "sourceEnd": 16.98312,
+        "start": 19.263684166666668,
+        "end": 19.513724166666666
+      },
+      {
+        "word": "you",
+        "sourceStart": 16.99313,
+        "sourceEnd": 17.10314,
+        "start": 19.523734166666667,
+        "end": 19.633744166666666
+      },
+      {
+        "word": "pause.",
+        "sourceStart": 17.13315,
+        "sourceEnd": 17.46321,
+        "start": 19.663754166666667,
+        "end": 19.993814166666667
+      }
+    ]
+  },
+  {
+    "id": "users",
+    "start": 20.503284166666667,
+    "end": 24.054554166666666,
+    "words": [
+      {
+        "word": "Built",
+        "sourceStart": 17.97268,
+        "sourceEnd": 18.22335,
+        "start": 20.503284166666667,
+        "end": 20.753954166666666
+      },
+      {
+        "word": "for",
+        "sourceStart": 18.27336,
+        "sourceEnd": 18.42338,
+        "start": 20.803964166666667,
+        "end": 20.953984166666668
+      },
+      {
+        "word": "adult",
+        "sourceStart": 18.45339,
+        "sourceEnd": 18.80345,
+        "start": 20.983994166666665,
+        "end": 21.334054166666668
+      },
+      {
+        "word": "Filipino",
+        "sourceStart": 18.83346,
+        "sourceEnd": 19.34355,
+        "start": 21.364064166666665,
+        "end": 21.874154166666667
+      },
+      {
+        "word": "Android",
+        "sourceStart": 19.45358,
+        "sourceEnd": 19.76363,
+        "start": 21.984184166666665,
+        "end": 22.294234166666666
+      },
+      {
+        "word": "users",
+        "sourceStart": 19.85365,
+        "sourceEnd": 20.18371,
+        "start": 22.384254166666665,
+        "end": 22.714314166666668
+      },
+      {
+        "word": "who",
+        "sourceStart": 20.25372,
+        "sourceEnd": 20.36374,
+        "start": 22.784324166666668,
+        "end": 22.894344166666666
+      },
+      {
+        "word": "watch",
+        "sourceStart": 20.39375,
+        "sourceEnd": 20.64379,
+        "start": 22.924354166666667,
+        "end": 23.174394166666666
+      },
+      {
+        "word": "short-form",
+        "sourceStart": 20.6938,
+        "sourceEnd": 21.14388,
+        "start": 23.224404166666666,
+        "end": 23.674484166666666
+      },
+      {
+        "word": "video.",
+        "sourceStart": 21.17389,
+        "sourceEnd": 21.52395,
+        "start": 23.704494166666667,
+        "end": 24.054554166666666
+      }
+    ]
+  },
+  {
+    "id": "signals",
+    "start": 24.495344166666666,
+    "end": 28.715414166666665,
+    "words": [
+      {
+        "word": "Three",
+        "sourceStart": 21.96474,
+        "sourceEnd": 22.28409,
+        "start": 24.495344166666666,
+        "end": 24.814694166666666
+      },
+      {
+        "word": "signals:",
+        "sourceStart": 22.35411,
+        "sourceEnd": 22.80419,
+        "start": 24.884714166666665,
+        "end": 25.334794166666665
+      },
+      {
+        "word": "session",
+        "sourceStart": 23.16996,
+        "sourceEnd": 23.54432,
+        "start": 25.700564166666666,
+        "end": 26.074924166666666
+      },
+      {
+        "word": "length,",
+        "sourceStart": 23.59434,
+        "sourceEnd": 23.84438,
+        "start": 26.124944166666666,
+        "end": 26.374984166666668
+      },
+      {
+        "word": "time",
+        "sourceStart": 24.1273,
+        "sourceEnd": 24.36447,
+        "start": 26.65790416666667,
+        "end": 26.895074166666667
+      },
+      {
+        "word": "per",
+        "sourceStart": 24.39448,
+        "sourceEnd": 24.5245,
+        "start": 26.925084166666668,
+        "end": 27.055104166666666
+      },
+      {
+        "word": "video,",
+        "sourceStart": 24.53451,
+        "sourceEnd": 24.90457,
+        "start": 27.065114166666667,
+        "end": 27.435174166666666
+      },
+      {
+        "word": "and",
+        "sourceStart": 25.13499,
+        "sourceEnd": 25.24463,
+        "start": 27.665594166666665,
+        "end": 27.775234166666667
+      },
+      {
+        "word": "negative",
+        "sourceStart": 25.29465,
+        "sourceEnd": 25.64471,
+        "start": 27.825254166666667,
+        "end": 28.175314166666666
+      },
+      {
+        "word": "captions.",
+        "sourceStart": 25.65472,
+        "sourceEnd": 26.18481,
+        "start": 28.185324166666668,
+        "end": 28.715414166666665
+      }
+    ]
+  },
+  {
+    "id": "score",
+    "start": 29.143184166666668,
+    "end": 32.19605416666667,
+    "words": [
+      {
+        "word": "Fuzzy",
+        "sourceStart": 26.61258,
+        "sourceEnd": 26.92494,
+        "start": 29.143184166666668,
+        "end": 29.455544166666666
+      },
+      {
+        "word": "logic",
+        "sourceStart": 26.95495,
+        "sourceEnd": 27.28501,
+        "start": 29.485554166666667,
+        "end": 29.815614166666666
+      },
+      {
+        "word": "combines",
+        "sourceStart": 27.33502,
+        "sourceEnd": 27.7851,
+        "start": 29.865624166666667,
+        "end": 30.315704166666666
+      },
+      {
+        "word": "them",
+        "sourceStart": 27.81511,
+        "sourceEnd": 27.98514,
+        "start": 30.345714166666667,
+        "end": 30.515744166666668
+      },
+      {
+        "word": "into",
+        "sourceStart": 28.07516,
+        "sourceEnd": 28.24519,
+        "start": 30.605764166666667,
+        "end": 30.775794166666667
+      },
+      {
+        "word": "a",
+        "sourceStart": 28.2952,
+        "sourceEnd": 28.3452,
+        "start": 30.825804166666668,
+        "end": 30.875804166666665
+      },
+      {
+        "word": "doomscrolling",
+        "sourceStart": 28.39522,
+        "sourceEnd": 29.04533,
+        "start": 30.925824166666665,
+        "end": 31.575934166666666
+      },
+      {
+        "word": "risk",
+        "sourceStart": 29.09535,
+        "sourceEnd": 29.30538,
+        "start": 31.625954166666666,
+        "end": 31.835984166666666
+      },
+      {
+        "word": "score.",
+        "sourceStart": 29.3754,
+        "sourceEnd": 29.66545,
+        "start": 31.906004166666666,
+        "end": 32.19605416666667
+      }
+    ]
+  },
+  {
+    "id": "prompts",
+    "start": 32.60702416666666,
+    "end": 39.97747416666667,
+    "words": [
+      {
+        "word": "When",
+        "sourceStart": 30.07642,
+        "sourceEnd": 30.18554,
+        "start": 32.60702416666666,
+        "end": 32.716144166666666
+      },
+      {
+        "word": "it",
+        "sourceStart": 30.18554,
+        "sourceEnd": 30.26556,
+        "start": 32.716144166666666,
+        "end": 32.79616416666667
+      },
+      {
+        "word": "rises,",
+        "sourceStart": 30.31557,
+        "sourceEnd": 30.72564,
+        "start": 32.84617416666667,
+        "end": 33.25624416666666
+      },
+      {
+        "word": "REDU",
+        "sourceStart": 31.09088,
+        "sourceEnd": 31.38576,
+        "start": 33.62148416666666,
+        "end": 33.91636416666667
+      },
+      {
+        "word": "steps",
+        "sourceStart": 31.45578,
+        "sourceEnd": 31.76583,
+        "start": 33.98638416666667,
+        "end": 34.29643416666667
+      },
+      {
+        "word": "in",
+        "sourceStart": 31.81585,
+        "sourceEnd": 31.88585,
+        "start": 34.34645416666667,
+        "end": 34.41645416666667
+      },
+      {
+        "word": "gently:",
+        "sourceStart": 31.97588,
+        "sourceEnd": 32.38595,
+        "start": 34.50648416666667,
+        "end": 34.91655416666667
+      },
+      {
+        "word": "a",
+        "sourceStart": 32.82601,
+        "sourceEnd": 32.88604,
+        "start": 35.35661416666666,
+        "end": 35.41664416666667
+      },
+      {
+        "word": "reminder,",
+        "sourceStart": 32.88604,
+        "sourceEnd": 33.44614,
+        "start": 35.41664416666667,
+        "end": 35.97674416666666
+      },
+      {
+        "word": "a",
+        "sourceStart": 33.78093,
+        "sourceEnd": 33.86622,
+        "start": 36.31153416666666,
+        "end": 36.39682416666666
+      },
+      {
+        "word": "pause,",
+        "sourceStart": 33.86622,
+        "sourceEnd": 34.28629,
+        "start": 36.39682416666666,
+        "end": 36.81689416666667
+      },
+      {
+        "word": "then",
+        "sourceStart": 34.69134,
+        "sourceEnd": 34.82639,
+        "start": 37.22194416666666,
+        "end": 37.35699416666667
+      },
+      {
+        "word": "a",
+        "sourceStart": 35.07644,
+        "sourceEnd": 35.12645,
+        "start": 37.60704416666667,
+        "end": 37.65705416666667
+      },
+      {
+        "word": "breathing",
+        "sourceStart": 35.15646,
+        "sourceEnd": 35.48651,
+        "start": 37.68706416666667,
+        "end": 38.01711416666667
+      },
+      {
+        "word": "break.",
+        "sourceStart": 35.49652,
+        "sourceEnd": 35.72656,
+        "start": 38.02712416666667,
+        "end": 38.25716416666667
+      },
+      {
+        "word": "You",
+        "sourceStart": 36.19998,
+        "sourceEnd": 36.42669,
+        "start": 38.73058416666666,
+        "end": 38.95729416666667
+      },
+      {
+        "word": "stay",
+        "sourceStart": 36.59672,
+        "sourceEnd": 36.82676,
+        "start": 39.12732416666667,
+        "end": 39.35736416666667
+      },
+      {
+        "word": "in",
+        "sourceStart": 36.85677,
+        "sourceEnd": 36.92678,
+        "start": 39.38737416666666,
+        "end": 39.45738416666667
+      },
+      {
+        "word": "control.",
+        "sourceStart": 36.97679,
+        "sourceEnd": 37.44687,
+        "start": 39.50739416666667,
+        "end": 39.97747416666667
+      }
+    ]
+  },
+  {
+    "id": "privacy",
+    "start": 40.43298416666667,
+    "end": 43.57814416666666,
+    "words": [
+      {
+        "word": "It",
+        "sourceStart": 37.90238,
+        "sourceEnd": 37.98697,
+        "start": 40.43298416666667,
+        "end": 40.51757416666666
+      },
+      {
+        "word": "all",
+        "sourceStart": 38.15701,
+        "sourceEnd": 38.32704,
+        "start": 40.68761416666666,
+        "end": 40.85764416666666
+      },
+      {
+        "word": "runs",
+        "sourceStart": 38.35705,
+        "sourceEnd": 38.58708,
+        "start": 40.887654166666664,
+        "end": 41.11768416666666
+      },
+      {
+        "word": "on",
+        "sourceStart": 38.6371,
+        "sourceEnd": 38.70711,
+        "start": 41.16770416666667,
+        "end": 41.23771416666666
+      },
+      {
+        "word": "your",
+        "sourceStart": 38.71711,
+        "sourceEnd": 38.86713,
+        "start": 41.24771416666667,
+        "end": 41.397734166666666
+      },
+      {
+        "word": "phone,",
+        "sourceStart": 38.87714,
+        "sourceEnd": 39.16719,
+        "start": 41.40774416666666,
+        "end": 41.69779416666667
+      },
+      {
+        "word": "and",
+        "sourceStart": 39.38032,
+        "sourceEnd": 39.48725,
+        "start": 41.91092416666666,
+        "end": 42.017854166666666
+      },
+      {
+        "word": "raw",
+        "sourceStart": 39.48725,
+        "sourceEnd": 39.68729,
+        "start": 42.017854166666666,
+        "end": 42.21789416666667
+      },
+      {
+        "word": "content",
+        "sourceStart": 39.7573,
+        "sourceEnd": 40.16737,
+        "start": 42.287904166666664,
+        "end": 42.69797416666667
+      },
+      {
+        "word": "is",
+        "sourceStart": 40.2574,
+        "sourceEnd": 40.34741,
+        "start": 42.78800416666667,
+        "end": 42.878014166666674
+      },
+      {
+        "word": "never",
+        "sourceStart": 40.49744,
+        "sourceEnd": 40.74748,
+        "start": 43.02804416666666,
+        "end": 43.27808416666667
+      },
+      {
+        "word": "kept.",
+        "sourceStart": 40.77749,
+        "sourceEnd": 41.04754,
+        "start": 43.30809416666666,
+        "end": 43.57814416666666
+      }
+    ]
+  },
+  {
+    "id": "impact",
+    "start": 44.00114416666666,
+    "end": 49.87929416666667,
+    "words": [
+      {
+        "word": "In",
+        "sourceStart": 41.47054,
+        "sourceEnd": 41.54763,
+        "start": 44.00114416666666,
+        "end": 44.07823416666666
+      },
+      {
+        "word": "a",
+        "sourceStart": 41.54763,
+        "sourceEnd": 41.64765,
+        "start": 44.07823416666666,
+        "end": 44.17825416666666
+      },
+      {
+        "word": "two-week",
+        "sourceStart": 41.67766,
+        "sourceEnd": 42.00771,
+        "start": 44.208264166666666,
+        "end": 44.538314166666666
+      },
+      {
+        "word": "pilot",
+        "sourceStart": 42.05773,
+        "sourceEnd": 42.42779,
+        "start": 44.58833416666667,
+        "end": 44.958394166666665
+      },
+      {
+        "word": "with",
+        "sourceStart": 42.4378,
+        "sourceEnd": 42.58782,
+        "start": 44.96840416666667,
+        "end": 45.11842416666667
+      },
+      {
+        "word": "fifty",
+        "sourceStart": 42.67784,
+        "sourceEnd": 42.98789,
+        "start": 45.208444166666666,
+        "end": 45.51849416666667
+      },
+      {
+        "word": "Filipino",
+        "sourceStart": 43.0179,
+        "sourceEnd": 43.52799,
+        "start": 45.54850416666666,
+        "end": 46.058594166666666
+      },
+      {
+        "word": "adults,",
+        "sourceStart": 43.57801,
+        "sourceEnd": 43.94807,
+        "start": 46.10861416666667,
+        "end": 46.478674166666664
+      },
+      {
+        "word": "prompted",
+        "sourceStart": 44.2224,
+        "sourceEnd": 44.56818,
+        "start": 46.75300416666667,
+        "end": 47.09878416666666
+      },
+      {
+        "word": "users",
+        "sourceStart": 44.6582,
+        "sourceEnd": 44.94825,
+        "start": 47.18880416666667,
+        "end": 47.478854166666665
+      },
+      {
+        "word": "scrolled",
+        "sourceStart": 44.99827,
+        "sourceEnd": 45.34832,
+        "start": 47.52887416666667,
+        "end": 47.878924166666664
+      },
+      {
+        "word": "less,",
+        "sourceStart": 45.37834,
+        "sourceEnd": 45.64838,
+        "start": 47.90894416666667,
+        "end": 48.178984166666666
+      },
+      {
+        "word": "and",
+        "sourceStart": 45.85842,
+        "sourceEnd": 45.98844,
+        "start": 48.38902416666667,
+        "end": 48.51904416666666
+      },
+      {
+        "word": "saw",
+        "sourceStart": 46.07846,
+        "sourceEnd": 46.24849,
+        "start": 48.60906416666667,
+        "end": 48.77909416666667
+      },
+      {
+        "word": "less",
+        "sourceStart": 46.33851,
+        "sourceEnd": 46.52854,
+        "start": 48.86911416666666,
+        "end": 49.05914416666667
+      },
+      {
+        "word": "negative",
+        "sourceStart": 46.57856,
+        "sourceEnd": 46.88861,
+        "start": 49.10916416666667,
+        "end": 49.41921416666666
+      },
+      {
+        "word": "content.",
+        "sourceStart": 46.89861,
+        "sourceEnd": 47.34869,
+        "start": 49.42921416666667,
+        "end": 49.87929416666667
+      }
+    ]
+  },
+  {
+    "id": "outro",
+    "start": 50.32507416666667,
+    "end": 53.29992416666667,
+    "words": [
+      {
+        "word": "REDU.",
+        "sourceStart": 47.79447,
+        "sourceEnd": 48.12884,
+        "start": 50.32507416666667,
+        "end": 50.65944416666666
+      },
+      {
+        "word": "Notice",
+        "sourceStart": 48.62741,
+        "sourceEnd": 48.98899,
+        "start": 51.15801416666666,
+        "end": 51.519594166666664
+      },
+      {
+        "word": "the",
+        "sourceStart": 49.03901,
+        "sourceEnd": 49.14902,
+        "start": 51.56961416666667,
+        "end": 51.67962416666667
+      },
+      {
+        "word": "scroll.",
+        "sourceStart": 49.15903,
+        "sourceEnd": 49.52909,
+        "start": 51.689634166666664,
+        "end": 52.05969416666666
+      },
+      {
+        "word": "Choose",
+        "sourceStart": 49.96474,
+        "sourceEnd": 50.26923,
+        "start": 52.49534416666667,
+        "end": 52.79983416666667
+      },
+      {
+        "word": "the",
+        "sourceStart": 50.29924,
+        "sourceEnd": 50.40925,
+        "start": 52.82984416666666,
+        "end": 52.93985416666666
+      },
+      {
+        "word": "pause.",
+        "sourceStart": 50.41926,
+        "sourceEnd": 50.76932,
+        "start": 52.94986416666667,
+        "end": 53.29992416666667
+      }
+    ]
+  }
+]

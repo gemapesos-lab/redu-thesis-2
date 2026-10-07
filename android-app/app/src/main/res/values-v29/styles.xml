@@ -2,5 +2,7 @@
     <style name="Theme.REDU" parent="Theme.REDU.Base">
         <item name="android:windowLightNavigationBar">false</item>
         <item name="android:forceDarkAllowed">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
     </style>
 </resources>

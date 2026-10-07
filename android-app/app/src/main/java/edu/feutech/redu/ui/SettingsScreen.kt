@@ -1,52 +1,47 @@
 package edu.feutech.redu.ui
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.ExpandLess
-import androidx.compose.material.icons.outlined.ExpandMore
-import androidx.compose.material.icons.outlined.OpenInNew
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import edu.feutech.redu.BuildConfig
+import edu.feutech.redu.R
+import edu.feutech.redu.ui.theme.ReduButtonMinHeight
+import edu.feutech.redu.ui.theme.ReduInlineIconSize
+import edu.feutech.redu.ui.theme.ReduPalette
+import edu.feutech.redu.ui.theme.ReduPill
+import edu.feutech.redu.ui.theme.ReduTheme
 import edu.feutech.redu.data.AppSettingsEntity
 import edu.feutech.redu.data.Platform
 import edu.feutech.redu.data.PromptLevel
@@ -112,16 +107,16 @@ internal fun SettingsScreen(
     ReduScreen(
         padding = padding,
         title = "Settings",
-        subtitle = "Monitoring, study, and local data controls",
+        pinHeader = true,
     ) {
         item {
-            ReduSectionHeader(title = "Monitoring", subtitle = "Service and selected platforms")
+            ReduSectionHeader(title = "Monitoring", quiet = true)
         }
         item {
             ReduSection {
                 ReduSettingRow(
                     title = "Monitoring service",
-                    subtitle = if (accessibilityEnabled) "Android permission is active" else "Permission is required to save new sessions",
+                    subtitle = if (accessibilityEnabled) null else "Permission is required to save new sessions",
                     onClick = onOpenAccessibilitySettings,
                     trailing = {
                         ReduStatusLabel(
@@ -154,7 +149,7 @@ internal fun SettingsScreen(
         }
 
         item {
-            ReduSectionHeader(title = "Intervention", subtitle = "Week 2 prompt behavior")
+            ReduSectionHeader(title = "Intervention", subtitle = "Week 2 prompt behavior", quiet = true)
         }
         item {
             ReduSection {
@@ -189,7 +184,7 @@ internal fun SettingsScreen(
         }
 
         item {
-            ReduSectionHeader(title = "Study details", subtitle = "Participant assignment and dates")
+            ReduSectionHeader(title = "Study details", quiet = true)
         }
         item {
             ReduSection {
@@ -198,8 +193,8 @@ internal fun SettingsScreen(
                     subtitle = settings?.studyCode?.takeIf { it != "UNSET" }?.let { "Participant $it" } ?: "Participant code not set",
                     onClick = { studyDetailsExpanded = !studyDetailsExpanded },
                     trailing = {
-                        Icon(
-                            if (studyDetailsExpanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                        ReduExpandIcon(
+                            expanded = studyDetailsExpanded,
                             contentDescription = if (studyDetailsExpanded) "Hide study details" else "Show study details",
                         )
                     },
@@ -222,8 +217,8 @@ internal fun SettingsScreen(
                                     style = MaterialTheme.typography.titleMedium,
                                 )
                             }
-                            IconButton(onClick = { editCodeDialogOpen = true }, modifier = Modifier.size(48.dp)) {
-                                Icon(Icons.Outlined.Edit, contentDescription = "Edit participant code")
+                            ReduIconButton(onClick = { editCodeDialogOpen = true }, modifier = Modifier.size(48.dp)) {
+                                Icon(painterResource(R.drawable.ic_edit), contentDescription = "Edit participant code")
                             }
                         }
                         ReduInfoRow("Assigned group", settings?.studyGroup?.name?.lowercase()?.replaceFirstChar { it.uppercase() } ?: "Not set")
@@ -287,7 +282,7 @@ internal fun SettingsScreen(
                             Text(
                                 status,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = if (status == "Study period saved") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                color = if (status == "Study period saved") ReduPalette.Sage else MaterialTheme.colorScheme.error,
                             )
                         }
                     }
@@ -296,7 +291,7 @@ internal fun SettingsScreen(
         }
 
         item {
-            ReduSectionHeader(title = "Image scanning", subtitle = "Optional analysis for items without usable text")
+            ReduSectionHeader(title = "Image scanning", quiet = true)
         }
         item {
             VlmModelSection(
@@ -308,13 +303,12 @@ internal fun SettingsScreen(
         }
 
         item {
-            ReduSectionHeader(title = "Data and privacy", subtitle = "What stays on this device")
+            ReduSectionHeader(title = "Data and privacy", quiet = true)
         }
         item {
             ReduSection {
                 ReduSettingRow(
                     title = "Export study data",
-                    subtitle = "Share six aggregate CSV datasets in one ZIP",
                     onClick = onOpenExport,
                 )
                 ReduDivider(Modifier.padding(horizontal = 16.dp))
@@ -326,7 +320,7 @@ internal fun SettingsScreen(
         }
 
         item {
-            ReduSectionHeader(title = "Advanced")
+            ReduSectionHeader(title = "Advanced", quiet = true)
         }
         item {
             ReduSection {
@@ -335,8 +329,8 @@ internal fun SettingsScreen(
                     subtitle = "Study-data reset and developer tools",
                     onClick = { advancedExpanded = !advancedExpanded },
                     trailing = {
-                        Icon(
-                            if (advancedExpanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                        ReduExpandIcon(
+                            expanded = advancedExpanded,
                             contentDescription = if (advancedExpanded) "Hide advanced controls" else "Show advanced controls",
                         )
                     },
@@ -373,9 +367,9 @@ internal fun SettingsScreen(
                             }
                             Text("Demo intervention", style = MaterialTheme.typography.titleSmall)
                             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                PromptDemoButton("L1", Modifier.weight(1f)) { onDemoIntervention(PromptLevel.L1_AWARENESS) }
-                                PromptDemoButton("L2", Modifier.weight(1f)) { onDemoIntervention(PromptLevel.L2_PAUSE) }
-                                PromptDemoButton("L3", Modifier.weight(1f)) { onDemoIntervention(PromptLevel.L3_BREATHING) }
+                                ReduOutlinedButton("L1", { onDemoIntervention(PromptLevel.L1_AWARENESS) }, Modifier.weight(1f))
+                                ReduOutlinedButton("L2", { onDemoIntervention(PromptLevel.L2_PAUSE) }, Modifier.weight(1f))
+                                ReduOutlinedButton("L3", { onDemoIntervention(PromptLevel.L3_BREATHING) }, Modifier.weight(1f))
                             }
                             ReduCaption("Requires the monitoring service to be enabled.")
                         }
@@ -388,16 +382,15 @@ internal fun SettingsScreen(
     if (editCodeDialogOpen) {
         AlertDialog(
             onDismissRequest = { editCodeDialogOpen = false },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            shape = MaterialTheme.shapes.extraLarge,
             title = { Text("Edit participant code") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
+                    ReduTextField(
                         value = editedStudyCode,
                         onValueChange = { editedStudyCode = it.trim() },
-                        label = { Text("Participant study code") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.medium,
+                        label = "Participant study code",
                     )
                     if (editedStudyCode.isNotBlank()) {
                         ReduInfoRow("Assigned group", studyGroupForParticipantCode(editedStudyCode).name.lowercase().replaceFirstChar { it.uppercase() })
@@ -408,16 +401,18 @@ internal fun SettingsScreen(
                 }
             },
             confirmButton = {
-                TextButton(
+                ReduTextButton(
+                    text = "Save",
                     onClick = {
                         onStudyCodeSave(editedStudyCode)
                         editCodeDialogOpen = false
                     },
                     enabled = editedStudyCode.isNotBlank() && !hasExistingSessions,
-                ) { Text("Save") }
+                    contentColor = MaterialTheme.colorScheme.primary,
+                )
             },
             dismissButton = {
-                TextButton(onClick = { editCodeDialogOpen = false }) { Text("Cancel") }
+                ReduTextButton(text = "Cancel", onClick = { editCodeDialogOpen = false })
             },
         )
     }
@@ -425,21 +420,24 @@ internal fun SettingsScreen(
     if (resetStudyDataDialogOpen) {
         AlertDialog(
             onDismissRequest = { resetStudyDataDialogOpen = false },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            shape = MaterialTheme.shapes.extraLarge,
             title = { Text("Reset study data?") },
             text = {
                 Text("This permanently deletes sessions, prompt events, reliability logs, and personalization. Participant settings and downloaded models stay on this device.")
             },
             confirmButton = {
-                TextButton(
+                ReduTextButton(
+                    text = "Reset data",
                     onClick = {
                         resetStudyDataDialogOpen = false
                         onResetStudyData()
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                ) { Text("Reset data") }
+                    contentColor = MaterialTheme.colorScheme.error,
+                )
             },
             dismissButton = {
-                TextButton(onClick = { resetStudyDataDialogOpen = false }) { Text("Cancel") }
+                ReduTextButton(text = "Cancel", onClick = { resetStudyDataDialogOpen = false })
             },
         )
     }
@@ -453,17 +451,33 @@ private fun StudyDateField(
     onValueChange: (LocalDate?) -> Unit,
 ) {
     var dialogOpen by rememberSaveable { mutableStateOf(false) }
-    OutlinedButton(
+    val interactionSource = remember { MutableInteractionSource() }
+    Button(
         onClick = { dialogOpen = true },
-        modifier = Modifier.fillMaxWidth().height(52.dp),
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = ReduButtonMinHeight)
+            .reduPressScale(interactionSource),
+        shape = ReduPill,
+        interactionSource = interactionSource,
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            focusedElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            disabledElevation = 0.dp,
+        ),
+        contentPadding = PaddingValues(horizontal = 22.dp, vertical = 14.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
     ) {
         Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.Start) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(value?.formatStudyDate() ?: "Choose date", maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(value?.formatStudyDate() ?: "Choose date", maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.labelLarge)
         }
-        Icon(Icons.Outlined.CalendarMonth, contentDescription = null)
+        Icon(painterResource(R.drawable.ic_calendar), contentDescription = null, modifier = Modifier.size(ReduInlineIconSize))
     }
 
     if (dialogOpen) {
@@ -474,8 +488,10 @@ private fun StudyDateField(
         val pickerState = rememberDatePickerState(initialSelectedDateMillis = initialMillis)
         DatePickerDialog(
             onDismissRequest = { dialogOpen = false },
+            shape = MaterialTheme.shapes.extraLarge,
             confirmButton = {
-                TextButton(
+                ReduTextButton(
+                    text = "Choose",
                     onClick = {
                         val selected = pickerState.selectedDateMillis?.let {
                             Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate()
@@ -484,10 +500,11 @@ private fun StudyDateField(
                         dialogOpen = false
                     },
                     enabled = pickerState.selectedDateMillis != null,
-                ) { Text("Choose") }
+                    contentColor = MaterialTheme.colorScheme.primary,
+                )
             },
             dismissButton = {
-                TextButton(onClick = { dialogOpen = false }) { Text("Cancel") }
+                ReduTextButton(text = "Cancel", onClick = { dialogOpen = false })
             },
         ) {
             DatePicker(state = pickerState)
@@ -513,7 +530,6 @@ private fun VlmModelSection(
     ReduSection {
         ReduSettingRow(
             title = "On-device visual model",
-            subtitle = "Improves coverage for items without usable text",
             onClick = { detailsExpanded = !detailsExpanded },
             trailing = { ReduStatusLabel(statusLabel, statusTone) },
         )
@@ -525,21 +541,16 @@ private fun VlmModelSection(
             if (detailsExpanded) {
                 ReduCaption("Moondream 2 text model (Q4_K_M) and multimodal projector (F16)")
                 ReduInfoRow("Download size", formatBytes(ModelDownloadManager.TOTAL_SIZE_BYTES))
-                ReduCaption("Model files remain in REDU's private app storage and are used only on this device.")
                 ReduDivider()
             }
             when (modelState) {
-                ModelState.NotDownloaded -> ReduPrimaryButton(
+                ModelState.NotDownloaded -> ReduOutlinedButton(
                     text = "Download model",
                     onClick = onDownload,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 is ModelState.Downloading -> {
-                    LinearProgressIndicator(
-                        progress = { modelState.progress },
-                        modifier = Modifier.fillMaxWidth().height(6.dp),
-                        strokeCap = StrokeCap.Round,
-                    )
+                    ReduLinearProgress(progress = { modelState.progress })
                     ReduCaption("${(modelState.progress * 100).toInt()}%${modelState.detail?.let { " / $it" }.orEmpty()}")
                     ReduOutlinedButton(
                         text = "Cancel download",
@@ -549,7 +560,7 @@ private fun VlmModelSection(
                     )
                 }
                 is ModelState.Verifying -> {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth().height(6.dp), strokeCap = StrokeCap.Round)
+                    ReduLinearProgress()
                     ReduCaption(modelState.detail ?: "Checking downloaded model files")
                 }
                 ModelState.Ready -> ReduOutlinedButton(
@@ -567,18 +578,6 @@ private fun VlmModelSection(
     }
 }
 
-@Composable
-private fun PromptDemoButton(label: String, modifier: Modifier, onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier.height(48.dp),
-        shape = MaterialTheme.shapes.medium,
-        contentPadding = PaddingValues(horizontal = 8.dp),
-    ) {
-        Text(label, style = MaterialTheme.typography.labelLarge)
-    }
-}
-
 private fun personalizationStatus(
     settings: AppSettingsEntity,
     personalization: RiskPersonalizationEntity?,
@@ -587,4 +586,32 @@ private fun personalizationStatus(
     personalization == null -> "Default activity ranges are active because no baseline profile is available."
     !personalization.hasAnyPersonalizedBounds() -> "Default activity ranges are active because baseline coverage was insufficient."
     else -> "Personalized ranges are locked from ${personalization.reliableBaselineSessionCount} reliable baseline sessions."
+}
+
+@Preview(name = "Settings", widthDp = 360, heightDp = 800, uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true, backgroundColor = 0xFF0A0A0A)
+@Preview(name = "Settings large font", widthDp = 320, heightDp = 900, fontScale = 1.5f, uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true, backgroundColor = 0xFF0A0A0A)
+@Composable
+private fun SettingsPreview() {
+    ReduTheme {
+        SettingsScreen(
+            padding = PaddingValues(0.dp),
+            settings = null,
+            personalization = null,
+            accessibilityEnabled = false,
+            debugOverlayEnabled = false,
+            modelState = ModelState.NotDownloaded,
+            hasExistingSessions = false,
+            onDownloadModel = {},
+            onCancelModelDownload = {},
+            onDeleteModel = {},
+            onPlatformTrackingChange = { _, _ -> },
+            onStudyCodeSave = {},
+            onStudyPeriodSave = { _, _, _, _ -> },
+            onResetStudyData = {},
+            onPromptsEnabledChange = {},
+            onDebugOverlayChange = {},
+            onOpenAccessibilitySettings = {},
+            onOpenExport = {},
+        )
+    }
 }

@@ -1,0 +1,592 @@
+{
+  "method": "Local Stable-ts forced alignment",
+  "model": "OpenAI Whisper small.en",
+  "audioUploaded": false,
+  "words": [
+    {
+      "text": "Just",
+      "start": 0.14,
+      "end": 0.38
+    },
+    {
+      "text": "one",
+      "start": 0.58,
+      "end": 0.76
+    },
+    {
+      "text": "more",
+      "start": 0.76,
+      "end": 0.98
+    },
+    {
+      "text": "video...",
+      "start": 0.98,
+      "end": 1.68
+    },
+    {
+      "text": "Then",
+      "start": 2.32,
+      "end": 2.42
+    },
+    {
+      "text": "another.",
+      "start": 2.42,
+      "end": 3.12
+    },
+    {
+      "text": "Suddenly,",
+      "start": 3.18,
+      "end": 4.04
+    },
+    {
+      "text": "it\u2019s",
+      "start": 4.04,
+      "end": 4.9
+    },
+    {
+      "text": "two-oh-seven",
+      "start": 4.92,
+      "end": 5.56
+    },
+    {
+      "text": "A.M.",
+      "start": 5.56,
+      "end": 6.22
+    },
+    {
+      "text": "That's",
+      "start": 6.72,
+      "end": 7.06
+    },
+    {
+      "text": "doomscrolling.",
+      "start": 7.06,
+      "end": 7.98
+    },
+    {
+      "text": "Screen-time",
+      "start": 8.5,
+      "end": 8.94
+    },
+    {
+      "text": "limits",
+      "start": 8.94,
+      "end": 9.16
+    },
+    {
+      "text": "count",
+      "start": 9.16,
+      "end": 9.54
+    },
+    {
+      "text": "minutes,",
+      "start": 9.54,
+      "end": 10.02
+    },
+    {
+      "text": "NOT",
+      "start": 10.46,
+      "end": 10.72
+    },
+    {
+      "text": "what",
+      "start": 10.72,
+      "end": 10.94
+    },
+    {
+      "text": "you",
+      "start": 10.94,
+      "end": 11.04
+    },
+    {
+      "text": "watch.",
+      "start": 11.04,
+      "end": 11.62
+    },
+    {
+      "text": "Meet",
+      "start": 12.02,
+      "end": 12.26
+    },
+    {
+      "text": "REDU:",
+      "start": 12.26,
+      "end": 12.76
+    },
+    {
+      "text": "a",
+      "start": 13.32,
+      "end": 13.42
+    },
+    {
+      "text": "privacy-first",
+      "start": 13.42,
+      "end": 14.04
+    },
+    {
+      "text": "Android",
+      "start": 14.04,
+      "end": 14.38
+    },
+    {
+      "text": "app",
+      "start": 14.38,
+      "end": 14.64
+    },
+    {
+      "text": "that",
+      "start": 14.64,
+      "end": 14.98
+    },
+    {
+      "text": "notices",
+      "start": 14.98,
+      "end": 15.4
+    },
+    {
+      "text": "doomscrolling,",
+      "start": 15.4,
+      "end": 16.26
+    },
+    {
+      "text": "and",
+      "start": 16.44,
+      "end": 16.62
+    },
+    {
+      "text": "helps",
+      "start": 16.62,
+      "end": 16.7
+    },
+    {
+      "text": "you",
+      "start": 16.98,
+      "end": 17.1
+    },
+    {
+      "text": "pause.",
+      "start": 17.1,
+      "end": 17.52
+    },
+    {
+      "text": "Built",
+      "start": 18.1,
+      "end": 18.2
+    },
+    {
+      "text": "for",
+      "start": 18.24,
+      "end": 18.34
+    },
+    {
+      "text": "adult",
+      "start": 18.34,
+      "end": 18.72
+    },
+    {
+      "text": "Filipino",
+      "start": 18.72,
+      "end": 19.1
+    },
+    {
+      "text": "Android",
+      "start": 19.14,
+      "end": 19.54
+    },
+    {
+      "text": "users",
+      "start": 19.54,
+      "end": 19.78
+    },
+    {
+      "text": "who",
+      "start": 19.78,
+      "end": 20.3
+    },
+    {
+      "text": "watch",
+      "start": 20.32,
+      "end": 20.62
+    },
+    {
+      "text": "short-form",
+      "start": 20.62,
+      "end": 21.12
+    },
+    {
+      "text": "video.",
+      "start": 21.12,
+      "end": 21.58
+    },
+    {
+      "text": "Three",
+      "start": 22.08,
+      "end": 22.3
+    },
+    {
+      "text": "signals:",
+      "start": 22.3,
+      "end": 22.76
+    },
+    {
+      "text": "session",
+      "start": 23.28,
+      "end": 23.52
+    },
+    {
+      "text": "length,",
+      "start": 23.52,
+      "end": 23.84
+    },
+    {
+      "text": "time",
+      "start": 24.16,
+      "end": 24.36
+    },
+    {
+      "text": "per",
+      "start": 24.36,
+      "end": 24.4
+    },
+    {
+      "text": "video,",
+      "start": 24.4,
+      "end": 24.96
+    },
+    {
+      "text": "and",
+      "start": 24.96,
+      "end": 25.28
+    },
+    {
+      "text": "negative",
+      "start": 25.28,
+      "end": 25.46
+    },
+    {
+      "text": "captions.",
+      "start": 25.46,
+      "end": 26.22
+    },
+    {
+      "text": "Fuzzy",
+      "start": 26.68,
+      "end": 26.84
+    },
+    {
+      "text": "logic",
+      "start": 26.84,
+      "end": 26.96
+    },
+    {
+      "text": "combines",
+      "start": 26.96,
+      "end": 27.32
+    },
+    {
+      "text": "them",
+      "start": 27.32,
+      "end": 27.92
+    },
+    {
+      "text": "into",
+      "start": 27.92,
+      "end": 28.26
+    },
+    {
+      "text": "a",
+      "start": 28.26,
+      "end": 28.36
+    },
+    {
+      "text": "doomscrolling",
+      "start": 28.36,
+      "end": 28.92
+    },
+    {
+      "text": "risk",
+      "start": 28.92,
+      "end": 29.22
+    },
+    {
+      "text": "score.",
+      "start": 29.22,
+      "end": 29.64
+    },
+    {
+      "text": "When",
+      "start": 30.16,
+      "end": 30.18
+    },
+    {
+      "text": "it",
+      "start": 30.18,
+      "end": 30.36
+    },
+    {
+      "text": "rises,",
+      "start": 30.36,
+      "end": 30.76
+    },
+    {
+      "text": "REDU",
+      "start": 31.06,
+      "end": 31.3
+    },
+    {
+      "text": "steps",
+      "start": 31.3,
+      "end": 31.48
+    },
+    {
+      "text": "in",
+      "start": 31.7,
+      "end": 31.8
+    },
+    {
+      "text": "gently:",
+      "start": 31.8,
+      "end": 32.24
+    },
+    {
+      "text": "a",
+      "start": 32.8,
+      "end": 32.92
+    },
+    {
+      "text": "reminder,",
+      "start": 32.92,
+      "end": 33.32
+    },
+    {
+      "text": "a",
+      "start": 33.32,
+      "end": 33.88
+    },
+    {
+      "text": "pause,",
+      "start": 33.88,
+      "end": 34.34
+    },
+    {
+      "text": "then",
+      "start": 34.34,
+      "end": 34.84
+    },
+    {
+      "text": "a",
+      "start": 34.84,
+      "end": 35.04
+    },
+    {
+      "text": "breathing",
+      "start": 35.24,
+      "end": 35.42
+    },
+    {
+      "text": "break.",
+      "start": 35.42,
+      "end": 35.7
+    },
+    {
+      "text": "You",
+      "start": 36.22,
+      "end": 36.38
+    },
+    {
+      "text": "stay",
+      "start": 36.38,
+      "end": 36.6
+    },
+    {
+      "text": "in",
+      "start": 36.6,
+      "end": 36.88
+    },
+    {
+      "text": "control.",
+      "start": 36.88,
+      "end": 37.42
+    },
+    {
+      "text": "It",
+      "start": 37.9,
+      "end": 38.02
+    },
+    {
+      "text": "all",
+      "start": 38.02,
+      "end": 38.24
+    },
+    {
+      "text": "runs",
+      "start": 38.24,
+      "end": 38.42
+    },
+    {
+      "text": "on",
+      "start": 38.42,
+      "end": 38.6
+    },
+    {
+      "text": "your",
+      "start": 38.6,
+      "end": 38.78
+    },
+    {
+      "text": "phone,",
+      "start": 38.78,
+      "end": 39.24
+    },
+    {
+      "text": "and",
+      "start": 39.24,
+      "end": 39.48
+    },
+    {
+      "text": "raw",
+      "start": 39.48,
+      "end": 39.7
+    },
+    {
+      "text": "content",
+      "start": 39.7,
+      "end": 40.1
+    },
+    {
+      "text": "is",
+      "start": 40.1,
+      "end": 40.28
+    },
+    {
+      "text": "never",
+      "start": 40.28,
+      "end": 40.64
+    },
+    {
+      "text": "kept.",
+      "start": 40.64,
+      "end": 40.78
+    },
+    {
+      "text": "In",
+      "start": 41.48,
+      "end": 41.56
+    },
+    {
+      "text": "a",
+      "start": 41.56,
+      "end": 41.58
+    },
+    {
+      "text": "two-week",
+      "start": 41.58,
+      "end": 42.06
+    },
+    {
+      "text": "pilot",
+      "start": 42.06,
+      "end": 42.08
+    },
+    {
+      "text": "with",
+      "start": 42.1,
+      "end": 42.54
+    },
+    {
+      "text": "fifty",
+      "start": 42.54,
+      "end": 42.96
+    },
+    {
+      "text": "Filipino",
+      "start": 42.96,
+      "end": 43.42
+    },
+    {
+      "text": "adults,",
+      "start": 43.42,
+      "end": 43.92
+    },
+    {
+      "text": "prompted",
+      "start": 44.26,
+      "end": 44.54
+    },
+    {
+      "text": "users",
+      "start": 44.54,
+      "end": 44.84
+    },
+    {
+      "text": "scrolled",
+      "start": 44.84,
+      "end": 45.28
+    },
+    {
+      "text": "less,",
+      "start": 45.28,
+      "end": 45.58
+    },
+    {
+      "text": "and",
+      "start": 45.82,
+      "end": 46.02
+    },
+    {
+      "text": "saw",
+      "start": 46.02,
+      "end": 46.28
+    },
+    {
+      "text": "less",
+      "start": 46.28,
+      "end": 46.48
+    },
+    {
+      "text": "negative",
+      "start": 46.48,
+      "end": 46.74
+    },
+    {
+      "text": "content.",
+      "start": 46.74,
+      "end": 47.36
+    },
+    {
+      "text": "REDU.",
+      "start": 47.84,
+      "end": 48.2
+    },
+    {
+      "text": "Notice",
+      "start": 48.64,
+      "end": 48.92
+    },
+    {
+      "text": "the",
+      "start": 48.92,
+      "end": 49.16
+    },
+    {
+      "text": "scroll.",
+      "start": 49.16,
+      "end": 49.6
+    },
+    {
+      "text": "Choose",
+      "start": 49.98,
+      "end": 50.18
+    },
+    {
+      "text": "the",
+      "start": 50.18,
+      "end": 50.38
+    },
+    {
+      "text": "pause.",
+      "start": 50.38,
+      "end": 50.64
+    }
+  ]
+}

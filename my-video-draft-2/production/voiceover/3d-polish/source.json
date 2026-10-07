@@ -1,0 +1,16 @@
+{
+  "originalPath": "/Users/geanm/Downloads/ElevenLabs_2026-10-06T23_53_45__s50_v4.mp3",
+  "copiedTo": "public/audio/vo/3d-polish-original.mp3",
+  "sha256": "0c10f7321ce6c3c567aaff3d39f96e96faac444e5169d2759aa7a697b9e33942",
+  "sourceDurationSeconds": 52.688938,
+  "model": "ElevenLabs v4",
+  "voice": "Lauren (the file name omits the voice; median pitch 178 Hz and spectral centroid match the October 6 Lauren take: 174 Hz)",
+  "newRecording": true,
+  "script": "VOICEOVER.txt — the October 6 script plus “And another…”",
+  "edit": {
+    "playbackRate": 1,
+    "removedSpeechOrSilence": false,
+    "insertedSilence": "0.6 s after “And another…” (natural pause 1.07 s → 1.67 s) and 0.3 s after “adults,”"
+  },
+  "targets": { "maxContainerSeconds": 60, "targetVideoSeconds": 59, "creditsSeconds": 5 }
+}

@@ -1,0 +1,243 @@
+{
+  "sourceSha256": "e6813c96c0388069ac4e835587502a003443f2f6781c332e8ad4cb641ee03afd",
+  "sourceDecodedSeconds": 55.066125,
+  "productionSeconds": 53.6,
+  "removedSilenceSeconds": 3.566125,
+  "insertedCaptionHoldSeconds": 2.1,
+  "insertAtSourceSeconds": 27.2,
+  "playbackRate": 1,
+  "allSpokenWordsPreserved": true,
+  "allSpokenSamplesPreservedBeforeNormalization": true,
+  "cuts": [
+    {
+      "silenceStart": 1.893515,
+      "silenceEnd": 2.762721,
+      "capacity": 0.3192059999999999,
+      "after": "video.",
+      "before": "Suddenly,",
+      "fromSample": 105928,
+      "toSample": 117572,
+      "removedSeconds": 0.24258333333333335
+    },
+    {
+      "silenceStart": 3.470317,
+      "silenceEnd": 3.695941,
+      "capacity": 0.04562399999999983,
+      "after": "Suddenly,",
+      "before": "it\u2019s",
+      "fromSample": 171159,
+      "toSample": 172821,
+      "removedSeconds": 0.034625
+    },
+    {
+      "silenceStart": 5.648594,
+      "silenceEnd": 6.276712,
+      "capacity": 0.44811799999999974,
+      "after": "AM.",
+      "before": "That's",
+      "fromSample": 278042,
+      "toSample": 294373,
+      "removedSeconds": 0.3402291666666667
+    },
+    {
+      "silenceStart": 7.625261,
+      "silenceEnd": 8.001633,
+      "capacity": 0.19637199999999994,
+      "after": "doomscrolling.",
+      "before": "Screen-time",
+      "fromSample": 371467,
+      "toSample": 378623,
+      "removedSeconds": 0.14908333333333335
+    },
+    {
+      "silenceStart": 11.33966,
+      "silenceEnd": 11.75161,
+      "capacity": 0.23194999999999916,
+      "after": "watch.",
+      "before": "Meet",
+      "fromSample": 549964,
+      "toSample": 558417,
+      "removedSeconds": 0.17610416666666667
+    },
+    {
+      "silenceStart": 12.618254,
+      "silenceEnd": 12.912948,
+      "capacity": 0.1146939999999998,
+      "after": "REDU:",
+      "before": "a",
+      "fromSample": 610660,
+      "toSample": 614839,
+      "removedSeconds": 0.0870625
+    },
+    {
+      "silenceStart": 16.18,
+      "silenceEnd": 16.400000000000002,
+      "capacity": 0.04000000000000242,
+      "after": "doomscrolling,",
+      "before": "and",
+      "fromSample": 781192,
+      "toSample": 782649,
+      "removedSeconds": 0.030354166666666668
+    },
+    {
+      "silenceStart": 17.52,
+      "silenceEnd": 17.993084,
+      "capacity": 0.29308400000000007,
+      "after": "pause.",
+      "before": "Built",
+      "fromSample": 846974,
+      "toSample": 857655,
+      "removedSeconds": 0.22252083333333333
+    },
+    {
+      "silenceStart": 21.82,
+      "silenceEnd": 22.298617,
+      "capacity": 0.29861699999999985,
+      "after": "video.",
+      "before": "Three",
+      "fromSample": 1053406,
+      "toSample": 1064288,
+      "removedSeconds": 0.22670833333333335
+    },
+    {
+      "silenceStart": 23.24,
+      "silenceEnd": 23.553832,
+      "capacity": 0.13383200000000145,
+      "after": "signals:",
+      "before": "session",
+      "fromSample": 1120614,
+      "toSample": 1125490,
+      "removedSeconds": 0.10158333333333333
+    },
+    {
+      "silenceStart": 24.38,
+      "silenceEnd": 24.654989,
+      "capacity": 0.09498900000000149,
+      "after": "length,",
+      "before": "time",
+      "fromSample": 1175110,
+      "toSample": 1178571,
+      "removedSeconds": 0.07210416666666666
+    },
+    {
+      "silenceStart": 30.88,
+      "silenceEnd": 31.28,
+      "capacity": 0.22000000000000214,
+      "after": "score.",
+      "before": "When",
+      "fromSample": 1487831,
+      "toSample": 1495849,
+      "removedSeconds": 0.16704166666666667
+    },
+    {
+      "silenceStart": 32.24,
+      "silenceEnd": 32.505261,
+      "capacity": 0.08526099999999531,
+      "after": "rises,",
+      "before": "REDU",
+      "fromSample": 1552333,
+      "toSample": 1555440,
+      "removedSeconds": 0.06472916666666667
+    },
+    {
+      "silenceStart": 34.06,
+      "silenceEnd": 34.495283,
+      "capacity": 0.2552829999999983,
+      "after": "gently:",
+      "before": "a",
+      "fromSample": 1640676,
+      "toSample": 1649979,
+      "removedSeconds": 0.1938125
+    },
+    {
+      "silenceStart": 35.327166,
+      "silenceEnd": 35.64,
+      "capacity": 0.13283400000000228,
+      "after": "reminder,",
+      "before": "a",
+      "fromSample": 1700792,
+      "toSample": 1705633,
+      "removedSeconds": 0.10085416666666666
+    },
+    {
+      "silenceStart": 36.418073,
+      "silenceEnd": 36.800000000000004,
+      "capacity": 0.20192700000000458,
+      "after": "pause,",
+      "before": "then",
+      "fromSample": 1753555,
+      "toSample": 1760914,
+      "removedSeconds": 0.1533125
+    },
+    {
+      "silenceStart": 37.8,
+      "silenceEnd": 38.290227,
+      "capacity": 0.3102270000000044,
+      "after": "break.",
+      "before": "You",
+      "fromSample": 1820513,
+      "toSample": 1831818,
+      "removedSeconds": 0.23552083333333335
+    },
+    {
+      "silenceStart": 39.64,
+      "silenceEnd": 40.11576,
+      "capacity": 0.2957600000000011,
+      "after": "control.",
+      "before": "It",
+      "fromSample": 1908749,
+      "toSample": 1919527,
+      "removedSeconds": 0.22454166666666667
+    },
+    {
+      "silenceStart": 43.74,
+      "silenceEnd": 44.2,
+      "capacity": 0.28000000000000086,
+      "after": "kept.",
+      "before": "In",
+      "fromSample": 2105458,
+      "toSample": 2115662,
+      "removedSeconds": 0.21258333333333335
+    },
+    {
+      "silenceStart": 46.98,
+      "silenceEnd": 47.24,
+      "capacity": 0.08000000000000512,
+      "after": "adults,",
+      "before": "prompted",
+      "fromSample": 2259823,
+      "toSample": 2262738,
+      "removedSeconds": 0.06072916666666667
+    },
+    {
+      "silenceStart": 50.96,
+      "silenceEnd": 51.544649,
+      "capacity": 0.40464899999999887,
+      "after": "content.",
+      "before": "REDU.",
+      "fromSample": 2452739,
+      "toSample": 2467486,
+      "removedSeconds": 0.30722916666666666
+    },
+    {
+      "silenceStart": 52.019999999999996,
+      "silenceEnd": 52.500998,
+      "capacity": 0.1609980000000067,
+      "after": "REDU.",
+      "before": "Notice",
+      "fromSample": 2505571,
+      "toSample": 2511438,
+      "removedSeconds": 0.12222916666666667
+    },
+    {
+      "silenceStart": 53.59839,
+      "silenceEnd": 53.971859,
+      "capacity": 0.053469000000000044,
+      "after": "scroll.",
+      "before": "Choose",
+      "fromSample": 2580712,
+      "toSample": 2582660,
+      "removedSeconds": 0.04058333333333333
+    }
+  ]
+}

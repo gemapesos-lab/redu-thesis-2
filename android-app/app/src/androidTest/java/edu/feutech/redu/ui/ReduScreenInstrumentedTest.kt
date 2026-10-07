@@ -41,8 +41,8 @@ class ReduScreenInstrumentedTest {
 
         composeRule.onNodeWithText("Monitoring needs attention").assertIsDisplayed()
         composeRule.onNodeWithText("Review setup").assertIsDisplayed()
-        composeRule.onNodeWithText("Your last 7 days").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("No activity in the last 7 days").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Your last 12 weeks").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("No activity in the last 12 weeks").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithContentDescription("How activity patterns are calculated").assertDoesNotExist()
     }
 
@@ -79,7 +79,7 @@ class ReduScreenInstrumentedTest {
                             peakRiskLevel = RiskLevel.SAFE,
                             latestSession = null,
                         ),
-                        weeklyActivity = activity,
+                        dailyActivity = activity,
                         totalSessionCount = 3,
                         reliableSessionCount = 3,
                     ),
@@ -96,7 +96,7 @@ class ReduScreenInstrumentedTest {
             .assertIsSelected()
         composeRule.onNodeWithText("Sunday, July 12").assertIsDisplayed()
         composeRule.onNodeWithText("2 min · 1 session").assertIsDisplayed()
-        composeRule.onNodeWithText("What this means").performScrollTo().performClick()
+        composeRule.onNodeWithContentDescription("What this means").performScrollTo().performClick()
         composeRule.onNodeWithText("Activity patterns").assertIsDisplayed()
     }
 
@@ -160,7 +160,7 @@ class ReduScreenInstrumentedTest {
         }
 
         composeRule.onNodeWithText("Preparing export").assertIsNotEnabled()
-        composeRule.onNodeWithText("Packaging the saved datasets. Keep REDU open for a moment.").assertIsDisplayed()
+        composeRule.onNodeWithText("Keep REDU open for a moment.").assertIsDisplayed()
     }
 
     @Test
@@ -213,9 +213,9 @@ class ReduScreenInstrumentedTest {
 
         composeRule.onNodeWithText("Monitoring").assertIsDisplayed()
         composeRule.onNodeWithText("Pause prompts").assertIsDisplayed()
-        composeRule.onNode(hasScrollAction()).performScrollToIndex(6)
+        composeRule.onNode(hasScrollAction()).performScrollToIndex(5)
         composeRule.onNodeWithText("Study configuration").assertIsDisplayed()
-        composeRule.onNode(hasScrollAction()).performScrollToIndex(7)
+        composeRule.onNode(hasScrollAction()).performScrollToIndex(6)
         composeRule.onNodeWithText("Image scanning").assertIsDisplayed()
     }
 }

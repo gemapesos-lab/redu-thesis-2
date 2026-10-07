@@ -1,0 +1,403 @@
+{
+  "starts": {
+    "hook": 0,
+    "problem": 274,
+    "meet": 430,
+    "users": 610,
+    "signals": 729,
+    "score": 868,
+    "prompts": 973,
+    "privacy": 1208,
+    "impact": 1315,
+    "outro": 1504,
+    "credits": 1620
+  },
+  "timings": {
+    "hook": {
+      "frames": 274,
+      "keyFrame": 237,
+      "cues": [
+        [
+          78,
+          "swipe"
+        ],
+        [
+          116,
+          "swipe"
+        ],
+        [
+          149,
+          "swipe"
+        ],
+        [
+          176,
+          "swipe"
+        ],
+        [
+          193,
+          "swipe"
+        ],
+        [
+          223,
+          "hit"
+        ]
+      ],
+      "voAt": 3,
+      "voFrames": 255
+    },
+    "problem": {
+      "frames": 156,
+      "keyFrame": 145,
+      "cues": [
+        [
+          56,
+          "whoosh"
+        ]
+      ],
+      "voAt": 5,
+      "voFrames": 142
+    },
+    "meet": {
+      "frames": 180,
+      "keyFrame": 168,
+      "cues": [
+        [
+          0,
+          "breath"
+        ]
+      ],
+      "voAt": 7,
+      "voFrames": 163
+    },
+    "users": {
+      "frames": 119,
+      "keyFrame": 109,
+      "cues": [
+        [
+          0,
+          "whoosh"
+        ]
+      ],
+      "voAt": 5,
+      "voFrames": 107
+    },
+    "signals": {
+      "frames": 139,
+      "keyFrame": 121,
+      "cues": [
+        [
+          42,
+          "tick"
+        ],
+        [
+          71,
+          "tick"
+        ],
+        [
+          106,
+          "tick"
+        ]
+      ],
+      "voAt": 6,
+      "voFrames": 127
+    },
+    "score": {
+      "frames": 105,
+      "keyFrame": 95,
+      "cues": [
+        [
+          89,
+          "tick"
+        ]
+      ],
+      "voAt": 6,
+      "voFrames": 92
+    },
+    "prompts": {
+      "frames": 235,
+      "keyFrame": 218,
+      "cues": [
+        [
+          89,
+          "tick"
+        ],
+        [
+          119,
+          "tick"
+        ],
+        [
+          158,
+          "tick"
+        ]
+      ],
+      "voAt": 5,
+      "voFrames": 222
+    },
+    "privacy": {
+      "frames": 107,
+      "keyFrame": 96,
+      "cues": [
+        [
+          19,
+          "tick"
+        ],
+        [
+          53,
+          "tick"
+        ],
+        [
+          91,
+          "tick"
+        ]
+      ],
+      "voAt": 5,
+      "voFrames": 95
+    },
+    "impact": {
+      "frames": 189,
+      "keyFrame": 173,
+      "cues": [
+        [
+          0,
+          "whoosh"
+        ],
+        [
+          111,
+          "tick"
+        ],
+        [
+          122,
+          "tick"
+        ],
+        [
+          158,
+          "tick"
+        ],
+        [
+          166,
+          "tick"
+        ]
+      ],
+      "voAt": 5,
+      "voFrames": 177
+    },
+    "outro": {
+      "frames": 116,
+      "keyFrame": 90,
+      "cues": [],
+      "voAt": 6,
+      "voFrames": 89
+    },
+    "credits": {
+      "frames": 150,
+      "keyFrame": 110,
+      "cues": [
+        [
+          0,
+          "whoosh"
+        ]
+      ]
+    }
+  },
+  "beats": {
+    "hook": {
+      "words": [
+        3,
+        19,
+        24,
+        33
+      ],
+      "another": [
+        70,
+        75
+      ],
+      "scrollBreak": [
+        88,
+        183
+      ],
+      "introExit": 60,
+      "phoneAt": 70,
+      "anotherExit": 203,
+      "phoneExit": 205,
+      "clock": 223,
+      "swipes": [
+        78,
+        116,
+        149,
+        176,
+        193
+      ]
+    },
+    "problem": {
+      "intro": [
+        5,
+        21
+      ],
+      "introExit": 46,
+      "pill": 56,
+      "limits": [
+        56,
+        73,
+        83,
+        94
+      ],
+      "contrast": [
+        116,
+        127,
+        132,
+        137
+      ],
+      "exit": 146
+    },
+    "meet": {
+      "logo": 17,
+      "eyebrow": [
+        41,
+        44,
+        73,
+        85
+      ],
+      "lift": 32,
+      "notices": [
+        98,
+        113
+      ],
+      "helps": [
+        148,
+        156,
+        160
+      ],
+      "exit": 170
+    },
+    "users": {
+      "built": [
+        5,
+        14
+      ],
+      "headline": [
+        20,
+        31,
+        50,
+        62
+      ],
+      "supporting": [
+        74,
+        78,
+        87,
+        101,
+        112
+      ],
+      "platforms": 87,
+      "exit": 111
+    },
+    "signals": {
+      "heading": [
+        6,
+        18
+      ],
+      "session": 42,
+      "sessionWords": [
+        42,
+        55
+      ],
+      "video": 71,
+      "videoWords": [
+        71,
+        79,
+        83
+      ],
+      "negative": 106,
+      "negativeWords": [
+        106,
+        117
+      ],
+      "captionStart": 82,
+      "captionReady": 110,
+      "highlight": 106,
+      "holdUntil": 131
+    },
+    "score": {
+      "fuzzy": 6,
+      "logic": 17,
+      "join": 28,
+      "meter": 50,
+      "title": [
+        60,
+        81,
+        89
+      ],
+      "settle": 89,
+      "exit": 97
+    },
+    "prompts": {
+      "steps": [
+        47,
+        57,
+        62
+      ],
+      "reminder": 89,
+      "pause": 119,
+      "breathing": 158,
+      "you": [
+        189,
+        201,
+        209,
+        212
+      ],
+      "unlocked": 181,
+      "exit": 225
+    },
+    "privacy": {
+      "heading": [
+        19,
+        27,
+        29,
+        34
+      ],
+      "points": [
+        19,
+        53,
+        91
+      ],
+      "exit": 99
+    },
+    "impact": {
+      "weeks": 11,
+      "adults": 41,
+      "sessions": 40,
+      "shrink": 89,
+      "headline": [
+        111,
+        122,
+        143,
+        151,
+        158,
+        168
+      ],
+      "cards": [
+        111,
+        122,
+        158,
+        166
+      ],
+      "badges": 128,
+      "footnote": 122,
+      "exit": 181
+    },
+    "outro": {
+      "logo": 6,
+      "notice": [
+        31,
+        43,
+        47
+      ],
+      "choose": [
+        71,
+        81,
+        84
+      ],
+      "wink": 95,
+      "exit": 108
+    }
+  }
+}

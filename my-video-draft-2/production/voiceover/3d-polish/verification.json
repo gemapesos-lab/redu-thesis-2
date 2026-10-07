@@ -1,0 +1,161 @@
+{
+  "export": "out/REDU-AVP-draft-2-3d-polish-v2.mp4",
+  "sha256": "006e4a27132eeb4a4580734459af0e5cdd49e80f4d94140e842c8e2c003ce85a",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "avg_frame_rate": "30/1",
+        "start_time": "0.000000",
+        "duration": "59.000000",
+        "nb_frames": "1770",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "avg_frame_rate": "0/0",
+        "start_time": "0.000000",
+        "duration": "59.008000",
+        "nb_frames": "2768"
+      }
+    ],
+    "format": {
+      "duration": "59.008000",
+      "size": "15271431"
+    }
+  },
+  "actualContainerSeconds": 59.008,
+  "videoFrames": 1770,
+  "fps": 30,
+  "creditsSeconds": 5,
+  "narrationSeconds": 53.589,
+  "narrationPlaybackRate": 1,
+  "insertedSilence": [
+    {
+      "afterWord": "another",
+      "beforeWord": "suddenly",
+      "atSourceSeconds": 5.295375,
+      "seconds": 0.6
+    },
+    {
+      "afterWord": "adults",
+      "beforeWord": "prompted",
+      "atSourceSeconds": 45.852354166666665,
+      "seconds": 0.3
+    }
+  ],
+  "sharedTextRegionsChecked": 6,
+  "phrasesOnTheirWord": 18,
+  "sfxCues": 65,
+  "originalFilesUnchanged": 96,
+  "voiceAlignmentInExport": [
+    {
+      "scene": "hook",
+      "word": "Just",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.9984
+    },
+    {
+      "scene": "problem",
+      "word": "NOT",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.98552
+    },
+    {
+      "scene": "meet",
+      "word": "Meet",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.98816
+    },
+    {
+      "scene": "users",
+      "word": "Built",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97134
+    },
+    {
+      "scene": "signals",
+      "word": "negative",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.93822
+    },
+    {
+      "scene": "score",
+      "word": "Fuzzy",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96351
+    },
+    {
+      "scene": "prompts",
+      "word": "reminder,",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.9737
+    },
+    {
+      "scene": "privacy",
+      "word": "It",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.97209
+    },
+    {
+      "scene": "impact",
+      "word": "In",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.96772
+    },
+    {
+      "scene": "outro",
+      "word": "REDU.",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.95739
+    },
+    {
+      "scene": "hook",
+      "word": "Then",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.93538
+    },
+    {
+      "scene": "hook",
+      "word": "And",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.83672
+    },
+    {
+      "scene": "hook",
+      "word": "Suddenly,",
+      "bestOffsetMs": 0.0,
+      "correlation": 0.99927
+    }
+  ],
+  "loudnessMeasuredFromExport": {
+    "integratedLUFS": -16.22,
+    "truePeakDBTP": -1.83,
+    "loudnessRangeLU": 4.9
+  },
+  "motionRenderRegression": {
+    "decodedFrames": 1770,
+    "scoreFramesChecked": 108,
+    "scoreMinimumMeanLuminance": 232.339,
+    "unexpectedDarkScoreFrames": 0,
+    "sampling": "12 fractional-frame samples, 180-degree shutter, normal alpha averaging"
+  },
+  "checks": {
+    "measuredCueFrames": "passed",
+    "originalVOHash": "passed",
+    "exportDecodesWithoutErrors": "passed",
+    "scoreNoBlackFrameRegression": "passed",
+    "previousExportsUnchanged": "passed",
+    "noOverlappingText": "passed"
+  }
+}

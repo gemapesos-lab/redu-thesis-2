@@ -1,0 +1,23 @@
+{
+  "sourceSha256": "0c10f7321ce6c3c567aaff3d39f96e96faac444e5169d2759aa7a697b9e33942",
+  "sourceDecodedSeconds": 52.689,
+  "productionSeconds": 53.589,
+  "removedSilenceSeconds": 0,
+  "insertedSilence": [
+    {
+      "afterWord": "another",
+      "beforeWord": "suddenly",
+      "atSourceSeconds": 5.295375,
+      "seconds": 0.6
+    },
+    {
+      "afterWord": "adults",
+      "beforeWord": "prompted",
+      "atSourceSeconds": 45.852354166666665,
+      "seconds": 0.3
+    }
+  ],
+  "playbackRate": 1,
+  "allSpokenWordsPreserved": true,
+  "allSpokenSamplesPreservedBeforeNormalization": true
+}

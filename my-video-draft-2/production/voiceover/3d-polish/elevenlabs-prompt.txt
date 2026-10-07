@@ -1,0 +1,18 @@
+[soft, conversational] Just one more video...
+[lightly amused] Then another.
+[drifting, a little slower] And another...
+[quiet realization] Suddenly, it’s two-oh-seven A.M.
+
+[matter-of-fact] That's doomscrolling. Screen-time limits count minutes, NOT what you watch.
+
+[warm, reassuring] Meet REDU: a privacy-first Android app that notices doomscrolling, and helps you pause.
+Built for adult Filipino Android users who watch short-form video.
+
+[clear, flowing delivery] Three signals: session length, time per video, and negative captions. Fuzzy logic combines them into a doomscrolling risk score.
+
+[reassuring] When it rises, REDU steps in gently: a reminder, a pause, then a breathing break. You stay in control.
+
+[confident, conversational] It all runs on your phone, and raw content is never kept.
+In a two-week pilot with fifty Filipino adults, prompted users scrolled less, and saw less negative content.
+
+[warm, gently decisive] REDU. Notice the scroll. Choose the pause.

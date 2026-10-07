@@ -1,0 +1,10 @@
+{
+  "status": 402,
+  "detail": {
+    "type": "payment_required",
+    "code": "paid_plan_required",
+    "message": "Free users cannot use library voices via the API. Please upgrade your subscription to use this voice.",
+    "status": "payment_required",
+    "request_id": "d7c3890304da4eea6e71135657fc03ed"
+  }
+}
